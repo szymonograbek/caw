@@ -9,6 +9,7 @@ import {
   ExternalConversationId as ConversationId,
 } from "@omen/sdk/ids";
 import { chunkMessage, DISCORD_MESSAGE_LIMIT } from "./chunk-message.ts";
+import { adoptDefaultAvatar } from "./default-avatar.ts";
 import type { MessageNotFound } from "./discord-client.ts";
 import {
   channelError,
@@ -226,7 +227,8 @@ const buildChannel = (client: Client<true>): DiscordChannelApi => {
 };
 
 /**
- * The Discord Channel on a connected client with `/new` and `/stop` registered,
+ * The Discord Channel on a connected client with `/new` and `/stop` registered
+ * and Omen's avatar on a bot that has none,
  * plus a `react` that tells a missing message apart, for the react tool. The
  * gateway connection lasts as long as the layer.
  */
@@ -239,6 +241,7 @@ export class DiscordChannel extends Context.Service<DiscordChannel, DiscordChann
       const client = yield* connectClient;
 
       yield* registerSlashCommands(client);
+      yield* adoptDefaultAvatar(client.user);
 
       return buildChannel(client);
     }),

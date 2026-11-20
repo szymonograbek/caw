@@ -191,6 +191,7 @@ There is no event log, projection, or message table: the Channel is the history.
 - Reply mode handling, typing indicator, 2000-char chunking.
 - The `react` tool and automatic ❌ / ⏹️.
 - Bot token comes from env (`~/.omen/.env`).
+- A bot with no avatar gets Omen's raven when it connects. An avatar set in the Discord developer portal is never replaced.
 
 ### claude
 
