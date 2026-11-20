@@ -7,7 +7,7 @@ const quote = (value: string): string => `'${value.replaceAll("'", `'\\''`)}'`;
 
 const skillManifest = `{
   "name": "caw",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "How to control Caw, the daemon this agent runs in"
 }
 `;

@@ -15,7 +15,8 @@ bun run --cwd "$root" verify
 
 # The CLI: one bundled script that runs on Bun. Its dependencies are bundled in.
 bun build "$root/packages/cli/src/main.ts" --target=bun --minify --outfile "$out/caw/caw.js"
-cp "$root/README.md" "$out/caw/README.md"
+cp "$root/README.md" "$root/LICENSE" "$out/caw/"
+cp "$root/LICENSE" "$out/caw-plugin-sdk/"
 bun -e '
 	const [source, target] = process.argv.slice(1);
 	const cli = await Bun.file(source).json();
@@ -23,10 +24,10 @@ bun -e '
 		name: cli.name,
 		version: cli.version,
 		description: "Talk to Claude Code from Discord. A small daemon that runs on your own computer.",
-		license: "UNLICENSED",
+		license: "MIT",
 		type: "module",
 		bin: { caw: "caw.js" },
-		files: ["caw.js", "README.md"],
+		files: ["caw.js", "README.md", "LICENSE"],
 		engines: { bun: ">=1.4.4" },
 	}, null, 2) + "\n");
 ' "$root/packages/cli/package.json" "$out/caw/package.json"
@@ -40,8 +41,8 @@ bun -e '
 	await Bun.write(target, JSON.stringify({
 		...sdk,
 		description: "The SDK for writing Caw plugins.",
-		license: "UNLICENSED",
-		files: ["src"],
+		license: "MIT",
+		files: ["src", "LICENSE"],
 		engines: { bun: ">=1.4.4" },
 	}, null, 2) + "\n");
 ' "$root/packages/sdk/package.json" "$out/caw-plugin-sdk/package.json"

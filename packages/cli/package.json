@@ -1,7 +1,8 @@
 {
   "name": "@gloaming/caw",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
+  "license": "MIT",
   "bin": {
     "caw": "./src/main.ts"
   },
