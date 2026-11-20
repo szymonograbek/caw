@@ -1,5 +1,5 @@
 import { describe, expect, it } from "@effect/vitest";
-import { Effect, Exit, Layer, Option } from "effect";
+import { Effect, Exit, Fiber, Layer, Option } from "effect";
 import { OmenHome } from "../home/omen-home.ts";
 import { makeFakeChannel } from "../testing/fake-channel.ts";
 import { makeFakeHarness } from "../testing/fake-harness.ts";
@@ -23,6 +23,7 @@ describe("RPC over the daemon socket", () => {
       const harness = yield* makeFakeHarness;
 
       yield* startPlugins(channel, harness);
+      yield* DaemonLifecycle.use((daemon) => daemon.markReady);
 
       const home = yield* OmenHome;
       const lifecycle = yield* DaemonLifecycle;
@@ -45,6 +46,35 @@ describe("RPC over the daemon socket", () => {
       ]);
 
       expect(unknown).toEqual(
+        Exit.fail(expect.objectContaining({ message: "Unknown command: nope" })),
+      );
+    }).pipe(Effect.provide(server), Effect.scoped),
+  );
+
+  it.live("holds a command sent while Plugins start until they have", () =>
+    Effect.gen(function* () {
+      const home = yield* OmenHome;
+      const lifecycle = yield* DaemonLifecycle;
+
+      const result = yield* Effect.gen(function* () {
+        const client = yield* OmenClient;
+
+        const pending = yield* Effect.forkChild(
+          Effect.exit(
+            client.RunCommand({ argv: ["nope"], conversationId: Option.none(), cwd: "/" }),
+          ),
+        );
+
+        yield* Effect.sleep("100 millis");
+        const waited = pending.pollUnsafe() === undefined;
+
+        yield* lifecycle.markReady;
+
+        return { waited, answer: yield* Fiber.join(pending) };
+      }).pipe(Effect.provide(OmenClient.layer(home.socket)));
+
+      expect(result.waited).toBe(true);
+      expect(result.answer).toEqual(
         Exit.fail(expect.objectContaining({ message: "Unknown command: nope" })),
       );
     }).pipe(Effect.provide(server), Effect.scoped),

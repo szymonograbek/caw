@@ -27,6 +27,7 @@ const serve = Effect.fn("Daemon.serve")(function* (options: DaemonOptions) {
   yield* writeAgentFiles(options.cli).pipe(Effect.orDie);
   yield* sessions.idleAllLive;
   yield* plugins.start(options.builtins);
+  yield* lifecycle.markReady;
   yield* bus.publish(OmenEvent.DaemonStarted());
   yield* Effect.logInfo("Omen started").pipe(Effect.annotateLogs({ pid: lifecycle.pid }));
   yield* lifecycle.stopped;

@@ -44,6 +44,8 @@ const handlers = OmenRpcs.toLayer(
       Shutdown: () => lifecycle.shutdown,
       RunCommand: ({ argv, conversationId, cwd }) =>
         Effect.gen(function* () {
+          // The socket opens before Plugins start; their commands exist only once they have.
+          yield* lifecycle.ready;
           const [name, ...args] = argv;
           const core = Option.fromNullishOr(coreCommands.find((command) => command.name === name));
 

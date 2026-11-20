@@ -51,6 +51,7 @@ describe("core CLI commands", () => {
       const harness = yield* makeFakeHarness;
 
       yield* startPlugins(channel, harness);
+      yield* DaemonLifecycle.use((daemon) => daemon.markReady);
 
       expect(yield* omen(["plugin", "list"])).toBe("fake  running  (built in)");
       expect(yield* omen(["plugin", "disable", "fake"])).toContain("Disabled plugin fake.");
@@ -76,6 +77,7 @@ describe("core CLI commands", () => {
       const harness = yield* makeFakeHarness;
 
       yield* startPlugins(channel, harness);
+      yield* DaemonLifecycle.use((daemon) => daemon.markReady);
       yield* channel.say(message("room", "m1", "hello"));
       yield* eventually(Effect.map(Ref.get(channel.sent), (sent) => sent.length === 1));
 
@@ -135,6 +137,7 @@ describe("core CLI commands", () => {
 
       yield* writeAgentFiles(["/opt/omen/bin/omen"]);
       yield* startPlugins(channel, harness);
+      yield* DaemonLifecycle.use((daemon) => daemon.markReady);
       yield* channel.say(message("dm", "m1", "hi", ConversationPlace.Direct()));
       yield* eventually(Effect.map(Ref.get(harness.sessions), (all) => all.length === 1));
 
