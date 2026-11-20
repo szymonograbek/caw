@@ -1,0 +1,23 @@
+{
+  "name": "omen",
+  "version": "0.0.0",
+  "private": true,
+  "bin": {
+    "omen": "./src/main.ts"
+  },
+  "type": "module",
+  "dependencies": {
+    "@effect/platform-bun": "4.1.4",
+    "@omen/core": "workspace:*",
+    "@omen/plugin-claude": "workspace:*",
+    "@omen/plugin-discord": "workspace:*",
+    "@omen/plugin-memory": "workspace:*",
+    "@omen/plugin-profiles": "workspace:*",
+    "@omen/plugin-scheduler": "workspace:*",
+    "@omen/sdk": "workspace:*",
+    "effect": "4.1.4"
+  },
+  "devDependencies": {
+    "@effect/vitest": "4.1.4"
+  }
+}

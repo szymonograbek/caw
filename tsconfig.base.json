@@ -1,0 +1,45 @@
+{
+  "$schema": "./node_modules/@effect/tsgo/schema.json",
+  "compilerOptions": {
+    "target": "ES2024",
+    "lib": ["ES2024", "ESNext.Iterator"],
+    "module": "Preserve",
+    "moduleResolution": "Bundler",
+    "moduleDetection": "force",
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "types": ["bun"],
+    "strict": true,
+    "exactOptionalPropertyTypes": true,
+    "noUncheckedIndexedAccess": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "plugins": [
+      {
+        "name": "@effect/language-service",
+        "allowedUnstableApis": [
+          "@effect/vitest",
+          "@effect/platform-bun",
+          "@effect/sql-sqlite-bun",
+          "effect/sql",
+          "effect/rpc",
+          "effect/socket",
+          "effect/cli",
+          "effect/http",
+          "effect/FileSystem",
+          "effect/Path",
+          "effect/Stdio",
+          "effect/Terminal",
+          "effect/process"
+        ]
+      }
+    ]
+  }
+}

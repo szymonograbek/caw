@@ -1,0 +1,27 @@
+{
+  "name": "@omen/core",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./daemon": "./src/daemon.ts",
+    "./loaded-plugin": "./src/plugins/loaded-plugin.ts",
+    "./omen-home": "./src/home/omen-home.ts",
+    "./omen-rpcs": "./src/rpc/omen-rpcs.ts",
+    "./rpc-client": "./src/rpc/rpc-client.ts",
+    "./guide": "./src/guide/guide.ts",
+    "./offline-host": "./src/plugins/offline-host.ts",
+    "./plugin-state": "./src/plugins/plugin-state.ts"
+  },
+  "dependencies": {
+    "@effect/platform-bun": "4.1.4",
+    "@effect/sql-sqlite-bun": "4.1.4",
+    "@omen/sdk": "workspace:*",
+    "@typeonce/effect-machine": "0.46.0",
+    "drizzle-orm": "1.0.0-rc.5",
+    "effect": "4.1.4"
+  },
+  "devDependencies": {
+    "@effect/vitest": "4.1.4"
+  }
+}

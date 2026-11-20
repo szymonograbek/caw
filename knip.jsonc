@@ -1,0 +1,11 @@
+{
+  "$schema": "./node_modules/knip/schema-jsonc.json",
+  // The vendored anti-slop tree keeps upstream's exports.
+  "ignore": ["tools/oxlint/anti-slop/**"],
+  "workspaces": {
+    ".": {
+      // @effect/tsgo serves its tsconfig plugin under this name.
+      "ignoreDependencies": ["@effect/language-service"],
+    },
+  },
+}

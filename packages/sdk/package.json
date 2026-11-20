@@ -1,0 +1,23 @@
+{
+  "name": "@omen/sdk",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./ids": "./src/ids.ts",
+    "./channel": "./src/channel.ts",
+    "./harness": "./src/harness.ts",
+    "./tool": "./src/tool.ts",
+    "./profile": "./src/profile.ts",
+    "./conversation": "./src/conversation.ts",
+    "./events": "./src/events.ts",
+    "./interceptors": "./src/interceptors.ts",
+    "./plugin": "./src/plugin.ts",
+    "./cli-command": "./src/cli-command.ts",
+    "./setup": "./src/setup.ts"
+  },
+  "dependencies": {
+    "@effect/sql-sqlite-bun": "4.1.4",
+    "effect": "4.1.4"
+  }
+}

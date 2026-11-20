@@ -1,0 +1,22 @@
+{
+  "name": "@omen/plugin-claude",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "0.3.329",
+    "@omen/sdk": "workspace:*",
+    "effect": "4.1.4",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@effect/vitest": "4.1.4"
+  },
+  "omen": {
+    "name": "claude",
+    "version": "0.0.0"
+  }
+}

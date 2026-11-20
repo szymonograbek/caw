@@ -1,0 +1,22 @@
+{
+  "name": "@omen/plugin-profiles",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@effect/sql-sqlite-bun": "4.1.4",
+    "@omen/sdk": "workspace:*",
+    "drizzle-orm": "1.0.0-rc.5",
+    "effect": "4.1.4"
+  },
+  "devDependencies": {
+    "@effect/vitest": "4.1.4"
+  },
+  "omen": {
+    "name": "profiles",
+    "version": "0.0.0"
+  }
+}

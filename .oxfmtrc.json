@@ -1,0 +1,16 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "ignorePatterns": [
+    ".agent/**",
+    ".agents/**",
+    ".claude/**",
+    ".codex/**",
+    ".cursor/**",
+    ".opencode/**",
+    ".omen-dev/**",
+    "tools/oxlint/**",
+    "coverage/**",
+    "dist/**",
+    "docs/spec.md"
+  ]
+}
