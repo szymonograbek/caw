@@ -18,7 +18,7 @@ Preconditions: baseline from `README.md`.
 
 - **Post.** Type `[caw e2e N] Reply with exactly the word: pineapple` in `#smoke` (composer `[role="textbox"][data-slate-editor="true"]`, then Enter). Wait about 20s.
 - **Thread exists.** Run `V threads`. The last line is a new thread named `[caw e2e N] Reply with exactly the word: pineapple`.
-- **Reply.** Run `V messages <thread id> 5`. The last line is from `the bot` with text `pineapple`.
+- **Reply.** Run `V messages <thread id> 5`. The last line is the bot's, with text `pineapple`.
 - **Session stored.** Run `sqlite3 "$CAW_HOME/caw.db" "select status, profile from sessions order by rowid desc limit 1"`. Expect `live|default`.
 - **Proof.** Take a browse screenshot of `#smoke` showing the thread preview, plus the `V messages` output.
 

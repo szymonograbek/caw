@@ -7,8 +7,8 @@ description: Launch this checkout's Caw daemon (Discord Channel + Claude Harness
 
 Caw is a daemon. People talk to it in Discord. The agent behind it is Claude, which controls Caw through the `caw` CLI. You verify a change by doing what a person does: post in `#smoke` and watch Caw's replies, reactions and threads. Then check what it stored with the CLI.
 
-- Discord guild "<test server name>" `$CAW_VERIFY_GUILD_ID`, channel `#smoke` `$CAW_VERIFY_CHANNEL_ID`: <V url>
-- Bot: "the bot". Its token lives only in `$CAW_HOME/.env`. Never print it.
+- The test Discord server and its `#smoke` channel come from `CAW_VERIFY_GUILD_ID` and `CAW_VERIFY_CHANNEL_ID` in this checkout's gitignored `.env.local`. If either is missing, ask the operator for them, then add them there. `V url` prints the channel's URL.
+- The bot's token lives only in `$CAW_HOME/.env`. Never print it.
 - Helper: `.claude/skills/verify-caw/scripts/caw-verify.sh` (below as `V`). It resolves this checkout's `CAW_HOME` from `.env.local`, so it never touches `~/.caw`.
 
 ## Isolation
@@ -19,7 +19,7 @@ Per-checkout state lives in `<checkout>/.caw-dev/` (gitignored): `caw.db`, `caw.
 
 ## Launch
 
-1. First time in a checkout, run `V setup <token-file>`. It runs `dev:setup` plus the non-interactive install wizard: Discord, Claude with model `sonnet`, and memory, scheduler and profiles. Ask the operator for the token through the secret tool (file delivery). Expected output: `Bot: the bot`, `Servers: <test server name>`, `Saved profile default  harness=claude  model=sonnet`, `Caw is set up.`
+1. First time in a checkout, run `V setup <token-file>`. It runs `dev:setup` plus the non-interactive install wizard: Discord, Claude with model `sonnet`, and memory, scheduler and profiles. Ask the operator for the token through the secret tool (file delivery). Expected output: `Bot: <bot name>`, `Servers: <test server name>`, `Saved profile default  harness=claude  model=sonnet`, `Caw is set up.`
 2. Run `V launch`. It starts `caw start` in the background (output in `$CAW_HOME/start.out`) and returns once `status` shows `discord running`. Ready means every plugin row reads `running`. `start.out` shows `Registered Discord slash commands` then `Caw started`.
 
 ## Doctor
@@ -31,7 +31,7 @@ Per-checkout state lives in `<checkout>/.caw-dev/` (gitignored): `caw.db`, `caw.
 Post as the operator through `browse` (MCP `mcp__browse__execute`, browser `dia-personal`, logged into Discord). The UI is in Polish, so use DOM handles, not labels:
 
 - Open a tab: `mcp__browse__tabs {action:"new", id:"caw-discord", browser:"dia-personal", keepOpen:true, url:"<V url>"}`.
-- Post a message (in `#smoke` or in a thread URL `<V url ><threadId>`):
+- Post a message (in `#smoke` or in a thread, whose URL `V url <threadId>` prints):
   ```js
   const box = page.locator('[role="textbox"][data-slate-editor="true"]');
   await box.click(); await page.keyboard.type("[caw e2e N] ..."); await page.keyboard.press("Enter");

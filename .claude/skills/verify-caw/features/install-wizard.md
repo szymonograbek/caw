@@ -16,7 +16,7 @@
 
 Preconditions: a fresh `CAW_HOME` (point `CAW_HOME` at a new temp dir for this feature instead of the checkout's `.caw-dev`).
 
-- **Flags.** `CAW_HOME=<tmp> bun packages/cli/src/main.ts install --yes --channel discord --discord-token-file <file> --harness claude --model sonnet --plugins memory,scheduler,profiles --no-service`. Output includes `Bot: the bot`, `Servers: <test server name>`, `Saved profile default  harness=claude  model=sonnet`, `Caw is running (pid N)` and `Caw is set up.`, and no Message Content warning (the intent is on). `<tmp>/.env` is mode 600.
+- **Flags.** `CAW_HOME=<tmp> bun packages/cli/src/main.ts install --yes --channel discord --discord-token-file <file> --harness claude --model sonnet --plugins memory,scheduler,profiles --no-service`. Output includes `Bot: <bot name>`, `Servers: <test server name>`, `Saved profile default  harness=claude  model=sonnet`, `Caw is running (pid N)` and `Caw is set up.`, and no Message Content warning (the intent is on). `<tmp>/.env` is mode 600.
 - **Interactive.** Run `caw install` in a PTY (`script -q /dev/null bun packages/cli/src/main.ts install`). Pick Discord and paste a fake token: it prints `Discord rejected the bot token.` and asks again. Ctrl-C prints `Setup cancelled.` and exits 1.
 
 ## Gotchas

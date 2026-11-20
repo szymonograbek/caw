@@ -16,7 +16,7 @@ Follow-up messages in a thread reach the same Session, so Claude remembers earli
 
 Preconditions: a thread from `threaded-reply.md` whose Session answered `pineapple`.
 
-- **Ask.** In that thread (URL `<V url ><thread id>`), post `[caw e2e N] Save a global memory titled 'favorite fruit' saying my favorite fruit is pineapple. Then run \`caw guide\` in your shell and tell me how many topics it lists. Also: what word did you reply with before?`. Wait about 45s.
+- **Ask.** In that thread (URL from `V url <thread id>`), post `[caw e2e N] Save a global memory titled 'favorite fruit' saying my favorite fruit is pineapple. Then run \`caw guide\` in your shell and tell me how many topics it lists. Also: what word did you reply with before?`. Wait about 45s.
 - **Reply.** `V messages <thread id> 3` shows a reply confirming memory #K, listing the guide topics (`overview, install, conversation, plugins, discord, claude, memory, schedule, profiles`), and naming `pineapple`.
 - **Side effect.** `V caw memory export` prints `### favorite fruit` under `## Global`.
 

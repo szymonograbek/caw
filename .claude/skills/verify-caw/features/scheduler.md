@@ -19,7 +19,7 @@ Preconditions: a Caw thread with a live Session.
 
 - **Ask.** In the thread, post `[caw e2e N] Using caw, schedule a one-off task in this conversation for about 1 minute from now whose prompt is: say the single word mango. Confirm when scheduled.`
 - **Stored.** `V caw schedule list --all` shows `#K  once  next <time>  conversation <thread conversation id>` with the mango prompt.
-- **Fires.** After `<time>`, `V messages <thread id> 2` ends with `the bot … mango`, and `V caw schedule list --all` prints `No Schedules.`
+- **Fires.** After `<time>`, `V messages <thread id> 2` ends with the bot's `mango`, and `V caw schedule list --all` prints `No Schedules.`
 
 ## Gotchas
 

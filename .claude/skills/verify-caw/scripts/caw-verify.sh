@@ -4,19 +4,30 @@
 #   caw-verify.sh launch               start the daemon in the background, wait until Discord is connected
 #   caw-verify.sh doctor               read-only health check of this checkout's daemon
 #   caw-verify.sh caw <args...>       run the caw CLI against this checkout's CAW_HOME
+#   caw-verify.sh url [thread-id]      the Discord URL of #smoke, or of one of its threads
 #   caw-verify.sh threads              active threads under #smoke, newest last: "<id>\t<name>"
 #   caw-verify.sh messages <channel-or-thread-id> [limit]   messages oldest first: "<id>\t<author>\t<reactions>\t<text>"
 #   caw-verify.sh stop                 stop this checkout's daemon (never other processes)
+# The test server and its #smoke channel come from CAW_VERIFY_GUILD_ID and CAW_VERIFY_CHANNEL_ID in .env.local.
 set -eu
 
 root=$(cd "$(dirname "$0")/../../../.." && pwd)
-guild=$CAW_VERIFY_GUILD_ID
-smoke=$CAW_VERIFY_CHANNEL_ID
 api=https://discord.com/api/v10
 
 [ -f "$root/.env.local" ] || sh "$root/scripts/dev-setup.sh" >/dev/null
-CAW_HOME=$(sed -n 's/^CAW_HOME=//p' "$root/.env.local")
+local_env() { sed -n "s/^$1=//p" "$root/.env.local"; }
+CAW_HOME=$(local_env CAW_HOME)
 export CAW_HOME
+
+# Sets $guild and $smoke, or stops with what to configure.
+discord_ids() {
+  guild=$(local_env CAW_VERIFY_GUILD_ID)
+  smoke=$(local_env CAW_VERIFY_CHANNEL_ID)
+  [ -n "$guild" ] && [ -n "$smoke" ] || {
+    echo "Set CAW_VERIFY_GUILD_ID and CAW_VERIFY_CHANNEL_ID (the test server and its #smoke channel) in $root/.env.local." >&2
+    exit 2
+  }
+}
 
 caw() { bun "$root/packages/cli/src/main.ts" "$@"; }
 
@@ -55,7 +66,12 @@ case "${1:-}" in
     shift
     caw "$@"
     ;;
+  url)
+    discord_ids
+    echo "https://discord.com/channels/$guild/${2:-$smoke}"
+    ;;
   threads)
+    discord_ids
     rest "/guilds/$guild/threads/active" | python3 -c '
 import json, sys
 threads = [t for t in json.load(sys.stdin)["threads"] if t["parent_id"] == sys.argv[1]]
@@ -74,7 +90,7 @@ for m in reversed(json.load(sys.stdin)):
     caw stop || true
     ;;
   *)
-    sed -n '2,9p' "$0" | sed 's/^# \{0,1\}//'
+    sed -n '2,11p' "$0" | sed 's/^# \{0,1\}//'
     exit 2
     ;;
 esac

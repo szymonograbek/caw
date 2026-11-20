@@ -17,7 +17,7 @@ In an `inline` Conversation, Caw replies in the channel itself and keeps one Ses
 Preconditions: baseline. Find the `#smoke` Conversation id with `sqlite3 "$CAW_HOME/caw.db" "select id from conversations where external_id='$CAW_VERIFY_CHANNEL_ID'"`.
 
 - **Switch.** `V caw conversation set --conversation <room id> --reply-mode inline`. It prints `Reply mode of … is now inline.`
-- **Inline reply.** In `#smoke`, post `[caw e2e N] Remember the code word: walrus. Reply exactly: noted`. `V messages $CAW_VERIFY_CHANNEL_ID 2` ends with `the bot … noted`, and `V threads` shows no new thread.
+- **Inline reply.** In `#smoke`, post `[caw e2e N] Remember the code word: walrus. Reply exactly: noted`. `V messages "$CAW_VERIFY_CHANNEL_ID" 2` ends with the bot's `noted`, and `V threads` shows no new thread.
 - **Fork.** Hover that message, click `Więcej` (More), then `Utwórz wątek` (Create thread) in the `[role="menu"]`. The side panel opens. Type in its composer (the last `[role="textbox"][data-slate-editor="true"]`): `[caw e2e N] Without tools: what is the code word I asked you to remember? Reply with just the word.` The thread reply is `walrus`.
 - **Stored.** `sqlite3 "$CAW_HOME/caw.db" "select s.status, s.forked_from_session_id, c.external_id from sessions s join conversations c on c.id=s.conversation_id order by s.rowid desc limit 2"`. The thread's Session has `forked_from_session_id` set to the room's Session.
 - **Restore.** `V caw conversation set --conversation <room id> --reply-mode threaded`.
