@@ -9,6 +9,7 @@ import { claudeExecutable } from "./claude-executable.ts";
 import { decodeCursor } from "./cursor.ts";
 import { toHarnessEvents } from "./events.ts";
 import { preToolUse } from "./pre-tool-use.ts";
+import { sessionEnv } from "./session-env.ts";
 import { toolServers } from "./tool-servers.ts";
 
 const defaultSettingSources: ReadonlyArray<SettingSource> = ["user", "project", "local"];
@@ -67,7 +68,7 @@ const open = Effect.fn("ClaudeHarness.open")(function* (request: OpenSession) {
     ...start,
     ...Option.match(request.profile.model, { onNone: () => ({}), onSome: (model) => ({ model }) }),
     cwd: request.cwd,
-    env: request.env,
+    env: sessionEnv(request.env),
     settingSources: [...settingSources],
     permissionMode: "bypassPermissions",
     allowDangerouslySkipPermissions: true,
