@@ -1,49 +1,50 @@
 import { claudeHarnessName } from "./claude-error.ts";
 import { findClaudeExecutable, notInstalled } from "./claude-executable.ts";
-import { answer, PluginSetup, SetupError, SetupQuestion } from "@omen/sdk/setup";
-import { Effect, Option } from "effect";
+import { answer, answerList, PluginSetup, SetupError, SetupQuestion } from "@omen/sdk/setup";
+import { Config, Effect, Option } from "effect";
 
-const defaultSources = ["user", "project", "local"];
-const knownSources = new Set(defaultSources);
+const knownSources = ["user", "project", "local"];
 
-const parseSources = (text: string) => {
-  const sources = text
-    .split(",")
-    .map((source) => source.trim())
-    .filter((source) => source.length > 0);
-
-  const unknown = sources.filter((source) => !knownSources.has(source));
+/** The known sources among `sources`, in Claude Code's order. */
+const checkSources = (sources: ReadonlyArray<string>) => {
+  const unknown = sources.filter((source) => !knownSources.includes(source));
 
   return unknown.length > 0
     ? Effect.fail(
         new SetupError({
-          message: `Unknown setting sources: ${unknown.join(", ")}. Use any of ${defaultSources.join(", ")}.`,
+          message: `Unknown setting sources: ${unknown.join(", ")}. Use any of ${knownSources.join(", ")}.`,
         }),
       )
-    : Effect.succeed(sources);
+    : Effect.succeed(knownSources.filter((source) => sources.includes(source)));
 };
 
 /** The Claude options `omen install` writes into the `default` profile. */
 export const claudeSetup: PluginSetup = PluginSetup.Harness({
-  title: "Claude (Claude Agent SDK)",
+  title: "Claude",
+  hint: "Claude Code through the Claude Agent SDK",
   questions: [
     SetupQuestion.Choice({
       key: "model",
       flag: "model",
       message: "Claude model",
       choices: [
-        { value: "default", title: "Claude Code's default" },
-        { value: "sonnet", title: "Sonnet" },
-        { value: "opus", title: "Opus" },
-        { value: "haiku", title: "Haiku" },
+        { value: "default", title: "Claude Code's default", hint: "whatever Claude Code picks" },
+        { value: "sonnet", title: "Sonnet", hint: "fast and capable" },
+        { value: "opus", title: "Opus", hint: "most capable" },
+        { value: "haiku", title: "Haiku", hint: "fastest" },
       ],
       initial: "default",
     }),
-    SetupQuestion.Text({
+    SetupQuestion.MultiChoice({
       key: "settingSources",
       flag: "settings-sources",
-      message: "Claude Code settings to load (comma-separated: user, project, local)",
-      initial: defaultSources.join(","),
+      message: "Claude Code settings to load",
+      choices: [
+        { value: "user", title: "user", hint: "~/.claude" },
+        { value: "project", title: "project", hint: ".claude/ in the working directory" },
+        { value: "local", title: "local", hint: ".claude/settings.local.json" },
+      ],
+      initial: knownSources,
     }),
   ],
   configure: (answers) =>
@@ -53,18 +54,26 @@ export const claudeSetup: PluginSetup = PluginSetup.Harness({
       ).pipe(Effect.mapError(() => new SetupError({ message: notInstalled })));
 
       const model = yield* answer(answers, "model");
-      const sources = yield* Effect.flatMap(answer(answers, "settingSources"), parseSources);
-      const isDefault = sources.join(",") === defaultSources.join(",");
+      const sources = yield* Effect.flatMap(answerList(answers, "settingSources"), checkSources);
+
+      // Claude Code keys its login by config dir: without this one the daemon's Sessions are logged out.
+      const configDir = yield* Config.option(Config.String("CLAUDE_CONFIG_DIR")).pipe(
+        Effect.mapError((error) => new SetupError({ message: error.message })),
+      );
 
       return {
         report: [
           `Claude Code: ${executable}`,
-          `Model: ${model}`,
-          `Settings sources: ${sources.join(", ")}`,
+          ...Option.toArray(Option.map(configDir, (dir) => `Claude config: ${dir}`)),
         ],
+        env: Option.match(configDir, {
+          onNone: () => ({}),
+          onSome: (dir) => ({ CLAUDE_CONFIG_DIR: dir }),
+        }),
         harness: claudeHarnessName,
         model: model === "default" ? Option.none() : Option.some(model),
-        settingSources: isDefault ? Option.none() : Option.some(sources),
+        settingSources:
+          sources.length === knownSources.length ? Option.none() : Option.some(sources),
       };
     }),
 });

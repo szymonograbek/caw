@@ -171,7 +171,7 @@ There is no event log, projection, or message table: the Channel is the history.
     1. Pick a Channel (Discord today) and enter its config. The Discord bot token is checked live and saved to `~/.omen/.env`. If the bot is in no server, the wizard prints an invite URL.
     2. Pick a Harness (Claude today) and its options. These become the `default` Harness profile.
     3. Pick which feature plugins to enable.
-    4. Optionally write a launchd plist (macOS first) or a systemd unit. It is loaded only on an explicit yes.
+    4. Ask whether to start Omen at login (default yes). Yes writes and loads a launchd plist (macOS first) or a systemd user unit; no starts the daemon in the background now. Either way Omen is running when the wizard ends, restarted if it already ran.
 
     Every prompt has a flag, so `install` also runs non-interactively. Plugins take part through an optional `setup` in their definition.
   - `logs [-f]`

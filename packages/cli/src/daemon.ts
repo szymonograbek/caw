@@ -3,7 +3,7 @@ import { OmenHome } from "@omen/core/omen-home";
 import { OmenClient } from "@omen/core/rpc-client";
 import type { ConversationId } from "@omen/sdk/ids";
 import type { CliCommandError } from "@omen/sdk/plugin";
-import { Cause, Context, Effect, Layer, Option, Schema } from "effect";
+import { Cause, Context, Effect, Layer, Option, Schedule, Schema } from "effect";
 import type { RpcClientError } from "effect/rpc";
 
 export class DaemonNotRunning extends Schema.TaggedError<
@@ -83,3 +83,13 @@ export class Daemon extends Context.Service<
     }),
   );
 }
+
+/**
+ * Asks for the daemon's status every 100 ms until `until` holds, at most
+ * `times` more times, and returns the last status.
+ */
+export const pollStatus = (
+  daemon: Daemon["Service"],
+  until: (status: Option.Option<DaemonStatus>) => boolean,
+  times: number,
+) => daemon.status.pipe(Effect.repeat({ schedule: Schedule.spaced("100 millis"), until, times }));

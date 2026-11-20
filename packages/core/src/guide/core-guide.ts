@@ -80,12 +80,13 @@ const install: GuidePage = {
      saved to <home>/.env; if the bot is in no server, an invite URL is printed.
   2. Pick a Harness and its options; they become the \`default\` profile.
   3. Pick which feature plugins to enable.
-  4. Optionally write a launchd plist (macOS) or systemd user unit, and load it.
+  4. Start Omen at login (a launchd plist on macOS, a systemd user unit on
+     Linux), or with --no-service only now. Omen runs when the wizard ends.
 
 Every question has a flag, so it runs without a terminal:
   omen install --yes --channel discord --discord-token-file <path> \\
     --harness claude --model sonnet --plugins memory,scheduler,profiles \\
-    --service --no-load-service
+    --settings-sources user,project --no-service
 --yes takes the default for anything not given; a secret has no default.
 Run \`omen install --help\` for every flag.`,
 };

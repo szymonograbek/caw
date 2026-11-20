@@ -12,6 +12,8 @@ Profile fields it honors:
 - \`env\`: added to the Session's environment, so \`CLAUDE_CONFIG_DIR\` selects another Claude config directory.
 - \`cwd\`: the Session's working directory instead of the Workspace.
 
+The daemon does not run in your shell, so it does not see your shell's environment. Set what Claude Code needs from it, such as \`CLAUDE_CONFIG_DIR\` (Claude Code keys its login by config dir), in the profile's \`env\`. \`omen install\` copies \`CLAUDE_CONFIG_DIR\` into the \`default\` profile when it is set.
+
 Each Plugin's tools appear as the MCP server \`omen_<plugin>\`, always loaded.`;
 
 export default definePlugin({

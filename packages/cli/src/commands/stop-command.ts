@@ -1,7 +1,7 @@
-import { Console, Effect, Option, Schedule } from "effect";
+import { Console, Effect, Option } from "effect";
 import { Command } from "effect/cli";
 import { CliFailure } from "../cli-failure.ts";
-import { Daemon } from "../daemon.ts";
+import { Daemon, pollStatus } from "../daemon.ts";
 
 export const stopCommand = Command.make("stop", {}, () =>
   Effect.gen(function* () {
@@ -14,13 +14,7 @@ export const stopCommand = Command.make("stop", {}, () =>
     );
 
     // The daemon closes Sessions and Plugins before its socket goes away.
-    const gone = yield* daemon.status.pipe(
-      Effect.repeat({
-        schedule: Schedule.spaced("100 millis"),
-        until: Option.isNone,
-        times: 100,
-      }),
-    );
+    const gone = yield* pollStatus(daemon, Option.isNone, 100);
 
     yield* Option.isNone(gone)
       ? Console.log("Omen stopped.")

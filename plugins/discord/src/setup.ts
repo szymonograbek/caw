@@ -106,6 +106,7 @@ const configure = Effect.fn("DiscordSetup.configure")(function* (token: string) 
 
 export const discordSetup: PluginSetup = PluginSetup.Channel({
   title: "Discord",
+  hint: "Discord bot",
   questions: [
     SetupQuestion.Secret({
       key: "token",

@@ -12,11 +12,21 @@ export interface ServiceTarget {
   readonly userId: Option.Option<number>;
 }
 
-/** A service definition for this platform, and the commands that load it. */
+/** A service definition for this platform, and the commands that manage it. */
 export interface ServiceFile {
   readonly path: string;
   readonly contents: string;
+  /** Load the written file and start Omen. */
   readonly load: ReadonlyArray<ReadonlyArray<string>>;
+  /** Stop Omen and unload the service; they fail when it is not loaded. */
+  readonly unload: ReadonlyArray<ReadonlyArray<string>>;
+  /**
+   * Exits 0 while the service manager still holds the service. Unloading
+   * finishes after `unload` returns (launchd refuses a new bootstrap until then).
+   */
+  readonly loaded: ReadonlyArray<string>;
+  /** Where the service's output goes, e.g. to point at when Omen does not start. */
+  readonly logs: string;
 }
 
 const label = "omen";
@@ -29,6 +39,7 @@ const string = (value: string) => `<string>${xml(value)}</string>`;
 const launchdPlist = (target: ServiceTarget): ServiceFile => {
   const path = NodePath.join(target.userHome, "Library", "LaunchAgents", `${label}.plist`);
   const log = NodePath.join(target.omenHome, "logs", "service.log");
+  const domain = `gui/${Option.getOrElse(target.userId, () => 0)}`;
 
   return {
     path,
@@ -60,7 +71,10 @@ const launchdPlist = (target: ServiceTarget): ServiceFile => {
 </dict>
 </plist>
 `,
-    load: [["launchctl", "bootstrap", `gui/${Option.getOrElse(target.userId, () => 0)}`, path]],
+    load: [["launchctl", "bootstrap", domain, path]],
+    unload: [["launchctl", "bootout", `${domain}/${label}`]],
+    loaded: ["launchctl", "print", `${domain}/${label}`],
+    logs: log,
   };
 };
 
@@ -88,6 +102,9 @@ WantedBy=default.target
       ["systemctl", "--user", "daemon-reload"],
       ["systemctl", "--user", "enable", "--now", `${label}.service`],
     ],
+    unload: [["systemctl", "--user", "stop", `${label}.service`]],
+    loaded: ["systemctl", "--user", "is-active", "--quiet", `${label}.service`],
+    logs: `journalctl --user -u ${label}`,
   };
 };
 

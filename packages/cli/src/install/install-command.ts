@@ -1,18 +1,18 @@
-import * as NodePath from "node:path";
 import type { LoadedPlugin } from "@omen/core/loaded-plugin";
 import { OfflineHost } from "@omen/core/offline-host";
 import { OmenHome } from "@omen/core/omen-home";
 import type { PluginName } from "@omen/sdk/ids";
 import type { PluginSetup } from "@omen/sdk/setup";
-import { Config, Console, Effect, FileSystem, Option } from "effect";
-import { Command, Flag, Prompt } from "effect/cli";
-import { ChildProcess, ChildProcessSpawner } from "effect/process";
+import { SetupQuestion as Question } from "@omen/sdk/setup";
+import { Config, Effect, Option } from "effect";
+import { Command, Flag } from "effect/cli";
 import { CliFailure } from "../cli-failure.ts";
 import { Invocation } from "../invocation.ts";
 import type { Asking, QuestionFlags } from "./ask.ts";
-import { ask, configureWith, flagNameOf } from "./ask.ts";
-import type { ServiceFile } from "./service-file.ts";
+import { ask, configureWith, flagNameOf, splitNames } from "./ask.ts";
 import { serviceFile } from "./service-file.ts";
+import { Launch, startOmen } from "./start-omen.ts";
+import { WizardUi } from "./wizard-ui.ts";
 
 type Role = PluginSetup["_tag"];
 
@@ -41,7 +41,7 @@ const isRole = <R extends Role>(
 /** The profiles Plugin stores Harness profiles, so the `default` profile is written through it. */
 const profilesPlugin = "profiles";
 
-/** One of `options` by name: given, the only one, the first under `--yes`, or picked. */
+/** One of `options` by name: given, the first under `--yes`, or picked from the list. */
 const pick = <R extends Role>(
   asking: Asking,
   noun: string,
@@ -49,47 +49,36 @@ const pick = <R extends Role>(
   given: Option.Option<string>,
 ) =>
   Effect.gen(function* () {
-    const names = options.map(({ plugin }) => plugin.name).join(", ");
-    const [first, ...rest] = options;
+    const ui = yield* WizardUi;
+    const [first] = options;
 
     if (first === undefined) {
       return yield* new CliFailure({ message: `No installed plugin provides a ${noun}.` });
     }
 
-    if (Option.isSome(given)) {
-      const found = options.find(({ plugin }) => plugin.name === given.value);
+    const choices = options.map(({ plugin, setup }) => ({
+      value: plugin.name,
+      title: setup.title,
+      hint: setup.hint,
+    }));
 
-      return found === undefined
-        ? yield* new CliFailure({
-            message: `No ${noun} named ${given.value}; choose from ${names}.`,
-          })
-        : found;
-    }
+    const name = yield* ask(asking, {
+      message: noun,
+      given,
+      fallback: Option.some(first.plugin.name),
+      missing: `Pass --${noun.toLowerCase()}.`,
+      describe: (value) => choices.find((choice) => choice.value === value)?.title ?? value,
+      prompt: ui.select(noun, choices, first.plugin.name),
+    });
 
-    const chosen =
-      rest.length === 0
-        ? first
-        : yield* ask(
-            asking,
-            Option.none(),
-            Option.some(first),
-            `Pass --${noun.toLowerCase()}.`,
-            Prompt.Select({
-              message: `Pick a ${noun}`,
-              choices: options.map((option) => ({ title: option.setup.title, value: option })),
-            }),
-          );
+    const found = options.find(({ plugin }) => plugin.name === name);
 
-    yield* Console.log(`${noun}: ${chosen.setup.title}`);
-
-    return chosen;
+    return found === undefined
+      ? yield* new CliFailure({
+          message: `No ${noun} named ${name}; choose from ${choices.map((choice) => choice.value).join(", ")}.`,
+        })
+      : found;
   });
-
-const splitNames = (text: string): ReadonlyArray<string> =>
-  text
-    .split(",")
-    .map((name) => name.trim())
-    .filter((name) => name.length > 0);
 
 /** Which feature Plugins to enable: `--plugins`, all under `--yes`, or picked (all preselected). */
 const pickFeatures = (
@@ -98,22 +87,23 @@ const pickFeatures = (
   given: Option.Option<string>,
 ) =>
   Effect.gen(function* () {
+    const ui = yield* WizardUi;
     const names = features.map((plugin) => plugin.name);
 
-    const chosen = yield* ask(
-      asking,
-      Option.map(given, splitNames),
-      Option.some(names),
-      "Pass --plugins.",
-      Prompt.MultiSelect({
-        message: "Enable feature plugins",
-        choices: features.map((plugin) => ({
-          title: plugin.name,
-          value: plugin.name,
-          selected: true,
-        })),
-      }),
-    );
+    const choices = features.map((plugin) => ({
+      value: plugin.name,
+      title: plugin.name,
+      hint: plugin.guide[0]?.summary,
+    }));
+
+    const chosen = yield* ask(asking, {
+      message: "Features",
+      given: Option.map(given, splitNames),
+      fallback: Option.some(names),
+      missing: "Pass --plugins.",
+      describe: (picked) => picked.join(", ") || "none",
+      prompt: ui.multiselect("Features", choices, names),
+    });
 
     const unknown = chosen.filter((name) => !names.some((known) => known === name));
 
@@ -126,58 +116,10 @@ const pickFeatures = (
     return new Set(chosen);
   });
 
-const runAll = (commands: ReadonlyArray<ReadonlyArray<string>>) =>
-  Effect.forEach(commands, ([program = "", ...args]) =>
-    ChildProcessSpawner.ChildProcessSpawner.use((spawner) =>
-      spawner.exitCode(ChildProcess.make(program, args)),
-    ).pipe(
-      Effect.mapError(
-        (error) => new CliFailure({ message: `${program} failed: ${error.message}` }),
-      ),
-      Effect.filterOrFail(
-        (code) => code === 0,
-        (code) =>
-          new CliFailure({ message: `\`${[program, ...args].join(" ")}\` exited with ${code}.` }),
-      ),
-    ),
-  );
-
-/** Writes the service file, and loads it only on an explicit yes. Returns the next-step lines. */
-const installService = (asking: Asking, service: ServiceFile, load: Option.Option<boolean>) =>
-  Effect.gen(function* () {
-    const fs = yield* FileSystem.FileSystem;
-
-    yield* fs.makeDirectory(NodePath.dirname(service.path), { recursive: true });
-    yield* fs.writeFileString(service.path, service.contents);
-    yield* Console.log(`Wrote ${service.path}`);
-
-    const loadIt = yield* ask(
-      asking,
-      load,
-      Option.some(false),
-      "",
-      Prompt.Confirm({ message: "Load it now, so Omen starts in the background?" }),
-    );
-
-    const commands = service.load.map((command) => command.join(" "));
-
-    if (!loadIt) {
-      return [`Load the service with: ${commands.join(" && ")}`];
-    }
-
-    yield* runAll(service.load);
-    yield* Console.log("Loaded the service; Omen is starting in the background.");
-
-    return ["Check it with: omen status"];
-  }).pipe(
-    Effect.catchTag("PlatformError", (error) =>
-      Effect.fail(new CliFailure({ message: `Writing the service failed: ${error.message}` })),
-    ),
-  );
-
 /**
  * `omen install`, the first-run wizard. Each step lists what the built-in and
- * installed Plugins offer; each question has a flag, so it also runs without a terminal.
+ * installed Plugins offer; each question has a flag, so it also runs without a
+ * terminal. It ends with Omen running.
  */
 export const installCommand = (
   builtins: ReadonlyArray<LoadedPlugin>,
@@ -194,7 +136,9 @@ export const installCommand = (
         flagNameOf(question),
         Flag.String(flagNameOf(question)).pipe(
           Flag.optional,
-          Flag.withDescription(`${plugin.name}: ${question.message}`),
+          Flag.withDescription(
+            `${plugin.name}: ${question.message}${Question.$is("MultiChoice")(question) ? " (comma-separated)" : ""}`,
+          ),
         ),
       ]),
     ),
@@ -216,45 +160,36 @@ export const installCommand = (
       ),
       service: Flag.Boolean("service").pipe(
         Flag.optional,
-        Flag.withDescription("Write a launchd plist or systemd user unit"),
-      ),
-      loadService: Flag.Boolean("load-service").pipe(
-        Flag.optional,
-        Flag.withDescription("Load the written service now"),
+        Flag.withDescription(
+          "Start Omen at login with a launchd agent or systemd user unit (default); --no-service starts it only now",
+        ),
       ),
       answers: questionFlags,
     },
     (input) =>
       Effect.gen(function* () {
+        const ui = yield* WizardUi;
         const offline = yield* OfflineHost;
         const home = yield* OmenHome;
         const invocation = yield* Invocation;
         const asking: Asking = { yes: input.yes };
         const answers: QuestionFlags = input.answers;
 
+        yield* ui.intro("Omen setup");
+
         const channel = yield* pick(asking, "Channel", channels, input.channel);
+        const channelConfig = yield* configureWith(asking, answers, channel.setup);
 
-        const channelConfig = yield* configureWith(
-          asking,
-          answers,
-          channel.setup.questions,
-          channel.setup.configure,
-        );
-
-        yield* Console.log(channelConfig.report.join("\n"));
         yield* offline.saveEnv(channelConfig.env);
-        yield* Console.log(`Saved ${Object.keys(channelConfig.env).join(", ")} to ${home.envFile}`);
+        yield* ui.lines([
+          ...channelConfig.report,
+          `Saved ${Object.keys(channelConfig.env).join(", ")} to ${home.envFile}`,
+        ]);
 
         const harness = yield* pick(asking, "Harness", harnesses, input.harness);
+        const harnessConfig = yield* configureWith(asking, answers, harness.setup);
 
-        const harnessConfig = yield* configureWith(
-          asking,
-          answers,
-          harness.setup.questions,
-          harness.setup.configure,
-        );
-
-        yield* Console.log(harnessConfig.report.join("\n"));
+        yield* ui.lines(harnessConfig.report);
 
         const enabledFeatures = yield* pickFeatures(asking, features, input.plugins);
 
@@ -269,70 +204,76 @@ export const installCommand = (
         const profiles = plugins.find((plugin) => plugin.name === profilesPlugin);
 
         if (profiles === undefined) {
-          yield* Console.log("No profiles plugin is installed, so no default profile was saved.");
+          yield* ui.warn("No profiles plugin is installed, so no default profile was saved.");
         } else {
-          yield* offline
-            .runCommand(profiles, [
-              "profile",
-              "add",
-              "--harness",
-              harnessConfig.harness,
-              ...Option.match(harnessConfig.model, {
-                onNone: () => [],
-                onSome: (model) => ["--model", model],
-              }),
-              ...Option.match(harnessConfig.settingSources, {
-                onNone: () => [],
-                onSome: (sources) => ["--settings-sources", sources.join(",")],
-              }),
-              "default",
-            ])
-            .pipe(Effect.flatMap(Console.log));
+          yield* offline.runCommand(profiles, [
+            "profile",
+            "add",
+            "--harness",
+            harnessConfig.harness,
+            ...Object.entries(harnessConfig.env).flatMap(([key, value]) => [
+              "--env",
+              `${key}=${value}`,
+            ]),
+            ...Option.match(harnessConfig.model, {
+              onNone: () => [],
+              onSome: (model) => ["--model", model],
+            }),
+            ...Option.match(harnessConfig.settingSources, {
+              onNone: () => [],
+              onSome: (sources) => ["--settings-sources", sources.join(",")],
+            }),
+            "default",
+          ]);
+
+          // The model and settings already show as answers; the full line would wrap past the guide bar.
+          yield* ui.lines(["Saved them as the default profile (omen profile list)"]);
 
           if (!enabledFeatures.has(profiles.name)) {
-            yield* Console.log("The profiles plugin is disabled, so Sessions ignore that profile.");
+            yield* ui.warn("The profiles plugin is disabled, so Sessions ignore that profile.");
           }
         }
 
-        const target = {
+        const service = serviceFile(invocation.platform, {
           userHome: yield* Config.String("HOME"),
           omenHome: home.root,
           cli: invocation.cli,
           path: yield* Config.String("PATH").pipe(Config.withDefault("/usr/bin:/bin")),
           userId: invocation.userId,
-        };
-
-        const service = serviceFile(invocation.platform, target);
-
-        const nextSteps = yield* Option.match(service, {
-          onNone: () => Effect.succeed([`No service manager support on ${invocation.platform}.`]),
-          onSome: (file) =>
-            Effect.gen(function* () {
-              const write = yield* ask(
-                asking,
-                input.service,
-                Option.some(false),
-                "",
-                Prompt.Confirm({ message: `Install Omen as a background service (${file.path})?` }),
-              );
-
-              return write ? yield* installService(asking, file, input.loadService) : [];
-            }),
         });
 
-        yield* Console.log(
-          [
-            "",
-            "Omen is set up.",
-            `  Channel: ${channel.setup.title}`,
-            `  Harness: ${harness.setup.title}`,
-            `  Plugins: ${[...enabledFeatures].join(", ") || "none"}`,
-            "",
-            "Next:",
-            ...(nextSteps.length === 0 ? ["  omen start"] : nextSteps.map((line) => `  ${line}`)),
-            "  omen guide",
-          ].join("\n"),
-        );
+        const launch = yield* Option.match(service, {
+          onNone: () =>
+            Effect.as(
+              ui.warn(
+                `Omen cannot start at login on ${invocation.platform}; it runs until you stop it or restart.`,
+              ),
+              Launch.Now({ previous: Option.none() }),
+            ),
+          onSome: (file) =>
+            ask(asking, {
+              message: "Start Omen at login?",
+              given: input.service,
+              fallback: Option.some(true),
+              missing: "",
+              describe: (atLogin) => (atLogin ? "Yes" : "No"),
+              prompt: ui.confirm("Start Omen at login?", true),
+            }).pipe(
+              Effect.map((atLogin) =>
+                atLogin
+                  ? Launch.AtLogin({ service: file })
+                  : Launch.Now({ previous: Option.some(file) }),
+              ),
+            ),
+        });
+
+        yield* startOmen(launch);
+
+        yield* ui.outro(`Omen is set up. Say hello on ${channel.setup.title}.`, [
+          ["omen status", "check on it"],
+          ["omen guide", "what it can do"],
+          ["omen logs -f", "follow its log"],
+        ]);
       }).pipe(
         Effect.catchTags({
           HostFileError: (error) =>
@@ -341,5 +282,5 @@ export const installCommand = (
           ConfigError: (error) => Effect.fail(new CliFailure({ message: error.message })),
         }),
       ),
-  ).pipe(Command.withDescription("Set Omen up: Channel, Harness, plugins and service"));
+  ).pipe(Command.withDescription("Set Omen up: Channel, Harness, plugins, then start it"));
 };

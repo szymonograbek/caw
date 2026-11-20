@@ -7,6 +7,8 @@ import { FetchHttpClient } from "effect/http";
 import { CliFailure } from "./cli-failure.ts";
 import { Daemon } from "./daemon.ts";
 import { forward } from "./forward.ts";
+import { Processes } from "./install/processes.ts";
+import { WizardUi } from "./install/wizard-ui.ts";
 import { Invocation } from "./invocation.ts";
 import { runsLocally } from "./routing.ts";
 
@@ -33,7 +35,14 @@ if (runsLocally(argv)) {
       Effect.promise(() => import("./cli.ts")),
       ({ runLocal }) => runLocal(argv),
     ),
-  ).pipe(Effect.provide(Layer.merge(OfflineHost.standalone, services)), BunRuntime.runMain);
+  ).pipe(
+    Effect.provide(
+      Layer.mergeAll(OfflineHost.standalone, WizardUi.layer, Processes.layer).pipe(
+        Layer.provideMerge(services),
+      ),
+    ),
+    BunRuntime.runMain,
+  );
 } else {
   reportFailure(forward(argv)).pipe(Effect.provide(services), BunRuntime.runMain);
 }

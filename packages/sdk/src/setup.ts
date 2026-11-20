@@ -1,7 +1,14 @@
-import type { Option } from "effect";
-import { Data, Effect, Schema } from "effect";
+import { Data, Effect, Option, Schema } from "effect";
 import type { HttpClient } from "effect/http";
 import type { HarnessName } from "./ids.ts";
+
+/** One option of a `Choice` or `MultiChoice` question. */
+export interface SetupChoice {
+  readonly value: string;
+  readonly title: string;
+  /** A few words shown beside the title. */
+  readonly hint?: string | undefined;
+}
 
 /**
  * One answer `omen install` collects for a Plugin. It is prompted for, or read
@@ -16,9 +23,18 @@ export type SetupQuestion = Data.TaggedEnum<{
     readonly key: string;
     readonly flag: string;
     readonly message: string;
-    readonly choices: ReadonlyArray<{ readonly value: string; readonly title: string }>;
+    readonly choices: ReadonlyArray<SetupChoice>;
     /** The `value` taken by default. */
     readonly initial: string;
+  };
+  /** Any number of `choices`; `--<flag>` takes them comma-separated. The answer is a list. */
+  MultiChoice: {
+    readonly key: string;
+    readonly flag: string;
+    readonly message: string;
+    readonly choices: ReadonlyArray<SetupChoice>;
+    /** The `value`s taken by default. */
+    readonly initial: ReadonlyArray<string>;
   };
   Text: {
     readonly key: string;
@@ -30,8 +46,16 @@ export type SetupQuestion = Data.TaggedEnum<{
 
 export const SetupQuestion = Data.taggedEnum<SetupQuestion>();
 
+/** A `MultiChoice` question's answer is `Many`; every other answer is `One`. */
+export type SetupAnswer = Data.TaggedEnum<{
+  One: { readonly value: string };
+  Many: { readonly values: ReadonlyArray<string> };
+}>;
+
+export const SetupAnswer = Data.taggedEnum<SetupAnswer>();
+
 /** Answers by question `key`; every question the Plugin asked has one. */
-export type SetupAnswers = ReadonlyMap<string, string>;
+export type SetupAnswers = ReadonlyMap<string, SetupAnswer>;
 
 /** The answers do not work (a rejected token, an unknown option). The wizard shows `message`. */
 export class SetupError extends Schema.TaggedError<SetupError, { readonly brand: unique symbol }>()(
@@ -53,6 +77,11 @@ export interface HarnessConfigured {
   readonly harness: HarnessName;
   readonly model: Option.Option<string>;
   readonly settingSources: Option.Option<ReadonlyArray<string>>;
+  /**
+   * The installing shell's variables the Harness needs. The daemon does not run
+   * in that shell, so they are saved in the profile.
+   */
+  readonly env: Readonly<Record<string, string>>;
 }
 
 /**
@@ -63,6 +92,8 @@ export type PluginSetup = Data.TaggedEnum<{
   Channel: {
     /** The name people pick from, e.g. `Discord`. */
     readonly title: string;
+    /** A few words shown beside the title, e.g. `Discord bot`. */
+    readonly hint?: string;
     readonly questions: ReadonlyArray<SetupQuestion>;
     readonly configure: (
       answers: SetupAnswers,
@@ -70,6 +101,7 @@ export type PluginSetup = Data.TaggedEnum<{
   };
   Harness: {
     readonly title: string;
+    readonly hint?: string;
     readonly questions: ReadonlyArray<SetupQuestion>;
     readonly configure: (answers: SetupAnswers) => Effect.Effect<HarnessConfigured, SetupError>;
   };
@@ -77,11 +109,25 @@ export type PluginSetup = Data.TaggedEnum<{
 
 export const PluginSetup = Data.taggedEnum<PluginSetup>();
 
-/** The answer to the question with `key`. */
-export const answer = (answers: SetupAnswers, key: string): Effect.Effect<string, SetupError> => {
-  const value = answers.get(key);
+const missing = (key: string) => new SetupError({ message: `No answer for ${key}.` });
 
-  return value === undefined
-    ? Effect.fail(new SetupError({ message: `No answer for ${key}.` }))
-    : Effect.succeed(value);
-};
+/** The answer to the single-answer question with `key`. */
+export const answer = (answers: SetupAnswers, key: string): Effect.Effect<string, SetupError> =>
+  Option.fromNullishOr(answers.get(key)).pipe(
+    Option.filter(SetupAnswer.$is("One")),
+    Option.map(({ value }) => value),
+    Effect.fromOption,
+    Effect.mapError(() => missing(key)),
+  );
+
+/** The answer to the `MultiChoice` question with `key`. */
+export const answerList = (
+  answers: SetupAnswers,
+  key: string,
+): Effect.Effect<ReadonlyArray<string>, SetupError> =>
+  Option.fromNullishOr(answers.get(key)).pipe(
+    Option.filter(SetupAnswer.$is("Many")),
+    Option.map(({ values }) => values),
+    Effect.fromOption,
+    Effect.mapError(() => missing(key)),
+  );
