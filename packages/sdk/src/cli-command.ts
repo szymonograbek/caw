@@ -111,7 +111,7 @@ export const fromCommand = <Name extends string, Input, ContextInput>(
             .join("\n"),
         });
 
-      return Cli.runWith(command, { version: "0.0.0" })(args).pipe(
+      return Cli.runWith(command, { version: "1.0.0" })(args).pipe(
         Effect.map(() => buffer.text()),
         // Without errors, help was shown for a command group that has no handler of its own.
         Effect.catchTag("ShowHelp", (error) =>

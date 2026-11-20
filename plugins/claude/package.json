@@ -1,6 +1,6 @@
 {
   "name": "@caw/plugin-claude",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "exports": {
@@ -17,6 +17,6 @@
   },
   "caw": {
     "name": "claude",
-    "version": "0.0.0"
+    "version": "1.0.0"
   }
 }

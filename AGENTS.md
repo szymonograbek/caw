@@ -45,7 +45,7 @@ Deviations from the kickoff guides:
 
 ## Commands
 
-`bun run verify` (format check, lint, typecheck, Knip, tests) must pass before any handoff. The other scripts are in `package.json`. Run `bun run dev:setup` once per checkout: it writes `.env.local` with this checkout's `CAW_HOME` (`.caw-dev/`), and Bun loads `.env.local` automatically. `bun run build` compiles the CLI into `dist/caw`, and `bun run install:global` builds it and copies it to `$CAW_INSTALL_DIR` (default: Bun's global bin). The compiled binary keeps its modules in Bun's virtual `/$bunfs`, which other processes cannot read: anything a Session's processes need (the `caw` shim, the core skill, Claude Code itself) must come from disk.
+`bun run verify` (format check, lint, typecheck, Knip, tests) must pass before any handoff. The other scripts are in `package.json`. Run `bun run dev:setup` once per checkout: it writes `.env.local` with this checkout's `CAW_HOME` (`.caw-dev/`), and Bun loads `.env.local` automatically. `bun run build` compiles the CLI into `dist/caw`, and `bun run install:global` builds it and copies it to `$CAW_INSTALL_DIR` (default: Bun's global bin). `bun run publish:npm` runs `verify`, then publishes `@gloaming/caw` (the CLI bundled into one script for Bun) and `@gloaming/caw-plugin-sdk` at the versions in their `package.json`; pass `--dry-run` to check them first. The compiled binary keeps its modules in Bun's virtual `/$bunfs`, which other processes cannot read: anything a Session's processes need (the `caw` shim, the core skill, Claude Code itself) must come from disk.
 
 ## Caw
 

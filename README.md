@@ -23,25 +23,13 @@ You need:
 
 ## Install Caw
 
-Caw will ship on npm as `@gloaming/caw`. Until then, build it from source.
-
-1. Clone the repository and install its dependencies:
+1. Install the `caw` command with Bun:
 
    ```sh
-   git clone https://github.com/szymonograbek/caw.git
-   cd caw
-   bun install
+   bun add -g @gloaming/caw
    ```
 
-2. Build the `caw` binary and copy it into Bun's global bin folder:
-
-   ```sh
-   bun run install:global
-   ```
-
-   To install it somewhere else, set `CAW_INSTALL_DIR` first.
-
-3. Run the setup wizard:
+2. Run the setup wizard:
 
    ```sh
    caw install
@@ -103,4 +91,4 @@ To learn how Caw works inside, read the [spec](docs/spec.md) and the [glossary](
 
 ## Develop Caw
 
-Run `bun run dev:setup` once per checkout. It points `CAW_HOME` at `.caw-dev/` in the checkout, so a development daemon never touches `~/.caw`. Run `bun run verify` before you open a pull request. [AGENTS.md](AGENTS.md) lists the project's conventions.
+To run Caw from source, clone the repository, run `bun install`, then `bun run install:global` to build `caw` and copy it into Bun's global bin folder. Run `bun run dev:setup` once per checkout. It points `CAW_HOME` at `.caw-dev/` in the checkout, so a development daemon never touches `~/.caw`. Run `bun run verify` before you open a pull request. [AGENTS.md](AGENTS.md) lists the project's conventions.

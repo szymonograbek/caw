@@ -1,4 +1,3 @@
-import * as NodePath from "node:path";
 import { ConversationId } from "@gloaming/caw-plugin-sdk/ids";
 import { Config, Context, Effect, Layer, Option } from "effect";
 
@@ -17,7 +16,7 @@ export class Invocation extends Context.Service<
     readonly platform: string;
     /**
      * The command that starts this CLI, for the `caw` shim and service files:
-     * `[bun, main.ts]` from source, or just the binary when compiled.
+     * `[bun, entry script]` from source or the npm bundle, or just the binary when compiled.
      */
     readonly cli: ReadonlyArray<string>;
     /** The user id `launchctl bootstrap gui/<uid>` needs. */
@@ -36,9 +35,7 @@ export class Invocation extends Context.Service<
         cwd: process.cwd(),
         conversationId,
         platform: process.platform,
-        cli: compiled
-          ? [process.execPath]
-          : [process.execPath, NodePath.join(import.meta.dirname, "main.ts")],
+        cli: compiled ? [process.execPath] : [process.execPath, Bun.main],
         userId: Option.fromNullishOr(process.getuid?.()),
       };
     }),

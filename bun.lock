@@ -20,7 +20,7 @@
     },
     "packages/cli": {
       "name": "@gloaming/caw",
-      "version": "0.0.0",
+      "version": "1.0.0",
       "bin": {
         "caw": "./src/main.ts",
       },
@@ -42,7 +42,7 @@
     },
     "packages/core": {
       "name": "@caw/core",
-      "version": "0.0.0",
+      "version": "1.0.0",
       "dependencies": {
         "@effect/platform-bun": "4.1.4",
         "@effect/sql-sqlite-bun": "4.1.4",
@@ -57,7 +57,7 @@
     },
     "packages/sdk": {
       "name": "@gloaming/caw-plugin-sdk",
-      "version": "0.0.0",
+      "version": "1.0.0",
       "dependencies": {
         "@effect/sql-sqlite-bun": "4.1.4",
         "effect": "4.1.4",
@@ -65,7 +65,7 @@
     },
     "plugins/claude": {
       "name": "@caw/plugin-claude",
-      "version": "0.0.0",
+      "version": "1.0.0",
       "dependencies": {
         "@anthropic-ai/claude-agent-sdk": "0.3.329",
         "@gloaming/caw-plugin-sdk": "workspace:*",
@@ -78,7 +78,7 @@
     },
     "plugins/discord": {
       "name": "@caw/plugin-discord",
-      "version": "0.0.0",
+      "version": "1.0.0",
       "dependencies": {
         "@gloaming/caw-plugin-sdk": "workspace:*",
         "discord.js": "14.28.1",
@@ -90,7 +90,7 @@
     },
     "plugins/memory": {
       "name": "@caw/plugin-memory",
-      "version": "0.0.0",
+      "version": "1.0.0",
       "dependencies": {
         "@effect/sql-sqlite-bun": "4.1.4",
         "@gloaming/caw-plugin-sdk": "workspace:*",
@@ -103,7 +103,7 @@
     },
     "plugins/profiles": {
       "name": "@caw/plugin-profiles",
-      "version": "0.0.0",
+      "version": "1.0.0",
       "dependencies": {
         "@effect/sql-sqlite-bun": "4.1.4",
         "@gloaming/caw-plugin-sdk": "workspace:*",
@@ -116,7 +116,7 @@
     },
     "plugins/scheduler": {
       "name": "@caw/plugin-scheduler",
-      "version": "0.0.0",
+      "version": "1.0.0",
       "dependencies": {
         "@effect/sql-sqlite-bun": "4.1.4",
         "@gloaming/caw-plugin-sdk": "workspace:*",

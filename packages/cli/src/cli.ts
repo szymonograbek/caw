@@ -30,5 +30,5 @@ export const runLocal = (argv: ReadonlyArray<string>) =>
       ]),
     );
 
-    yield* Command.runWith(caw, { version: "0.0.0" })(argv);
+    yield* Command.runWith(caw, { version: "1.0.0" })(argv);
   });
