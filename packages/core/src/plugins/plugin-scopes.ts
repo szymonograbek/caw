@@ -1,8 +1,8 @@
 import { SqliteClient } from "@effect/sql-sqlite-bun";
-import type { Channel } from "@omen/sdk/channel";
-import type { ConversationId, PluginName } from "@omen/sdk/ids";
-import type { PluginServices } from "@omen/sdk/plugin";
-import { ConversationNotFound, Omen, PluginContext } from "@omen/sdk/plugin";
+import type { Channel } from "@caw/sdk/channel";
+import type { ConversationId, PluginName } from "@caw/sdk/ids";
+import type { PluginServices } from "@caw/sdk/plugin";
+import { ConversationNotFound, Caw, PluginContext } from "@caw/sdk/plugin";
 import type { Scope } from "effect";
 import { Context, Effect, Layer, Option, Schema } from "effect";
 import { SqlClient } from "effect/sql";
@@ -14,7 +14,7 @@ import { runPluginMigrations } from "../store/migrations.ts";
 import type { LoadedPlugin } from "./loaded-plugin.ts";
 import { Registration, Registry } from "./registry.ts";
 
-/** The services one Plugin's layer runs with: `Omen` bound to that Plugin, its key-value store, SQL. */
+/** The services one Plugin's layer runs with: `Caw` bound to that Plugin, its key-value store, SQL. */
 export class PluginScopes extends Context.Service<
   PluginScopes,
   {
@@ -26,7 +26,7 @@ export class PluginScopes extends Context.Service<
       scope: Scope.Scope,
     ) => Effect.Effect<void>;
   }
->()("@omen/core/PluginScopes") {
+>()("@caw/core/PluginScopes") {
   static readonly layer = Layer.effect(
     PluginScopes,
     Effect.gen(function* () {
@@ -45,7 +45,7 @@ export class PluginScopes extends Context.Service<
         );
 
       const servicesFor = (plugin: PluginName) => {
-        const omen = Omen.of({
+        const caw = Caw.of({
           registerChannel: (channel: Channel) =>
             Effect.gen(function* () {
               yield* registry.add(Registration.Channel({ plugin, channel }));
@@ -84,7 +84,7 @@ export class PluginScopes extends Context.Service<
             ),
         });
 
-        return Context.make(Omen, omen).pipe(
+        return Context.make(Caw, caw).pipe(
           Context.add(PluginContext, context),
           Context.add(SqlClient.SqlClient, sql),
           Context.add(SqliteClient.SqliteClient, sqlite),

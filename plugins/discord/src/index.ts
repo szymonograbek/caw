@@ -1,6 +1,6 @@
 import { Effect, Layer, Option } from "effect";
-import { definePlugin, Omen } from "@omen/sdk/plugin";
-import { PluginName } from "@omen/sdk/ids";
+import { definePlugin, Caw } from "@caw/sdk/plugin";
+import { PluginName } from "@caw/sdk/ids";
 import { DiscordChannel } from "./discord-channel.ts";
 import { discordGuide } from "./guide.ts";
 import { reactTool } from "./react-tool.ts";
@@ -17,14 +17,14 @@ export default definePlugin({
   layer: (settings) =>
     Layer.effectDiscard(
       Effect.gen(function* () {
-        const omen = yield* Omen;
+        const caw = yield* Caw;
         const discord = yield* DiscordChannel;
 
-        yield* omen.registerChannel(discord.channel);
-        yield* omen.registerTool(
+        yield* caw.registerChannel(discord.channel);
+        yield* caw.registerTool(
           reactTool({
             allowedReactions: settings.allowedReactions,
-            conversation: omen.conversation,
+            conversation: caw.conversation,
             react: discord.react,
           }),
         );

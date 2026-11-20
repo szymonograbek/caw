@@ -1,5 +1,5 @@
-import type { SetupAnswers, SetupChoice, SetupError, SetupQuestion } from "@omen/sdk/setup";
-import { SetupAnswer, SetupQuestion as Question } from "@omen/sdk/setup";
+import type { SetupAnswers, SetupChoice, SetupError, SetupQuestion } from "@caw/sdk/setup";
+import { SetupAnswer, SetupQuestion as Question } from "@caw/sdk/setup";
 import { Effect, FileSystem, Match, Option } from "effect";
 import { CliFailure } from "../cli-failure.ts";
 import { WizardUi } from "./wizard-ui.ts";

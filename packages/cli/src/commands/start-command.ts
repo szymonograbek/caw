@@ -1,5 +1,5 @@
-import { runDaemon } from "@omen/core/daemon";
-import { OmenHome } from "@omen/core/omen-home";
+import { runDaemon } from "@caw/core/daemon";
+import { CawHome } from "@caw/core/caw-home";
 import { Console, Effect, Option } from "effect";
 import { Command } from "effect/cli";
 import { builtins } from "../builtins.ts";
@@ -11,16 +11,16 @@ export const startCommand = Command.make("start", {}, () =>
   Effect.gen(function* () {
     const daemon = yield* Daemon;
     const invocation = yield* Invocation;
-    const home = yield* OmenHome;
+    const home = yield* CawHome;
     const running = yield* daemon.status;
 
     if (Option.isSome(running)) {
       return yield* new CliFailure({
-        message: `Omen is already running (pid ${running.value.pid}).`,
+        message: `Caw is already running (pid ${running.value.pid}).`,
       });
     }
 
-    yield* Console.log(`Starting Omen in ${home.root}. Logs: ${home.logFile}`);
+    yield* Console.log(`Starting Caw in ${home.root}. Logs: ${home.logFile}`);
 
     return yield* runDaemon({ builtins, cli: invocation.cli });
   }),

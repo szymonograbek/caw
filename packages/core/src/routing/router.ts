@@ -1,12 +1,12 @@
-import type { Channel, ChannelInput, ChannelMessage } from "@omen/sdk/channel";
-import { ConversationPlace } from "@omen/sdk/channel";
-import type { Conversation } from "@omen/sdk/conversation";
-import { OmenEvent } from "@omen/sdk/events";
-import type { ConversationId } from "@omen/sdk/ids";
-import { ConversationNotFound } from "@omen/sdk/plugin";
+import type { Channel, ChannelInput, ChannelMessage } from "@caw/sdk/channel";
+import { ConversationPlace } from "@caw/sdk/channel";
+import type { Conversation } from "@caw/sdk/conversation";
+import { CawEvent } from "@caw/sdk/events";
+import type { ConversationId } from "@caw/sdk/ids";
+import { ConversationNotFound } from "@caw/sdk/plugin";
 import { Cause, Context, DateTime, Effect, Layer, Match, Option, Stream } from "effect";
 import { DaemonConfig } from "../home/daemon-config.ts";
-import { OmenHome } from "../home/omen-home.ts";
+import { CawHome } from "../home/caw-home.ts";
 import { EventBus } from "../events/event-bus.ts";
 import { InterceptorChains } from "../plugins/interceptor-chains.ts";
 import { Registry } from "../plugins/registry.ts";
@@ -20,11 +20,11 @@ import { ConversationPlaces } from "./conversation-places.ts";
 import { formatInput, formatMessage, formatTask } from "./inbound-format.ts";
 import { SessionRouting } from "./session-routing.ts";
 
-/** The first 80 characters of the text, or "Omen" when there are none. */
+/** The first 80 characters of the text, or "Caw" when there are none. */
 const threadName = (text: string) => {
   const name = text.replaceAll(/\s+/g, " ").trim().slice(0, 80);
 
-  return name.length === 0 ? "Omen" : name;
+  return name.length === 0 ? "Caw" : name;
 };
 
 /** Logs a failed handling step without stopping the Channel's input stream. */
@@ -52,12 +52,12 @@ export class Router extends Context.Service<
       prompt: string,
     ) => Effect.Effect<void, ConversationNotFound>;
   }
->()("@omen/core/Router") {
+>()("@caw/core/Router") {
   static readonly layer = Layer.effect(
     Router,
     Effect.gen(function* () {
       const config = yield* DaemonConfig;
-      const home = yield* OmenHome;
+      const home = yield* CawHome;
       const bus = yield* EventBus;
       const chains = yield* InterceptorChains;
       const registry = yield* Registry;
@@ -90,7 +90,7 @@ export class Router extends Context.Service<
       ) {
         const arrived = yield* places.resolve(channel.name, received.conversation, received.place);
 
-        yield* bus.publish(OmenEvent.MessageReceived({ conversation: arrived, message: received }));
+        yield* bus.publish(CawEvent.MessageReceived({ conversation: arrived, message: received }));
 
         const accepted = yield* chains.inbound(received, arrived);
 

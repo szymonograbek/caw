@@ -1,4 +1,4 @@
-import { PluginName } from "@omen/sdk/ids";
+import { PluginName } from "@caw/sdk/ids";
 import { asc, eq, max } from "drizzle-orm";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { Context, Effect, Layer, Option, Schema } from "effect";
@@ -13,7 +13,7 @@ const pluginsTable = sqliteTable("plugins", {
   settingsJson: text("settings_json").notNull().default("{}"),
 });
 
-/** One installed Plugin. `source` is `builtin` or what `omen plugin add` installed from. */
+/** One installed Plugin. `source` is `builtin` or what `caw plugin add` installed from. */
 export class PluginRow extends Schema.Class<PluginRow, { readonly brand: unique symbol }>(
   "PluginRow",
 )({
@@ -42,7 +42,7 @@ export class PluginRows extends Context.Service<
     readonly setOrder: (order: ReadonlyArray<PluginName>) => Effect.Effect<void>;
     readonly remove: (name: PluginName) => Effect.Effect<void>;
   }
->()("@omen/core/PluginRows") {
+>()("@caw/core/PluginRows") {
   static readonly layer = Layer.effect(
     PluginRows,
     Effect.gen(function* () {

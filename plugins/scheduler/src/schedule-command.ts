@@ -1,9 +1,9 @@
 import { Console, DateTime, Effect, Option, Result } from "effect";
 import { Argument, Command, Flag } from "effect/cli";
-import { CurrentCliContext, fromCommand } from "@omen/sdk/cli-command";
-import type { Conversation } from "@omen/sdk/conversation";
-import { ConversationId } from "@omen/sdk/ids";
-import { CliCommandError, Omen } from "@omen/sdk/plugin";
+import { CurrentCliContext, fromCommand } from "@caw/sdk/cli-command";
+import type { Conversation } from "@caw/sdk/conversation";
+import { ConversationId } from "@caw/sdk/ids";
+import { CliCommandError, Caw } from "@caw/sdk/plugin";
 import type { Schedule } from "./schedule.ts";
 import { nextRun, parseCron, ScheduleId, ScheduleTiming } from "./schedule.ts";
 import { Scheduler } from "./scheduler.ts";
@@ -79,13 +79,13 @@ const conversationFlag = (description: string) =>
 const rootOf = (conversation: Conversation): ConversationId =>
   Option.getOrElse(conversation.parentId, () => conversation.id);
 
-/** `omen schedule add | list | remove`. */
+/** `caw schedule add | list | remove`. */
 export const scheduleCommand = Effect.gen(function* () {
-  const omen = yield* Omen;
+  const caw = yield* Caw;
   const scheduler = yield* Scheduler;
 
   const findConversation = (id: ConversationId) =>
-    omen.conversation(id).pipe(Effect.mapError(() => usageError(`No Conversation ${id}.`)));
+    caw.conversation(id).pipe(Effect.mapError(() => usageError(`No Conversation ${id}.`)));
 
   /** The top-level Conversation of the Session running the CLI. */
   const currentRoot = (missing: string) =>
@@ -101,14 +101,14 @@ export const scheduleCommand = Effect.gen(function* () {
 
   /** Whether a Schedule targets `root` or one of its threads; false once its Conversation is gone. */
   const isUnder = (root: ConversationId) => (schedule: Schedule) =>
-    omen.conversation(schedule.conversationId).pipe(
+    caw.conversation(schedule.conversationId).pipe(
       Effect.map((target) => rootOf(target) === root),
       Effect.catchTag("ConversationNotFound", () => Effect.succeed(false)),
     );
 
   const listUnderCurrentRoot = Effect.gen(function* () {
     const root = yield* currentRoot(
-      "Pass --all or --conversation <id>; there is no OMEN_CONVERSATION_ID here.",
+      "Pass --all or --conversation <id>; there is no CAW_CONVERSATION_ID here.",
     );
 
     const schedules = yield* scheduler.list(Option.none());
@@ -129,7 +129,7 @@ export const scheduleCommand = Effect.gen(function* () {
       ),
       prompt: Flag.String("prompt").pipe(Flag.withDescription("What the agent is asked to do")),
       conversation: conversationFlag(
-        "The target Conversation (default: the top-level Conversation of OMEN_CONVERSATION_ID)",
+        "The target Conversation (default: the top-level Conversation of CAW_CONVERSATION_ID)",
       ),
       timezone: Flag.String("timezone").pipe(
         Flag.optional,
@@ -141,7 +141,7 @@ export const scheduleCommand = Effect.gen(function* () {
         const conversationId = yield* Option.match(input.conversation, {
           onSome: (id) => findConversation(id).pipe(Effect.as(id)),
           onNone: () =>
-            currentRoot("Pass --conversation <id>; there is no OMEN_CONVERSATION_ID here."),
+            currentRoot("Pass --conversation <id>; there is no CAW_CONVERSATION_ID here."),
         });
 
         const timeZone = yield* Option.match(input.timezone, {
@@ -177,7 +177,7 @@ export const scheduleCommand = Effect.gen(function* () {
         Flag.withDescription("List every Conversation's Schedules"),
       ),
       conversation: conversationFlag(
-        "Only this Conversation's (default: the top-level Conversation of OMEN_CONVERSATION_ID and its threads)",
+        "Only this Conversation's (default: the top-level Conversation of CAW_CONVERSATION_ID and its threads)",
       ),
     },
     ({ all, conversation }) =>

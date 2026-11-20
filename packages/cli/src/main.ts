@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 import { BunRuntime, BunServices } from "@effect/platform-bun";
-import { OfflineHost } from "@omen/core/offline-host";
-import { OmenHome } from "@omen/core/omen-home";
+import { OfflineHost } from "@caw/core/offline-host";
+import { CawHome } from "@caw/core/caw-home";
 import { Console, Effect, Layer, Logger } from "effect";
 import { FetchHttpClient } from "effect/http";
 import { CliFailure } from "./cli-failure.ts";
@@ -16,7 +16,7 @@ const argv = process.argv.slice(2);
 
 const services = Layer.mergeAll(
   Invocation.layer,
-  Daemon.layer.pipe(Layer.provideMerge(OmenHome.layer)),
+  Daemon.layer.pipe(Layer.provideMerge(CawHome.layer)),
   Logger.layer([Logger.consolePretty()]),
   Layer.succeed(Logger.LogToStderr, true),
 ).pipe(Layer.provideMerge(Layer.merge(BunServices.layer, FetchHttpClient.layer)));

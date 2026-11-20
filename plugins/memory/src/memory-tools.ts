@@ -1,6 +1,6 @@
 import { Effect, Schema } from "effect";
-import type { Tool, ToolContext } from "@omen/sdk/tool";
-import { makeTool, ToolError } from "@omen/sdk/tool";
+import type { Tool, ToolContext } from "@caw/sdk/tool";
+import { makeTool, ToolError } from "@caw/sdk/tool";
 import type { Memory, MemoryNotFound, MemoryScopeFull, MemoryTooLong } from "./memory.ts";
 import {
   maxBodyLength,

@@ -1,6 +1,6 @@
-import { OmenHome } from "@omen/core/omen-home";
-import type { DaemonStatus } from "@omen/core/omen-rpcs";
-import { describePluginState } from "@omen/core/plugin-state";
+import { CawHome } from "@caw/core/caw-home";
+import type { DaemonStatus } from "@caw/core/caw-rpcs";
+import { describePluginState } from "@caw/core/plugin-state";
 import { Console, DateTime, Effect, Option } from "effect";
 import { Command } from "effect/cli";
 import { CliFailure } from "../cli-failure.ts";
@@ -10,7 +10,7 @@ const describe = (status: DaemonStatus, home: string): string => {
   const width = Math.max(...status.plugins.map((plugin) => plugin.name.length));
 
   return [
-    `Omen is running (pid ${status.pid}, since ${DateTime.formatIso(status.startedAt)}).`,
+    `Caw is running (pid ${status.pid}, since ${DateTime.formatIso(status.startedAt)}).`,
     `Home: ${home}`,
     `Live Sessions: ${status.liveSessions}`,
     "Plugins:",
@@ -22,11 +22,11 @@ const describe = (status: DaemonStatus, home: string): string => {
 
 export const statusCommand = Command.make("status", {}, () =>
   Effect.gen(function* () {
-    const home = yield* OmenHome;
+    const home = yield* CawHome;
     const status = yield* Daemon.use((daemon) => daemon.status);
 
     if (Option.isNone(status)) {
-      return yield* new CliFailure({ message: `Omen is not running (home ${home.root}).` });
+      return yield* new CliFailure({ message: `Caw is not running (home ${home.root}).` });
     }
 
     return yield* Console.log(describe(status.value, home.root));

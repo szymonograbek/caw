@@ -1,7 +1,7 @@
 import type { Readable, Writable } from "node:stream";
 import { styleText } from "node:util";
 import * as Clack from "@clack/prompts";
-import type { SetupChoice } from "@omen/sdk/setup";
+import type { SetupChoice } from "@caw/sdk/setup";
 import { Cause, Context, Effect, Exit, Layer } from "effect";
 import { CliFailure } from "../cli-failure.ts";
 
@@ -31,7 +31,7 @@ const prompted = (message: string) =>
   Effect.die(`The wizard prompted "${message}" without a terminal.`);
 
 /**
- * The terminal `omen install` talks through: lines on one guide bar, and
+ * The terminal `caw install` talks through: lines on one guide bar, and
  * prompts that fail with "Setup cancelled." when the person cancels.
  */
 export class WizardUi extends Context.Service<
@@ -64,7 +64,7 @@ export class WizardUi extends Context.Service<
     readonly confirm: (message: string, initial: boolean) => Effect.Effect<boolean, CliFailure>;
     readonly outro: (message: string, steps: ReadonlyArray<NextStep>) => Effect.Effect<void>;
   }
->()("@omen/cli/WizardUi") {
+>()("@caw/cli/WizardUi") {
   /** clack reading keys from `input` and drawing on `output`. */
   static readonly on = (input: Readable, output: Writable) =>
     Layer.sync(WizardUi, () => {

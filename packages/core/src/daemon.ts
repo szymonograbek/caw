@@ -1,4 +1,4 @@
-import { OmenEvent } from "@omen/sdk/events";
+import { CawEvent } from "@caw/sdk/events";
 import { Effect, Layer } from "effect";
 import { EventBus } from "./events/event-bus.ts";
 import { writeAgentFiles } from "./home/agent-files.ts";
@@ -11,9 +11,9 @@ import { rpcServerLayer } from "./rpc/rpc-server.ts";
 import { Sessions } from "./store/sessions.ts";
 
 export interface DaemonOptions {
-  /** The Plugins that ship with Omen, enabled on first start. */
+  /** The Plugins that ship with Caw, enabled on first start. */
   readonly builtins: ReadonlyArray<LoadedPlugin>;
-  /** The command that starts this CLI (`[bun, main.ts]`, or the compiled binary); Sessions run it through `<home>/bin/omen`. */
+  /** The command that starts this CLI (`[bun, main.ts]`, or the compiled binary); Sessions run it through `<home>/bin/caw`. */
   readonly cli: ReadonlyArray<string>;
 }
 
@@ -28,11 +28,11 @@ const serve = Effect.fn("Daemon.serve")(function* (options: DaemonOptions) {
   yield* sessions.idleAllLive;
   yield* plugins.start(options.builtins);
   yield* lifecycle.markReady;
-  yield* bus.publish(OmenEvent.DaemonStarted());
-  yield* Effect.logInfo("Omen started").pipe(Effect.annotateLogs({ pid: lifecycle.pid }));
+  yield* bus.publish(CawEvent.DaemonStarted());
+  yield* Effect.logInfo("Caw started").pipe(Effect.annotateLogs({ pid: lifecycle.pid }));
   yield* lifecycle.stopped;
-  yield* bus.publish(OmenEvent.DaemonStopping());
-  yield* Effect.logInfo("Omen stopping");
+  yield* bus.publish(CawEvent.DaemonStopping());
+  yield* Effect.logInfo("Caw stopping");
 });
 
 const daemonLayer = Layer.mergeAll(rpcServerLayer, daemonLoggerLayer).pipe(
@@ -40,8 +40,8 @@ const daemonLayer = Layer.mergeAll(rpcServerLayer, daemonLoggerLayer).pipe(
 );
 
 /**
- * The daemon `omen start` runs in the foreground: core services, the RPC
- * socket and JSON file logging, all under `OMEN_HOME`.
+ * The daemon `caw start` runs in the foreground: core services, the RPC
+ * socket and JSON file logging, all under `CAW_HOME`.
  */
 export const runDaemon = (options: DaemonOptions) =>
   // This is the daemon's entry point: every layer is provided once, here.

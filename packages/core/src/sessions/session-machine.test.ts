@@ -1,5 +1,5 @@
 import { describe, expect, it } from "@effect/vitest";
-import { ChannelMessageId, ExternalConversationId } from "@omen/sdk/ids";
+import { ChannelMessageId, ExternalConversationId } from "@caw/sdk/ids";
 import { Machine } from "@typeonce/effect-machine";
 import { Effect, Layer, Option, Queue, Ref, Stream } from "effect";
 import { TestClock } from "effect/testing";

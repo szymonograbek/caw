@@ -15,7 +15,7 @@ const renderMemory = (memory: Memory): string =>
     `_#${memory.id} · saved ${DateTime.formatIsoDateUtc(memory.createdAt)} · last used ${DateTime.formatIsoDateUtc(memory.lastUsedAt)}_`,
   ].join("\n\n");
 
-const title = "# Omen Memories";
+const title = "# Caw Memories";
 
 /** All Memories as markdown, one section per scope, in the order given. */
 export const exportMarkdown = (memories: ReadonlyArray<Memory>): string => {

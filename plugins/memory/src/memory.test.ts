@@ -5,7 +5,7 @@ import { SqliteClient } from "@effect/sql-sqlite-bun";
 import { describe, expect, it } from "@effect/vitest";
 import { Array, Effect, Layer, Option, PubSub, Stream } from "effect";
 import { TestClock } from "effect/testing";
-import { Conversation, Session } from "@omen/sdk/conversation";
+import { Conversation, Session } from "@caw/sdk/conversation";
 import {
   ChannelName,
   ConversationId,
@@ -13,12 +13,12 @@ import {
   HarnessName,
   ProfileName,
   SessionId,
-} from "@omen/sdk/ids";
-import { Interceptor } from "@omen/sdk/interceptors";
-import type { CliCommand, PluginMessage } from "@omen/sdk/plugin";
-import { Omen, PluginContext } from "@omen/sdk/plugin";
-import { Profile } from "@omen/sdk/profile";
-import type { Tool, ToolContext } from "@omen/sdk/tool";
+} from "@caw/sdk/ids";
+import { Interceptor } from "@caw/sdk/interceptors";
+import type { CliCommand, PluginMessage } from "@caw/sdk/plugin";
+import { Caw, PluginContext } from "@caw/sdk/plugin";
+import { Profile } from "@caw/sdk/profile";
+import type { Tool, ToolContext } from "@caw/sdk/tool";
 import memory from "./index.ts";
 
 interface Registered {
@@ -27,12 +27,12 @@ interface Registered {
   readonly commands: Array<CliCommand>;
 }
 
-/** Starts the plugin as core would: migrations first, then its layer with a fake Omen. */
+/** Starts the plugin as core would: migrations first, then its layer with a fake Caw. */
 const startPlugin = Effect.gen(function* () {
   const registered: Registered = { tools: [], interceptors: [], commands: [] };
   const unused = Effect.die("not used by the memory plugin");
 
-  const omen = Layer.succeed(Omen)({
+  const caw = Layer.succeed(Caw)({
     registerChannel: () => unused,
     registerHarness: () => unused,
     registerTool: (tool) => Effect.sync(() => registered.tools.push(tool)),
@@ -54,7 +54,7 @@ const startPlugin = Effect.gen(function* () {
   });
 
   yield* Effect.forEach(memory.migrations, (migration) => migration.run);
-  yield* Layer.build(memory.layer({}).pipe(Layer.provide(Layer.merge(omen, pluginContext))));
+  yield* Layer.build(memory.layer({}).pipe(Layer.provide(Layer.merge(caw, pluginContext))));
 
   return registered;
 });
@@ -314,7 +314,7 @@ describe("pinned Memories at SessionOpening", () => {
   );
 });
 
-describe("omen memory export", () => {
+describe("caw memory export", () => {
   it.effect("prints every Memory as markdown with its dates", () =>
     Effect.gen(function* () {
       const registered = yield* startPlugin;
@@ -338,7 +338,7 @@ describe("omen memory export", () => {
 
       expect(markdown).toBe(
         [
-          "# Omen Memories",
+          "# Caw Memories",
           "## Global",
           "### Name",
           "Call me Sam.",
@@ -355,7 +355,7 @@ describe("omen memory export", () => {
   it.effect("writes the markdown to an absolute --out path", () =>
     Effect.gen(function* () {
       const registered = yield* startPlugin;
-      const directory = yield* Effect.promise(() => mkdtemp(join(tmpdir(), "omen-memory-")));
+      const directory = yield* Effect.promise(() => mkdtemp(join(tmpdir(), "caw-memory-")));
       const out = join(directory, "memories.md");
 
       const printed = yield* exportMemories(registered, ["--out", out]);
@@ -363,7 +363,7 @@ describe("omen memory export", () => {
       yield* Effect.promise(() => rm(directory, { recursive: true }));
 
       expect(printed).toBe(`Exported 0 Memories to ${out}.`);
-      expect(written).toBe("# Omen Memories\n\nNo Memories.\n");
+      expect(written).toBe("# Caw Memories\n\nNo Memories.\n");
     }).pipe(Effect.provide(sqlite)),
   );
 

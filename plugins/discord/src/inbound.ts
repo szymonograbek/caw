@@ -6,9 +6,9 @@ import type {
   ChannelError,
   ChannelMessage,
   QuotedMessage,
-} from "@omen/sdk/channel";
-import { ChannelInput, ConversationPlace } from "@omen/sdk/channel";
-import { ChannelMessageId, ChannelName, ExternalConversationId } from "@omen/sdk/ids";
+} from "@caw/sdk/channel";
+import { ChannelInput, ConversationPlace } from "@caw/sdk/channel";
+import { ChannelMessageId, ChannelName, ExternalConversationId } from "@caw/sdk/ids";
 
 /** The registered name of this Channel. */
 export const DISCORD_CHANNEL = ChannelName.make("discord");
@@ -37,7 +37,7 @@ interface DiscordAttachment {
   readonly contentType: string | null;
 }
 
-/** The plain fields of a discord.js `Message` that Omen reads. */
+/** The plain fields of a discord.js `Message` that Caw reads. */
 export interface DiscordMessage {
   readonly id: string;
   readonly channelId: string;
@@ -50,7 +50,7 @@ export interface DiscordMessage {
   readonly attachments: ReadonlyArray<DiscordAttachment>;
 }
 
-/** The plain fields of a discord.js slash-command interaction that Omen reads. */
+/** The plain fields of a discord.js slash-command interaction that Caw reads. */
 export interface DiscordCommand {
   readonly commandName: string;
   readonly channelId: string;
@@ -83,11 +83,11 @@ const toQuoted = (quoted: DiscordQuoted): QuotedMessage => ({
   text: quoted.content,
 });
 
-/** A message a person wrote: not from a bot (Omen included) and not a system notice. */
+/** A message a person wrote: not from a bot (Caw included) and not a system notice. */
 export const isFromPerson = (message: DiscordMessage): boolean =>
   !message.author.bot && !message.system;
 
-/** `None` when the message sits somewhere Omen cannot place (a thread without a parent). */
+/** `None` when the message sits somewhere Caw cannot place (a thread without a parent). */
 export const parseMessage = (message: DiscordMessage): Option.Option<ChannelMessage> =>
   toPlace(message.place).pipe(
     Option.map((place) => ({
@@ -107,7 +107,7 @@ export const parseMessage = (message: DiscordMessage): Option.Option<ChannelMess
     })),
   );
 
-/** `None` for a command Omen does not define or a place it cannot resolve. */
+/** `None` for a command Caw does not define or a place it cannot resolve. */
 export const parseCommand = (
   command: DiscordCommand,
   respond: (text: string) => Effect.Effect<void, ChannelError>,

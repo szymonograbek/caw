@@ -14,7 +14,7 @@ export const PluginState = Schema.TaggedUnion({
 
 export type PluginState = typeof PluginState.Type;
 
-/** One line for `omen status` and `omen plugin list`. */
+/** One line for `caw status` and `caw plugin list`. */
 export const describePluginState = (state: PluginState): string =>
   PluginState.match(state, {
     Running: () => "running",

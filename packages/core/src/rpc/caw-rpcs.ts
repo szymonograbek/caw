@@ -1,5 +1,5 @@
-import { ConversationId, PluginName } from "@omen/sdk/ids";
-import { CliCommandError } from "@omen/sdk/plugin";
+import { ConversationId, PluginName } from "@caw/sdk/ids";
+import { CliCommandError } from "@caw/sdk/plugin";
 import { Schema } from "effect";
 import { Rpc, RpcGroup } from "effect/rpc";
 import { PluginState } from "../plugins/plugin-state.ts";
@@ -22,15 +22,15 @@ export class DaemonStatus extends Schema.Class<DaemonStatus, { readonly brand: u
   liveSessions: Schema.Int,
 }) {}
 
-/** What the `omen` CLI asks the daemon over `<home>/omen.sock`. */
-export const OmenRpcs = RpcGroup.make(
+/** What the `caw` CLI asks the daemon over `<home>/caw.sock`. */
+export const CawRpcs = RpcGroup.make(
   Rpc.make("Status", { success: DaemonStatus }),
   Rpc.make("Shutdown"),
-  /** Runs `omen <argv>` inside the daemon and returns what the CLI prints. */
+  /** Runs `caw <argv>` inside the daemon and returns what the CLI prints. */
   Rpc.make("RunCommand", {
     payload: {
       argv: Schema.Array(Schema.String),
-      /** From `OMEN_CONVERSATION_ID` when the agent runs the CLI inside a Session. */
+      /** From `CAW_CONVERSATION_ID` when the agent runs the CLI inside a Session. */
       conversationId: Schema.Option(ConversationId),
       /** The invoking shell's working directory. */
       cwd: Schema.String,

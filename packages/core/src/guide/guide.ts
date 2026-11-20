@@ -1,4 +1,4 @@
-import type { GuidePage } from "@omen/sdk/plugin";
+import type { GuidePage } from "@caw/sdk/plugin";
 import { Option, Result } from "effect";
 import type { LoadedPlugin } from "../plugins/loaded-plugin.ts";
 import { coreGuide } from "./core-guide.ts";
@@ -23,7 +23,7 @@ const listing = (sections: ReadonlyArray<GuideSection>): string => {
   );
 
   return [
-    "Run `omen guide <topic>` to read a topic.",
+    "Run `caw guide <topic>` to read a topic.",
     ...sections.flatMap((section) => [
       "",
       section.owner,
@@ -33,7 +33,7 @@ const listing = (sections: ReadonlyArray<GuideSection>): string => {
 };
 
 /**
- * `omen guide [topic]`: the topic list, or one page. Fails with a message when
+ * `caw guide [topic]`: the topic list, or one page. Fails with a message when
  * no page has that topic. Needs no daemon: pages are data on each Plugin.
  */
 export const renderGuide = (
@@ -51,6 +51,6 @@ export const renderGuide = (
     .find((candidate) => candidate.topic === topic.value);
 
   return page === undefined
-    ? Result.fail(`No guide topic "${topic.value}". Run \`omen guide\` to list topics.`)
+    ? Result.fail(`No guide topic "${topic.value}". Run \`caw guide\` to list topics.`)
     : Result.succeed(`${page.topic}: ${page.summary}\n\n${page.body}`);
 };

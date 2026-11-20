@@ -15,7 +15,7 @@ export type SessionCloseReason =
 export type TurnOutcome = "completed" | "interrupted" | "failed";
 
 /** Everything core announces. Plugins observe these; they cannot change them. */
-export type OmenEvent = Data.TaggedEnum<{
+export type CawEvent = Data.TaggedEnum<{
   DaemonStarted: {};
   DaemonStopping: {};
   MessageReceived: { readonly conversation: Conversation; readonly message: ChannelMessage };
@@ -35,4 +35,4 @@ export type OmenEvent = Data.TaggedEnum<{
   PluginDisabled: { readonly plugin: PluginName };
 }>;
 
-export const OmenEvent = Data.taggedEnum<OmenEvent>();
+export const CawEvent = Data.taggedEnum<CawEvent>();

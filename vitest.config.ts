@@ -5,7 +5,7 @@ export default defineConfig({
     projects: [
       {
         test: {
-          name: "omen",
+          name: "caw",
           include: ["{packages,plugins}/*/src/**/*.test.ts"],
           // Runs under Bun (`bun --bun vitest`) so `bun:sqlite` exists; the default forks pool crashes on Bun.
           pool: "threads",

@@ -1,5 +1,5 @@
 {
-  "name": "@omen/plugin-memory",
+  "name": "@caw/plugin-memory",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -7,15 +7,15 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
+    "@caw/sdk": "workspace:*",
     "@effect/sql-sqlite-bun": "4.1.4",
-    "@omen/sdk": "workspace:*",
     "drizzle-orm": "1.0.0-rc.5",
     "effect": "4.1.4"
   },
   "devDependencies": {
     "@effect/vitest": "4.1.4"
   },
-  "omen": {
+  "caw": {
     "name": "memory",
     "version": "0.0.0"
   }

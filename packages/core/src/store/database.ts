@@ -4,9 +4,9 @@ import { Context, Effect, Layer } from "effect";
 import { SqlClient } from "effect/sql";
 import { runCoreMigrations } from "./migrations.ts";
 
-/** Drizzle over Omen's sqlite database, migrated before first use. */
+/** Drizzle over Caw's sqlite database, migrated before first use. */
 export class Database extends Context.Service<Database, SqliteDrizzle.EffectSQLiteBunDatabase>()(
-  "@omen/core/Database",
+  "@caw/core/Database",
 ) {
   static readonly layer = Layer.effect(Database, SqliteDrizzle.makeWithDefaults());
 }

@@ -5,7 +5,7 @@ import type {
   SDKUserMessage,
 } from "@anthropic-ai/claude-agent-sdk";
 import { Match, Option, Schema } from "effect";
-import { HarnessEvent, SessionNotFound } from "@omen/sdk/harness";
+import { HarnessEvent, SessionNotFound } from "@caw/sdk/harness";
 import { claudeError, claudeHarnessName } from "./claude-error.ts";
 import type { ClaudeSessionId } from "./cursor.ts";
 import { encodeCursor, ClaudeSessionId as ClaudeSessionIdSchema } from "./cursor.ts";

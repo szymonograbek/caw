@@ -3,7 +3,7 @@ import { CliFailure } from "./cli-failure.ts";
 import { Daemon } from "./daemon.ts";
 import { Invocation } from "./invocation.ts";
 
-/** Runs `omen <argv>` inside the daemon and prints what it returns. */
+/** Runs `caw <argv>` inside the daemon and prints what it returns. */
 export const forward = (argv: ReadonlyArray<string>) =>
   Effect.gen(function* () {
     const daemon = yield* Daemon;
@@ -17,8 +17,6 @@ export const forward = (argv: ReadonlyArray<string>) =>
     Effect.catchTags({
       CliCommandError: ({ message }) => Effect.fail(new CliFailure({ message })),
       DaemonNotRunning: () =>
-        Effect.fail(
-          new CliFailure({ message: "Omen is not running. Start it with `omen start`." }),
-        ),
+        Effect.fail(new CliFailure({ message: "Caw is not running. Start it with `caw start`." })),
     }),
   );

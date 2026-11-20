@@ -1,7 +1,7 @@
 import * as NodePath from "node:path";
-import { CurrentCliContext, fromCommand } from "@omen/sdk/cli-command";
-import { PluginName } from "@omen/sdk/ids";
-import { CliCommandError } from "@omen/sdk/plugin";
+import { CurrentCliContext, fromCommand } from "@caw/sdk/cli-command";
+import { PluginName } from "@caw/sdk/ids";
+import { CliCommandError } from "@caw/sdk/plugin";
 import { Console, Effect, Option, Schema } from "effect";
 import { Argument, Command } from "effect/cli";
 import type { PluginEntry } from "../plugins/plugin-host.ts";
@@ -48,12 +48,12 @@ const decodeSettings = Schema.decodeUnknownOption(Schema.Record(Schema.String, S
 const failWith = (message: string) => Effect.fail(new CliCommandError({ message }));
 
 const notFound = ({ plugin }: { readonly plugin: string }) =>
-  failWith(`No plugin named ${plugin}. Run \`omen plugin list\`.`);
+  failWith(`No plugin named ${plugin}. Run \`caw plugin list\`.`);
 
 /** Settings and Plugin changes close live Sessions; they resume on their next message. */
 const resumeNote = "Live Sessions were closed; each resumes on its next message.";
 
-/** Core's `omen plugin …`: install, remove, toggle, order and configure Plugins. */
+/** Core's `caw plugin …`: install, remove, toggle, order and configure Plugins. */
 export const pluginCommand = Effect.gen(function* () {
   const host = yield* PluginHost;
 
@@ -72,7 +72,7 @@ export const pluginCommand = Effect.gen(function* () {
       Effect.catchTags({
         PluginNotFound: notFound,
         BuiltinPluginNotRemovable: () =>
-          failWith(`${name} is built in; disable it instead: omen plugin disable ${name}`),
+          failWith(`${name} is built in; disable it instead: caw plugin disable ${name}`),
         PluginInstallError: ({ message }) => failWith(message),
       }),
     ),

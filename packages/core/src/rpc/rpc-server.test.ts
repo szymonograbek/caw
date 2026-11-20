@@ -1,11 +1,11 @@
 import { describe, expect, it } from "@effect/vitest";
 import { Effect, Exit, Fiber, Layer, Option } from "effect";
-import { OmenHome } from "../home/omen-home.ts";
+import { CawHome } from "../home/caw-home.ts";
 import { makeFakeChannel } from "../testing/fake-channel.ts";
 import { makeFakeHarness } from "../testing/fake-harness.ts";
 import { startPlugins, temporaryHome, testCoreLayer } from "../testing/test-daemon.ts";
 import { DaemonLifecycle } from "./daemon-lifecycle.ts";
-import { OmenClient } from "./rpc-client.ts";
+import { CawClient } from "./rpc-client.ts";
 import { rpcServerLayer } from "./rpc-server.ts";
 
 const server = Layer.unwrap(
@@ -25,11 +25,11 @@ describe("RPC over the daemon socket", () => {
       yield* startPlugins(channel, harness);
       yield* DaemonLifecycle.use((daemon) => daemon.markReady);
 
-      const home = yield* OmenHome;
+      const home = yield* CawHome;
       const lifecycle = yield* DaemonLifecycle;
 
       const { status, unknown } = yield* Effect.gen(function* () {
-        const client = yield* OmenClient;
+        const client = yield* CawClient;
 
         return {
           status: yield* client.Status(),
@@ -37,7 +37,7 @@ describe("RPC over the daemon socket", () => {
             client.RunCommand({ argv: ["nope"], conversationId: Option.none(), cwd: "/" }),
           ),
         };
-      }).pipe(Effect.provide(OmenClient.layer(home.socket)));
+      }).pipe(Effect.provide(CawClient.layer(home.socket)));
 
       expect(status.pid).toBe(lifecycle.pid);
       expect(status.liveSessions).toBe(0);
@@ -53,11 +53,11 @@ describe("RPC over the daemon socket", () => {
 
   it.live("holds a command sent while Plugins start until they have", () =>
     Effect.gen(function* () {
-      const home = yield* OmenHome;
+      const home = yield* CawHome;
       const lifecycle = yield* DaemonLifecycle;
 
       const result = yield* Effect.gen(function* () {
-        const client = yield* OmenClient;
+        const client = yield* CawClient;
 
         const pending = yield* Effect.forkChild(
           Effect.exit(
@@ -71,7 +71,7 @@ describe("RPC over the daemon socket", () => {
         yield* lifecycle.markReady;
 
         return { waited, answer: yield* Fiber.join(pending) };
-      }).pipe(Effect.provide(OmenClient.layer(home.socket)));
+      }).pipe(Effect.provide(CawClient.layer(home.socket)));
 
       expect(result.waited).toBe(true);
       expect(result.answer).toEqual(

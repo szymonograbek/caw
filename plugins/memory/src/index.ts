@@ -1,7 +1,7 @@
 import { Effect, Layer, Option, Schema } from "effect";
-import { PluginName } from "@omen/sdk/ids";
-import { Interceptor } from "@omen/sdk/interceptors";
-import { definePlugin, Omen } from "@omen/sdk/plugin";
+import { PluginName } from "@caw/sdk/ids";
+import { Interceptor } from "@caw/sdk/interceptors";
+import { definePlugin, Caw } from "@caw/sdk/plugin";
 import { memoryGuide } from "./guide.ts";
 import { memoryMigrations } from "./memories-table.ts";
 import { memoryCommand } from "./memory-command.ts";
@@ -11,14 +11,14 @@ import { renderPinned } from "./pinned-memories.ts";
 
 const pluginLayer = Layer.effectDiscard(
   Effect.gen(function* () {
-    const omen = yield* Omen;
+    const caw = yield* Caw;
     const store = yield* MemoryStore;
     const tools = yield* memoryTools;
     const command = yield* memoryCommand;
 
-    yield* Effect.forEach(tools, omen.registerTool);
-    yield* omen.registerCliCommand(command);
-    yield* omen.registerInterceptor(
+    yield* Effect.forEach(tools, caw.registerTool);
+    yield* caw.registerCliCommand(command);
+    yield* caw.registerInterceptor(
       Interceptor.SessionOpening({
         handle: ({ root }) =>
           store.pinned(root.id).pipe(

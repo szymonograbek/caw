@@ -1,22 +1,22 @@
 #!/bin/sh
-# Installs the compiled `omen` binary (from `bun run build`) onto PATH.
-# Target: $OMEN_INSTALL_DIR, else Bun's global bin ($BUN_INSTALL/bin, default ~/.bun/bin).
+# Installs the compiled `caw` binary (from `bun run build`) onto PATH.
+# Target: $CAW_INSTALL_DIR, else Bun's global bin ($BUN_INSTALL/bin, default ~/.bun/bin).
 set -eu
 
 root=$(cd "$(dirname "$0")/.." && pwd)
-binary="$root/dist/omen"
-target_dir="${OMEN_INSTALL_DIR:-${BUN_INSTALL:-$HOME/.bun}/bin}"
+binary="$root/dist/caw"
+target_dir="${CAW_INSTALL_DIR:-${BUN_INSTALL:-$HOME/.bun}/bin}"
 
 [ -x "$binary" ] || { echo "No $binary. Run \`bun run build\` first." >&2; exit 1; }
 
 mkdir -p "$target_dir"
 # Copy to a temp name, then rename: replacing a running binary in place can crash it.
-cp "$binary" "$target_dir/.omen.new"
-mv -f "$target_dir/.omen.new" "$target_dir/omen"
+cp "$binary" "$target_dir/.caw.new"
+mv -f "$target_dir/.caw.new" "$target_dir/caw"
 
-echo "Installed $target_dir/omen ($("$target_dir/omen" --version))"
+echo "Installed $target_dir/caw ($("$target_dir/caw" --version))"
 
 case ":$PATH:" in
   *":$target_dir:"*) ;;
-  *) echo "Note: $target_dir is not on your PATH. Add it to use \`omen\` from any shell." ;;
+  *) echo "Note: $target_dir is not on your PATH. Add it to use \`caw\` from any shell." ;;
 esac

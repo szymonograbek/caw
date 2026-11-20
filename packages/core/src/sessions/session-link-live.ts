@@ -1,11 +1,11 @@
-import { OmenEvent } from "@omen/sdk/events";
-import type { ChannelError } from "@omen/sdk/channel";
-import type { HarnessEvent, LiveSession } from "@omen/sdk/harness";
-import { HarnessError } from "@omen/sdk/harness";
+import { CawEvent } from "@caw/sdk/events";
+import type { ChannelError } from "@caw/sdk/channel";
+import type { HarnessEvent, LiveSession } from "@caw/sdk/harness";
+import { HarnessError } from "@caw/sdk/harness";
 import { Context, Deferred, Effect, Layer, Match, Option, Queue, Stream } from "effect";
 import { DaemonEnvironment } from "../home/daemon-environment.ts";
 import { HostFiles } from "../home/host-files.ts";
-import { OmenHome } from "../home/omen-home.ts";
+import { CawHome } from "../home/caw-home.ts";
 import { EventBus } from "../events/event-bus.ts";
 import { InterceptorChains } from "../plugins/interceptor-chains.ts";
 import { Registration, Registry } from "../plugins/registry.ts";
@@ -15,12 +15,12 @@ import type { SessionInput, TurnFailure } from "./session-link.ts";
 import { DeliverySignal, HarnessSignal, SessionLink } from "./session-link.ts";
 import type { SessionTarget } from "./session-target.ts";
 
-/** Omen's core skill, a local Claude plugin telling the agent to run `omen guide`. */
+/** Caw's core skill, a local Claude plugin telling the agent to run `caw guide`. */
 
 const none: ReadonlyArray<HarnessSignal> = [];
 
-const omenPrompt = (target: SessionTarget) =>
-  `You are Omen, talking with people through ${target.channel.name}. Write ${target.channel.markup}. Run \`omen guide\` to learn how to control Omen (schedules, memory, profiles, plugins).`;
+const cawPrompt = (target: SessionTarget) =>
+  `You are Caw, talking with people through ${target.channel.name}. Write ${target.channel.markup}. Run \`caw guide\` to learn how to control Caw (schedules, memory, profiles, plugins).`;
 
 const logChannelFailure = <A, R>(effect: Effect.Effect<A, ChannelError, R>) =>
   effect.pipe(
@@ -39,7 +39,7 @@ export class SessionLinks extends Context.Service<
       inputs: Queue.Queue<SessionInput>,
     ) => Effect.Effect<SessionLink["Service"]>;
   }
->()("@omen/core/SessionLinks") {
+>()("@caw/core/SessionLinks") {
   static readonly layer = Layer.effect(
     SessionLinks,
     Effect.gen(function* () {
@@ -48,7 +48,7 @@ export class SessionLinks extends Context.Service<
       const bus = yield* EventBus;
       const sessions = yield* Sessions;
       const messageMap = yield* MessageMap;
-      const home = yield* OmenHome;
+      const home = yield* CawHome;
       const files = yield* HostFiles;
       const environment = yield* DaemonEnvironment;
 
@@ -72,7 +72,7 @@ export class SessionLinks extends Context.Service<
 
             yield* messageMap.record(conversation.id, messageIds, Option.some(sessionId));
             yield* bus.publish(
-              OmenEvent.ReplySent({
+              CawEvent.ReplySent({
                 conversationId: conversation.id,
                 messageIds,
                 text: outgoing.value,
@@ -84,7 +84,7 @@ export class SessionLinks extends Context.Service<
             event: HarnessEvent,
           ): Effect.Effect<ReadonlyArray<HarnessSignal>> =>
             Effect.gen(function* () {
-              yield* bus.publish(OmenEvent.HarnessEventReceived({ sessionId, event }));
+              yield* bus.publish(CawEvent.HarnessEventReceived({ sessionId, event }));
 
               return yield* Match.valueTags(event, {
                 Text: ({ text }) => Effect.as(reply(text), none),
@@ -93,7 +93,7 @@ export class SessionLinks extends Context.Service<
                 CursorUpdated: ({ cursor }) =>
                   Effect.as(sessions.saveCursor(sessionId, cursor), none),
                 TurnEnded: () =>
-                  Effect.as(bus.publish(OmenEvent.TurnEnded({ sessionId, outcome: "completed" })), [
+                  Effect.as(bus.publish(CawEvent.TurnEnded({ sessionId, outcome: "completed" })), [
                     HarnessSignal.cases.TurnCompleted.make({}),
                   ]),
                 Failed: ({ error }) =>
@@ -101,10 +101,9 @@ export class SessionLinks extends Context.Service<
                     SessionNotFound: () =>
                       Effect.succeed([HarnessSignal.cases.SessionMissing.make({})]),
                     HarnessError: ({ message }) =>
-                      Effect.as(
-                        bus.publish(OmenEvent.TurnEnded({ sessionId, outcome: "failed" })),
-                        [HarnessSignal.cases.TurnFailed.make({ message })],
-                      ),
+                      Effect.as(bus.publish(CawEvent.TurnEnded({ sessionId, outcome: "failed" })), [
+                        HarnessSignal.cases.TurnFailed.make({ message }),
+                      ]),
                   }),
               });
             });
@@ -137,12 +136,12 @@ export class SessionLinks extends Context.Service<
               cwd,
               env: {
                 ...env,
-                // The agent runs `omen` through the shim the daemon wrote.
+                // The agent runs `caw` through the shim the daemon wrote.
                 PATH: [home.binDir, ...Option.toArray(Option.fromNullishOr(env["PATH"]))].join(":"),
-                OMEN_CONVERSATION_ID: conversation.id,
-                OMEN_SESSION_ID: sessionId,
+                CAW_CONVERSATION_ID: conversation.id,
+                CAW_SESSION_ID: sessionId,
               },
-              systemPrompt: [omenPrompt(target), ...setup.systemPrompt],
+              systemPrompt: [cawPrompt(target), ...setup.systemPrompt],
               tools: setup.tools,
               skillDirs: [
                 home.skillDir,
@@ -154,7 +153,7 @@ export class SessionLinks extends Context.Service<
             });
 
             yield* Deferred.succeed(opened, live);
-            yield* bus.publish(OmenEvent.SessionOpened({ session, start: target.start }));
+            yield* bus.publish(CawEvent.SessionOpened({ session, start: target.start }));
 
             return Stream.concat(
               Stream.succeed(HarnessSignal.cases.Opened.make({})),
@@ -188,7 +187,7 @@ export class SessionLinks extends Context.Service<
             harness: Stream.unwrap(open),
             deliveries: Stream.fromQueue(inputs).pipe(Stream.mapEffect(deliver)),
             turn: Effect.gen(function* () {
-              yield* bus.publish(OmenEvent.TurnStarted({ sessionId }));
+              yield* bus.publish(CawEvent.TurnStarted({ sessionId }));
               yield* channel.typing(conversation.externalId);
 
               return yield* Effect.never;
@@ -201,7 +200,7 @@ export class SessionLinks extends Context.Service<
                   Effect.catch((error) => Effect.logWarning("Interrupting the Turn failed", error)),
                 );
                 yield* Effect.forEach(inFlight, (input) => react(input, "⏹️"));
-                yield* bus.publish(OmenEvent.TurnEnded({ sessionId, outcome: "interrupted" }));
+                yield* bus.publish(CawEvent.TurnEnded({ sessionId, outcome: "interrupted" }));
               }).pipe(Effect.uninterruptible),
             reportFailure: (failure: TurnFailure) =>
               Effect.gen(function* () {

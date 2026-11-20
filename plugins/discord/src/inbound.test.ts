@@ -1,7 +1,7 @@
 import { describe, expect, it } from "@effect/vitest";
 import { DateTime, Effect, Option } from "effect";
-import { ChannelInput, ConversationPlace } from "@omen/sdk/channel";
-import { ExternalConversationId } from "@omen/sdk/ids";
+import { ChannelInput, ConversationPlace } from "@caw/sdk/channel";
+import { ExternalConversationId } from "@caw/sdk/ids";
 import type { DiscordMessage } from "./inbound.ts";
 import { isFromPerson, parseCommand, parseMessage } from "./inbound.ts";
 
@@ -56,7 +56,7 @@ describe("parseMessage", () => {
     const parsed = Option.getOrThrow(
       parseMessage({
         ...message,
-        referenced: { id: "m0", author: { id: "u2", name: "Omen", bot: true }, content: "earlier" },
+        referenced: { id: "m0", author: { id: "u2", name: "Caw", bot: true }, content: "earlier" },
         attachments: [
           { name: "a.png", url: "https://cdn/a.png", contentType: "image/png" },
           { name: "b.bin", url: "https://cdn/b.bin", contentType: null },
@@ -65,7 +65,7 @@ describe("parseMessage", () => {
     );
 
     expect(parsed.replyTo).toEqual(
-      Option.some({ messageId: "m0", author: { id: "u2", name: "Omen" }, text: "earlier" }),
+      Option.some({ messageId: "m0", author: { id: "u2", name: "Caw" }, text: "earlier" }),
     );
     expect(parsed.attachments).toEqual([
       { name: "a.png", url: "https://cdn/a.png", contentType: Option.some("image/png") },
@@ -97,7 +97,7 @@ describe("parseCommand", () => {
     ).toEqual(Option.some("stop"));
   });
 
-  it("ignores commands Omen does not define", () => {
+  it("ignores commands Caw does not define", () => {
     expect(
       parseCommand({ commandName: "ban", channelId: "c1", place: { kind: "guild" } }, respond),
     ).toEqual(Option.none());

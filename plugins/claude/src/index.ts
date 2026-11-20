@@ -1,6 +1,6 @@
 import { Effect, Layer, Option, Schema } from "effect";
-import { PluginName } from "@omen/sdk/ids";
-import { definePlugin, Omen } from "@omen/sdk/plugin";
+import { PluginName } from "@caw/sdk/ids";
+import { definePlugin, Caw } from "@caw/sdk/plugin";
 import { claudeHarness } from "./claude-harness.ts";
 import { claudeSetup } from "./setup.ts";
 
@@ -13,9 +13,9 @@ Profile fields it honors:
 - \`env\`: added to the Session's environment, so \`CLAUDE_CONFIG_DIR\` selects another Claude config directory.
 - \`cwd\`: the Session's working directory instead of the Workspace.
 
-The daemon does not run in your shell, so it does not see your shell's environment. Set what Claude Code needs from it, such as \`CLAUDE_CONFIG_DIR\` (Claude Code keys its login by config dir), in the profile's \`env\`. \`omen install\` copies \`CLAUDE_CONFIG_DIR\` into the \`default\` profile when it is set.
+The daemon does not run in your shell, so it does not see your shell's environment. Set what Claude Code needs from it, such as \`CLAUDE_CONFIG_DIR\` (Claude Code keys its login by config dir), in the profile's \`env\`. \`caw install\` copies \`CLAUDE_CONFIG_DIR\` into the \`default\` profile when it is set.
 
-Each Plugin's tools appear as the MCP server \`omen_<plugin>\`, always loaded.`;
+Each Plugin's tools appear as the MCP server \`caw_<plugin>\`, always loaded.`;
 
 export default definePlugin({
   name: PluginName.make("claude"),
@@ -33,9 +33,9 @@ export default definePlugin({
   layer: () =>
     Layer.effectDiscard(
       Effect.gen(function* () {
-        const omen = yield* Omen;
+        const caw = yield* Caw;
 
-        yield* omen.registerHarness(claudeHarness);
+        yield* caw.registerHarness(claudeHarness);
       }),
     ),
 });

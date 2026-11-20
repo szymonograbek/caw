@@ -1,12 +1,12 @@
 import * as NodePath from "node:path";
 import { describe, expect, it } from "@effect/vitest";
-import { ConversationPlace } from "@omen/sdk/channel";
-import { ChannelName, ConversationId, ExternalConversationId } from "@omen/sdk/ids";
+import { ConversationPlace } from "@caw/sdk/channel";
+import { ChannelName, ConversationId, ExternalConversationId } from "@caw/sdk/ids";
 import { Effect, Exit, Layer, Option, Ref } from "effect";
 import { writeAgentFiles } from "../home/agent-files.ts";
-import { OmenHome } from "../home/omen-home.ts";
+import { CawHome } from "../home/caw-home.ts";
 import { DaemonLifecycle } from "../rpc/daemon-lifecycle.ts";
-import { OmenClient } from "../rpc/rpc-client.ts";
+import { CawClient } from "../rpc/rpc-client.ts";
 import { rpcServerLayer } from "../rpc/rpc-server.ts";
 import { Conversations } from "../store/conversations.ts";
 import { makeFakeChannel } from "../testing/fake-channel.ts";
@@ -28,18 +28,18 @@ const server = Layer.unwrap(
   ),
 );
 
-/** `omen <argv>` through the daemon socket, as the CLI sends it. */
-const omen = (argv: ReadonlyArray<string>, conversationId = Option.none<string>()) =>
+/** `caw <argv>` through the daemon socket, as the CLI sends it. */
+const caw = (argv: ReadonlyArray<string>, conversationId = Option.none<string>()) =>
   Effect.gen(function* () {
-    const home = yield* OmenHome;
+    const home = yield* CawHome;
 
-    return yield* OmenClient.use((client) =>
+    return yield* CawClient.use((client) =>
       client.RunCommand({
         argv,
         conversationId: Option.map(conversationId, (id) => ConversationId.make(id)),
         cwd: "/",
       }),
-    ).pipe(Effect.provide(OmenClient.layer(home.socket)));
+    ).pipe(Effect.provide(CawClient.layer(home.socket)));
   });
 
 const failure = (text: string) => Exit.fail(expect.objectContaining({ message: text }));
@@ -53,20 +53,20 @@ describe("core CLI commands", () => {
       yield* startPlugins(channel, harness);
       yield* DaemonLifecycle.use((daemon) => daemon.markReady);
 
-      expect(yield* omen(["plugin", "list"])).toBe("fake  running  (built in)");
-      expect(yield* omen(["plugin", "disable", "fake"])).toContain("Disabled plugin fake.");
-      expect(yield* omen(["plugin", "list"])).toBe("fake  disabled  (built in)");
-      expect(yield* omen(["plugin", "enable", "fake"])).toContain("Enabled plugin fake.");
-      expect(yield* omen(["plugin", "set", "fake", "mood=calm", "level=3"])).toContain(
+      expect(yield* caw(["plugin", "list"])).toBe("fake  running  (built in)");
+      expect(yield* caw(["plugin", "disable", "fake"])).toContain("Disabled plugin fake.");
+      expect(yield* caw(["plugin", "list"])).toBe("fake  disabled  (built in)");
+      expect(yield* caw(["plugin", "enable", "fake"])).toContain("Enabled plugin fake.");
+      expect(yield* caw(["plugin", "set", "fake", "mood=calm", "level=3"])).toContain(
         "Updated settings of fake.",
       );
-      expect(yield* omen(["plugin", "order", "fake"])).toBe("Plugin order: fake");
+      expect(yield* caw(["plugin", "order", "fake"])).toBe("Plugin order: fake");
 
-      expect(yield* Effect.exit(omen(["plugin", "remove", "fake"]))).toEqual(
-        failure("fake is built in; disable it instead: omen plugin disable fake"),
+      expect(yield* Effect.exit(caw(["plugin", "remove", "fake"]))).toEqual(
+        failure("fake is built in; disable it instead: caw plugin disable fake"),
       );
-      expect(yield* Effect.exit(omen(["plugin", "enable", "ghost"]))).toEqual(
-        failure("No plugin named ghost. Run `omen plugin list`."),
+      expect(yield* Effect.exit(caw(["plugin", "enable", "ghost"]))).toEqual(
+        failure("No plugin named ghost. Run `caw plugin list`."),
       );
     }).pipe(Effect.provide(server), Effect.scoped),
   );
@@ -91,11 +91,11 @@ describe("core CLI commands", () => {
 
       const inThread = Option.some(threadConversation.id);
 
-      expect(yield* Effect.exit(omen(["conversation", "show"]))).toEqual(
-        failure("Pass --conversation <id>; there is no OMEN_CONVERSATION_ID here."),
+      expect(yield* Effect.exit(caw(["conversation", "show"]))).toEqual(
+        failure("Pass --conversation <id>; there is no CAW_CONVERSATION_ID here."),
       );
 
-      const shown = yield* omen(["conversation", "show"], inThread);
+      const shown = yield* caw(["conversation", "show"], inThread);
 
       expect(shown).toContain(`Thread of ${room.id} (fake room)`);
       expect(shown).toContain("Reply mode: threaded");
@@ -103,7 +103,7 @@ describe("core CLI commands", () => {
       expect(shown).toMatch(/Session: \S+ \(live, profile default\)/);
 
       expect(
-        yield* omen(
+        yield* caw(
           ["conversation", "set", "--profile", "fast", "--reply-mode", "inline"],
           inThread,
         ),
@@ -118,7 +118,7 @@ describe("core CLI commands", () => {
       yield* channel.say(message("thread-m1", "m2", "again", thread("room")));
       yield* eventually(Effect.map(Ref.get(harness.sessions), (all) => all.length === 2));
 
-      const after = yield* omen(["conversation", "show", "--conversation", room.id]);
+      const after = yield* caw(["conversation", "show", "--conversation", room.id]);
 
       expect(after).toContain("Reply mode: inline");
       expect(after).toContain("Profile: fast");
@@ -129,13 +129,13 @@ describe("core CLI commands", () => {
     }).pipe(Effect.provide(server), Effect.scoped),
   );
 
-  it.effect("writes the core skill and the omen shim into each Session's environment", () =>
+  it.effect("writes the core skill and the caw shim into each Session's environment", () =>
     Effect.gen(function* () {
       const channel = yield* makeFakeChannel;
       const harness = yield* makeFakeHarness;
-      const home = yield* OmenHome;
+      const home = yield* CawHome;
 
-      yield* writeAgentFiles(["/opt/omen/bin/omen"]);
+      yield* writeAgentFiles(["/opt/caw/bin/caw"]);
       yield* startPlugins(channel, harness);
       yield* DaemonLifecycle.use((daemon) => daemon.markReady);
       yield* channel.say(message("dm", "m1", "hi", ConversationPlace.Direct()));
@@ -146,14 +146,14 @@ describe("core CLI commands", () => {
       expect(session?.request.env["PATH"]?.split(":")[0]).toBe(home.binDir);
       expect(session?.request.skillDirs[0]).toBe(home.skillDir);
 
-      const shim = yield* Effect.promise(() => Bun.file(NodePath.join(home.binDir, "omen")).text());
+      const shim = yield* Effect.promise(() => Bun.file(NodePath.join(home.binDir, "caw")).text());
 
       const skill = yield* Effect.promise(() =>
-        Bun.file(NodePath.join(home.skillDir, "skills", "omen", "SKILL.md")).text(),
+        Bun.file(NodePath.join(home.skillDir, "skills", "caw", "SKILL.md")).text(),
       );
 
-      expect(shim).toContain(`exec '/opt/omen/bin/omen' "$@"`);
-      expect(skill).toContain("Run `omen guide`");
+      expect(shim).toContain(`exec '/opt/caw/bin/caw' "$@"`);
+      expect(skill).toContain("Run `caw guide`");
     }).pipe(Effect.provide(server), Effect.scoped),
   );
 });

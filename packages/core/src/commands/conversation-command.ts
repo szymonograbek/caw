@@ -1,9 +1,9 @@
-import { CurrentCliContext, fromCommand } from "@omen/sdk/cli-command";
-import type { Conversation } from "@omen/sdk/conversation";
-import { ReplyMode } from "@omen/sdk/conversation";
-import { ConversationId, ProfileName } from "@omen/sdk/ids";
-import { CliCommandError } from "@omen/sdk/plugin";
-import { defaultProfileName } from "@omen/sdk/profile";
+import { CurrentCliContext, fromCommand } from "@caw/sdk/cli-command";
+import type { Conversation } from "@caw/sdk/conversation";
+import { ReplyMode } from "@caw/sdk/conversation";
+import { ConversationId, ProfileName } from "@caw/sdk/ids";
+import { CliCommandError } from "@caw/sdk/plugin";
+import { defaultProfileName } from "@caw/sdk/profile";
 import { Console, Effect, Option } from "effect";
 import { Command, Flag } from "effect/cli";
 import { Registration, Registry } from "../plugins/registry.ts";
@@ -14,7 +14,7 @@ import { Sessions } from "../store/sessions.ts";
 const conversationFlag = Flag.String("conversation").pipe(
   Flag.withSchema(ConversationId),
   Flag.optional,
-  Flag.withDescription("The Conversation id; defaults to OMEN_CONVERSATION_ID"),
+  Flag.withDescription("The Conversation id; defaults to CAW_CONVERSATION_ID"),
 );
 
 const failWith = (message: string) => Effect.fail(new CliCommandError({ message }));
@@ -22,7 +22,7 @@ const failWith = (message: string) => Effect.fail(new CliCommandError({ message 
 const describeConversation = (conversation: Conversation) =>
   `${conversation.id} (${conversation.channel} ${conversation.externalId})`;
 
-/** Core's `omen conversation set | show`: the top-level Conversation's profile and Reply mode. */
+/** Core's `caw conversation set | show`: the top-level Conversation's profile and Reply mode. */
 export const conversationCommand = Effect.gen(function* () {
   const conversations = yield* Conversations;
   const places = yield* ConversationPlaces;
@@ -37,7 +37,7 @@ export const conversationCommand = Effect.gen(function* () {
     const id = Option.orElse(flag, () => context.conversationId);
 
     if (Option.isNone(id)) {
-      return yield* failWith("Pass --conversation <id>; there is no OMEN_CONVERSATION_ID here.");
+      return yield* failWith("Pass --conversation <id>; there is no CAW_CONVERSATION_ID here.");
     }
 
     const found = yield* conversations.get(id.value);
@@ -85,7 +85,7 @@ export const conversationCommand = Effect.gen(function* () {
 
         if (Option.isSome(profile)) {
           if (!(yield* profileExists(profile.value))) {
-            return yield* failWith(`No profile named ${profile.value}. Run \`omen profile list\`.`);
+            return yield* failWith(`No profile named ${profile.value}. Run \`caw profile list\`.`);
           }
 
           yield* conversations.setProfile(root.id, profile);

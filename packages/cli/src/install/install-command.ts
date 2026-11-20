@@ -1,9 +1,9 @@
-import type { LoadedPlugin } from "@omen/core/loaded-plugin";
-import { OfflineHost } from "@omen/core/offline-host";
-import { OmenHome } from "@omen/core/omen-home";
-import type { PluginName } from "@omen/sdk/ids";
-import type { PluginSetup } from "@omen/sdk/setup";
-import { SetupQuestion as Question } from "@omen/sdk/setup";
+import type { LoadedPlugin } from "@caw/core/loaded-plugin";
+import { OfflineHost } from "@caw/core/offline-host";
+import { CawHome } from "@caw/core/caw-home";
+import type { PluginName } from "@caw/sdk/ids";
+import type { PluginSetup } from "@caw/sdk/setup";
+import { SetupQuestion as Question } from "@caw/sdk/setup";
 import { Config, Effect, Option } from "effect";
 import { Command, Flag } from "effect/cli";
 import { CliFailure } from "../cli-failure.ts";
@@ -11,7 +11,7 @@ import { Invocation } from "../invocation.ts";
 import type { Asking, QuestionFlags } from "./ask.ts";
 import { ask, configureWith, flagNameOf, splitNames } from "./ask.ts";
 import { serviceFile } from "./service-file.ts";
-import { Launch, startOmen } from "./start-omen.ts";
+import { Launch, startCaw } from "./start-caw.ts";
 import { WizardUi } from "./wizard-ui.ts";
 
 type Role = PluginSetup["_tag"];
@@ -117,9 +117,9 @@ const pickFeatures = (
   });
 
 /**
- * `omen install`, the first-run wizard. Each step lists what the built-in and
+ * `caw install`, the first-run wizard. Each step lists what the built-in and
  * installed Plugins offer; each question has a flag, so it also runs without a
- * terminal. It ends with Omen running.
+ * terminal. It ends with Caw running.
  */
 export const installCommand = (
   builtins: ReadonlyArray<LoadedPlugin>,
@@ -161,7 +161,7 @@ export const installCommand = (
       service: Flag.Boolean("service").pipe(
         Flag.optional,
         Flag.withDescription(
-          "Start Omen at login with a launchd agent or systemd user unit (default); --no-service starts it only now",
+          "Start Caw at login with a launchd agent or systemd user unit (default); --no-service starts it only now",
         ),
       ),
       answers: questionFlags,
@@ -170,12 +170,12 @@ export const installCommand = (
       Effect.gen(function* () {
         const ui = yield* WizardUi;
         const offline = yield* OfflineHost;
-        const home = yield* OmenHome;
+        const home = yield* CawHome;
         const invocation = yield* Invocation;
         const asking: Asking = { yes: input.yes };
         const answers: QuestionFlags = input.answers;
 
-        yield* ui.intro("Omen setup");
+        yield* ui.intro("Caw setup");
 
         const channel = yield* pick(asking, "Channel", channels, input.channel);
         const channelConfig = yield* configureWith(asking, answers, channel.setup);
@@ -231,7 +231,7 @@ export const installCommand = (
           ]);
 
           // The model and settings already show as answers; the full line would wrap past the guide bar.
-          yield* ui.lines(["Saved them as the default profile (omen profile list)"]);
+          yield* ui.lines(["Saved them as the default profile (caw profile list)"]);
 
           if (!enabledFeatures.has(profiles.name)) {
             yield* ui.warn("The profiles plugin is disabled, so Sessions ignore that profile.");
@@ -240,7 +240,7 @@ export const installCommand = (
 
         const service = serviceFile(invocation.platform, {
           userHome: yield* Config.String("HOME"),
-          omenHome: home.root,
+          cawHome: home.root,
           cli: invocation.cli,
           path: yield* Config.String("PATH").pipe(Config.withDefault("/usr/bin:/bin")),
           userId: invocation.userId,
@@ -250,18 +250,18 @@ export const installCommand = (
           onNone: () =>
             Effect.as(
               ui.warn(
-                `Omen cannot start at login on ${invocation.platform}; it runs until you stop it or restart.`,
+                `Caw cannot start at login on ${invocation.platform}; it runs until you stop it or restart.`,
               ),
               Launch.Now({ previous: Option.none() }),
             ),
           onSome: (file) =>
             ask(asking, {
-              message: "Start Omen at login?",
+              message: "Start Caw at login?",
               given: input.service,
               fallback: Option.some(true),
               missing: "",
               describe: (atLogin) => (atLogin ? "Yes" : "No"),
-              prompt: ui.confirm("Start Omen at login?", true),
+              prompt: ui.confirm("Start Caw at login?", true),
             }).pipe(
               Effect.map((atLogin) =>
                 atLogin
@@ -271,12 +271,12 @@ export const installCommand = (
             ),
         });
 
-        yield* startOmen(launch);
+        yield* startCaw(launch);
 
-        yield* ui.outro(`Omen is set up. Say hello on ${channel.setup.title}.`, [
-          ["omen status", "check on it"],
-          ["omen guide", "what it can do"],
-          ["omen logs -f", "follow its log"],
+        yield* ui.outro(`Caw is set up. Say hello on ${channel.setup.title}.`, [
+          ["caw status", "check on it"],
+          ["caw guide", "what it can do"],
+          ["caw logs -f", "follow its log"],
         ]);
       }).pipe(
         Effect.catchTags({
@@ -286,5 +286,5 @@ export const installCommand = (
           ConfigError: (error) => Effect.fail(new CliFailure({ message: error.message })),
         }),
       ),
-  ).pipe(Command.withDescription("Set Omen up: Channel, Harness, plugins, then start it"));
+  ).pipe(Command.withDescription("Set Caw up: Channel, Harness, plugins, then start it"));
 };

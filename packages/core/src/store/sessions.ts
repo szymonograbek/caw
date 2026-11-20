@@ -1,6 +1,6 @@
-import { Session, SessionStatus } from "@omen/sdk/conversation";
-import { ResumeCursor } from "@omen/sdk/harness";
-import { ConversationId, HarnessName, ProfileName, SessionId } from "@omen/sdk/ids";
+import { Session, SessionStatus } from "@caw/sdk/conversation";
+import { ResumeCursor } from "@caw/sdk/harness";
+import { ConversationId, HarnessName, ProfileName, SessionId } from "@caw/sdk/ids";
 import { and, desc, eq, inArray } from "drizzle-orm";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { Clock, Context, Effect, Layer, Option, Schema } from "effect";
@@ -68,7 +68,7 @@ export class Sessions extends Context.Service<
     /** After a crash no Session is live; each resumes on its next message. */
     readonly idleAllLive: Effect.Effect<void>;
   }
->()("@omen/core/Sessions") {
+>()("@caw/core/Sessions") {
   static readonly layer = Layer.effect(
     Sessions,
     Effect.gen(function* () {

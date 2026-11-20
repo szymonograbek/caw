@@ -1,4 +1,4 @@
-# Omen — v1 spec
+# Caw — v1 spec
 
 Terms are defined in [GLOSSARY.md](../GLOSSARY.md). Key decisions are in [docs/adr](./adr).
 
@@ -13,10 +13,10 @@ A minimal daemon that lets trusted people talk to agent Harnesses (Claude Agent 
 - **Repo**: Bun workspaces monorepo.
   - `packages/sdk` — public plugin API (types, Event union, Interceptor types, services). The only thing plugins import.
   - `packages/core` — daemon, store, routing, RPC.
-  - `packages/cli` — the `omen` binary.
+  - `packages/cli` — the `caw` binary.
   - `plugins/*` — built-in plugins.
-- **Stack**: Bun, Effect v4. Distributed as an npm package (`bun add -g omen`), or compiled into a single `omen` binary (`bun run install:global`). Omen runs the Claude Code installed on the host (`claude` on `PATH`), not a bundled copy.
-- **State**: everything under `~/.omen/` (DB, plugins, Workspaces, logs, `.env`), so migrating machines is a folder copy.
+- **Stack**: Bun, Effect v4. Distributed as an npm package (`bun add -g caw`), or compiled into a single `caw` binary (`bun run install:global`). Caw runs the Claude Code installed on the host (`claude` on `PATH`), not a bundled copy.
+- **State**: everything under `~/.caw/` (DB, plugins, Workspaces, logs, `.env`), so migrating machines is a folder copy.
 
 ## Conversations and Sessions
 
@@ -24,7 +24,7 @@ A minimal daemon that lets trusted people talk to agent Harnesses (Claude Agent 
 
 Configured per Conversation:
 
-- `threaded` (default for guild channels): each top-level message makes Omen open a thread; that thread is a new Session.
+- `threaded` (default for guild channels): each top-level message makes Caw open a thread; that thread is a new Session.
 - `inline` (always for DMs): the Conversation is one Session; replies go in the main chat. A thread a person opens off a message Forks the main Session into a new one.
 
 Every message triggers a reply; no mention is needed. `/new` resets the Conversation's Session. `/stop` interrupts the current Turn.
@@ -46,7 +46,7 @@ A Session is permanently bound to the Harness profile it started with. Changing 
 
 ### Lost Session recovery
 
-The Harness's "conversation not found" error maps to a typed error. Omen then:
+The Harness's "conversation not found" error maps to a typed error. Caw then:
 
 1. Marks the Session `lost`.
 2. Starts a new Session whose first input includes a `<channel-history>` block with the last ~50 Channel messages.
@@ -90,7 +90,7 @@ LiveSession: send(message), interrupt(), close(), events: Stream<HarnessEvent>
 HarnessEvent: Text | ToolCall | ToolResult | TurnEnded | Error | CursorUpdated
 ```
 
-- Tools arrive Harness-agnostic (Effect Schema params plus an Effect handler). Each Harness maps them; Claude uses one in-process MCP server per plugin (`omen_<plugin>`), always loaded (never deferred).
+- Tools arrive Harness-agnostic (Effect Schema params plus an Effect handler). Each Harness maps them; Claude uses one in-process MCP server per plugin (`caw_<plugin>`), always loaded (never deferred).
 - Each Harness decodes its opaque `resume_cursor_json` with its own Schema at the boundary.
 
 ### Claude Harness specifics
@@ -98,14 +98,14 @@ HarnessEvent: Text | ToolCall | ToolResult | TurnEnded | Error | CursorUpdated
 - `permissionMode: bypassPermissions` everywhere (ADR 0001).
 - `settingSources` come from the profile; the default is `['user','project','local']`.
 - `effort` comes from the profile; the default is `medium`.
-- The system prompt is the `claude_code` preset plus a short fixed Omen append. It tells the agent:
-  - it is Omen, talking through `<Channel>`;
+- The system prompt is the `claude_code` preset plus a short fixed Caw append. It tells the agent:
+  - it is Caw, talking through `<Channel>`;
   - to write Discord markdown;
-  - to run `omen guide` to learn its controls.
+  - to run `caw guide` to learn its controls.
 
   `snapshot` stays at its default so the prompt is stable for the Session's lifetime.
-- `env` is `process.env` plus the profile env plus `OMEN_CONVERSATION_ID` and `OMEN_SESSION_ID`.
-- Omen's core skill and plugin skill directories are passed as a local Claude plugin.
+- `env` is `process.env` plus the profile env plus `CAW_CONVERSATION_ID` and `CAW_SESSION_ID`.
+- Caw's core skill and plugin skill directories are passed as a local Claude plugin.
 
 ## Prompt caching rules
 
@@ -120,7 +120,7 @@ HarnessEvent: Text | ToolCall | ToolResult | TurnEnded | Error | CursorUpdated
 
 - A plugin is a default-exported Effect `Layer`. Its scope is the plugin's lifetime: disabling it closes the scope, which cancels subscriptions and runs finalizers.
 - **Events** (observe only):
-  - Core publishes every event (daemon, Channel messages, Conversation, Session, Turn, all Harness events, replies) as a tagged `OmenEvent` union on a `PubSub`.
+  - Core publishes every event (daemon, Channel messages, Conversation, Session, Turn, all Harness events, replies) as a tagged `CawEvent` union on a `PubSub`.
   - Plugins consume them as a `Stream`.
   - Each subscriber has its own queue, so slow plugins never block core.
 - **Interceptors** (change the flow): an ordered chain per interception point. Core folds through the chain and stops at the first `drop`, `handled`, or `block`.
@@ -139,14 +139,14 @@ HarnessEvent: Text | ToolCall | ToolResult | TurnEnded | Error | CursorUpdated
   - `store`;
   - an inter-plugin event bus.
 - **No guard rails** beyond typing; plugins may break things.
-- **Order**: install order by default, changed with `omen plugin order`.
-- **Package**: a default export plus an `omen` key in `package.json` (name, version, settings schema).
-- **Install**: `omen plugin add <git-url | npm-name | path>` installs into `~/.omen/plugins/<name>/` and runs `bun install`. Built-ins ship inside Omen and are enabled by default.
+- **Order**: install order by default, changed with `caw plugin order`.
+- **Package**: a default export plus an `caw` key in `package.json` (name, version, settings schema).
+- **Install**: `caw plugin add <git-url | npm-name | path>` installs into `~/.caw/plugins/<name>/` and runs `bun install`. Built-ins ship inside Caw and are enabled by default.
 - **Storage**: plugins can own tables `plugin_<name>_*` in the core DB, with migrations core runs, or use a key-value `store.get/set`.
 
 ## Persistence
 
-- sqlite at `~/.omen/omen.db`.
+- sqlite at `~/.caw/caw.db`.
 - Pragmas: `journal_mode=WAL`, `busy_timeout=5000`, `foreign_keys=ON`, `synchronous=NORMAL`.
 - Effect `Migrator` with numbered, idempotent migration modules. Branded ids.
 
@@ -162,17 +162,17 @@ There is no event log, projection, or message table: the Channel is the history.
 
 ## Control surface (ADR 0002)
 
-- The `omen` CLI is the only control surface. It talks to the daemon over RPC on `~/.omen/omen.sock`.
+- The `caw` CLI is the only control surface. It talks to the daemon over RPC on `~/.caw/caw.sock`.
 - `start`, `install`, `guide`, and `plugin add` work without a running daemon.
-- The agent uses the same CLI through its shell. A tiny core skill tells it to run `omen guide`. `omen guide` lists topics; `omen guide <topic>` explains one. Plugins add pages.
-- The current Conversation is resolved from `OMEN_CONVERSATION_ID`.
+- The agent uses the same CLI through its shell. A tiny core skill tells it to run `caw guide`. `caw guide` lists topics; `caw guide <topic>` explains one. Plugins add pages.
+- The current Conversation is resolved from `CAW_CONVERSATION_ID`.
 - Commands:
   - `start | stop | status | install`
   - `install` is the first-run setup wizard. Each step lists what installed plugins offer, never a hardcoded menu:
-    1. Pick a Channel (Discord today) and enter its config. The Discord bot token is checked live and saved to `~/.omen/.env`. If the bot is in no server, the wizard prints an invite URL.
+    1. Pick a Channel (Discord today) and enter its config. The Discord bot token is checked live and saved to `~/.caw/.env`. If the bot is in no server, the wizard prints an invite URL.
     2. Pick a Harness (Claude today) and its options. These become the `default` Harness profile.
     3. Pick which feature plugins to enable.
-    4. Ask whether to start Omen at login (default yes). Yes writes and loads a launchd plist (macOS first) or a systemd user unit; no starts the daemon in the background now. Either way Omen is running when the wizard ends, restarted if it already ran.
+    4. Ask whether to start Caw at login (default yes). Yes writes and loads a launchd plist (macOS first) or a systemd user unit; no starts the daemon in the background now. Either way Caw is running when the wizard ends, restarted if it already ran.
 
     Every prompt has a flag, so `install` also runs non-interactively. Plugins take part through an optional `setup` in their definition.
   - `logs [-f]`
@@ -182,7 +182,7 @@ There is no event log, projection, or message table: the Channel is the history.
   - `conversation set | show`
   - `schedule add | list | remove`
   - `memory export`
-- Logs are structured JSON in `~/.omen/logs/omen.log`. No telemetry.
+- Logs are structured JSON in `~/.caw/logs/caw.log`. No telemetry.
 
 ## Built-in plugins
 
@@ -191,8 +191,8 @@ There is no event log, projection, or message table: the Channel is the history.
 - Channel implementation: guild channels, threads, and DMs.
 - Reply mode handling, typing indicator, 2000-char chunking.
 - The `react` tool and automatic ❌ / ⏹️.
-- Bot token comes from env (`~/.omen/.env`).
-- A bot with no avatar gets Omen's raven when it connects. An avatar set in the Discord developer portal is never replaced.
+- Bot token comes from env (`~/.caw/.env`).
+- A bot with no avatar gets Caw's raven when it connects. An avatar set in the Discord developer portal is never replaced.
 
 ### claude
 
@@ -200,8 +200,8 @@ The Claude Agent SDK Harness (see above).
 
 ### profiles
 
-- `omen profile add <name> --harness claude --env K=V … [--model] [--effort] [--cwd] [--settings-sources]`.
-- `omen conversation set --profile <name>`.
+- `caw profile add <name> --harness claude --env K=V … [--model] [--effort] [--cwd] [--settings-sources]`.
+- `caw conversation set --profile <name>`.
 - A `default` profile applies when none is set.
 - The profile's cwd overrides the Workspace default.
 
@@ -211,17 +211,17 @@ The Claude Agent SDK Harness (see above).
 - Tools: `memory_save`, `memory_update`, `memory_forget`, `memory_list` (titles only), `memory_read`, `memory_pin`.
 - Pinned Memories are injected at `SessionOpening` within a ~2000-char budget.
 - Hard caps: 100 per scope, 1000 chars each. A save over a cap is rejected and the agent is told to merge or forget. No auto-eviction.
-- `omen memory export` writes markdown.
+- `caw memory export` writes markdown.
 
 ### scheduler
 
-- A Schedule is a cron expression or a one-off time, plus a target Conversation and a prompt. It is created via `omen schedule add` (by the user or the agent).
+- A Schedule is a cron expression or a one-off time, plus a target Conversation and a prompt. It is created via `caw schedule add` (by the user or the agent).
 - When it fires, it is delivered as a `<task>` message following the Conversation's Reply mode: a new thread when `threaded`, the main Session when `inline`.
 - Missed runs: at most one catch-up per Schedule, and only if the missed run was due within the last 24h.
 
 ## Workspace
 
-- Default `~/.omen/conversations/<top-level-id>/`: the Sessions' cwd, the Conversation's CLAUDE.md, and `inbox/`.
+- Default `~/.caw/conversations/<top-level-id>/`: the Sessions' cwd, the Conversation's CLAUDE.md, and `inbox/`.
 - Overridable by the profile's cwd.
 
 ## Security (ADR 0001)

@@ -1,7 +1,7 @@
 import { Effect, Layer } from "effect";
 import { EventBus } from "./events/event-bus.ts";
 import { HostFiles } from "./home/host-files.ts";
-import { OmenHome } from "./home/omen-home.ts";
+import { CawHome } from "./home/caw-home.ts";
 import { InterceptorChains } from "./plugins/interceptor-chains.ts";
 import { PluginHost } from "./plugins/plugin-host.ts";
 import { PluginInstaller } from "./plugins/plugin-installer.ts";
@@ -23,7 +23,7 @@ import { Sessions } from "./store/sessions.ts";
 
 const database = Layer.unwrap(
   Effect.gen(function* () {
-    const home = yield* OmenHome;
+    const home = yield* CawHome;
     const files = yield* HostFiles;
 
     yield* files.ensureDirectory(home.root).pipe(Effect.orDie);
@@ -63,7 +63,7 @@ const plugins = PluginHost.layer.pipe(
 );
 
 /**
- * Every core service over one `OmenHome`: store, Plugin host, routing and the
+ * Every core service over one `CawHome`: store, Plugin host, routing and the
  * live-Session pool. Logging, RPC and the process environment come from the
  * entry point.
  */

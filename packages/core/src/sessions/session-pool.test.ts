@@ -1,7 +1,7 @@
 import { describe, expect, it } from "@effect/vitest";
-import { ConversationPlace } from "@omen/sdk/channel";
-import { HarnessEvent, SessionStart } from "@omen/sdk/harness";
-import { ChannelName, ExternalConversationId } from "@omen/sdk/ids";
+import { ConversationPlace } from "@caw/sdk/channel";
+import { HarnessEvent, SessionStart } from "@caw/sdk/harness";
+import { ChannelName, ExternalConversationId } from "@caw/sdk/ids";
 import { Effect, Layer, Option, Queue, Ref } from "effect";
 import { TestClock } from "effect/testing";
 import { Conversations } from "../store/conversations.ts";

@@ -1,6 +1,6 @@
 import { Effect, Layer, Option, Schema } from "effect";
-import { PluginName } from "@omen/sdk/ids";
-import { definePlugin, Omen } from "@omen/sdk/plugin";
+import { PluginName } from "@caw/sdk/ids";
+import { definePlugin, Caw } from "@caw/sdk/plugin";
 import { profilesGuide } from "./guide.ts";
 import { profileCommand } from "./profile-command.ts";
 import { ProfileStore } from "./profile-store.ts";
@@ -8,13 +8,13 @@ import { profilesMigrations } from "./profiles-table.ts";
 
 const pluginLayer = Layer.effectDiscard(
   Effect.gen(function* () {
-    const omen = yield* Omen;
+    const caw = yield* Caw;
     const store = yield* ProfileStore;
 
     const command = yield* profileCommand;
 
-    yield* omen.registerProfiles(store.find);
-    yield* omen.registerCliCommand(command);
+    yield* caw.registerProfiles(store.find);
+    yield* caw.registerCliCommand(command);
   }),
 ).pipe(Layer.provide(ProfileStore.layer));
 

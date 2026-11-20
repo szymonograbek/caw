@@ -1,7 +1,7 @@
 import { Effect } from "effect";
 import { SqlClient } from "effect/sql";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
-import type { Migration } from "@omen/sdk/plugin";
+import type { Migration } from "@caw/sdk/plugin";
 
 export const schedulesTable = sqliteTable("plugin_scheduler_schedules", {
   id: integer("id").primaryKey({ autoIncrement: true }),

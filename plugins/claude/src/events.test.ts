@@ -7,7 +7,7 @@ import type {
 } from "@anthropic-ai/claude-agent-sdk";
 import { describe, expect, it } from "@effect/vitest";
 import { Option } from "effect";
-import { HarnessEvent, SessionNotFound } from "@omen/sdk/harness";
+import { HarnessEvent, SessionNotFound } from "@caw/sdk/harness";
 import { claudeError, claudeHarnessName } from "./claude-error.ts";
 import { ClaudeSessionId, encodeCursor } from "./cursor.ts";
 import type { ReportedSession } from "./events.ts";

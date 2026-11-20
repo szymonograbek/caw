@@ -1,7 +1,7 @@
 import * as NodePath from "node:path";
 import { describe, expect, it } from "@effect/vitest";
-import { Conversation } from "@omen/sdk/conversation";
-import { ChannelName, ConversationId, ExternalConversationId } from "@omen/sdk/ids";
+import { Conversation } from "@caw/sdk/conversation";
+import { ChannelName, ConversationId, ExternalConversationId } from "@caw/sdk/ids";
 import { Effect, Layer, Option } from "effect";
 import { SqlClient } from "effect/sql";
 import { temporaryHome } from "../testing/test-daemon.ts";
@@ -24,7 +24,7 @@ describe("core migrations", () => {
   it.effect("run once and keep the data when the database is reused", () =>
     Effect.gen(function* () {
       const home = yield* temporaryHome;
-      const filename = NodePath.join(home, "omen.db");
+      const filename = NodePath.join(home, "caw.db");
 
       yield* Conversations.use((conversations) => conversations.insert(conversation)).pipe(
         Effect.provide(store(filename)),

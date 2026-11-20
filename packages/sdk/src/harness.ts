@@ -75,12 +75,12 @@ export interface OpenSession {
   readonly sessionId: SessionId;
   readonly profile: Profile;
   readonly cwd: string;
-  /** Merged env: process env, profile env, plugin env, `OMEN_CONVERSATION_ID`, `OMEN_SESSION_ID`. */
+  /** Merged env: process env, profile env, plugin env, `CAW_CONVERSATION_ID`, `CAW_SESSION_ID`. */
   readonly env: Readonly<Record<string, string>>;
   /** Appended after the Harness's own system prompt, in order. Fixed for the Session's lifetime. */
   readonly systemPrompt: ReadonlyArray<string>;
   readonly tools: ReadonlyArray<ToolGroup>;
-  /** Skill directories to load (Omen's core skill and each Plugin's). */
+  /** Skill directories to load (Caw's core skill and each Plugin's). */
   readonly skillDirs: ReadonlyArray<string>;
   /** Runs the ToolCall interceptor chain; the Harness calls it before every tool use. */
   readonly interceptToolCall: (request: ToolCallRequest) => Effect.Effect<ToolCallDecision>;

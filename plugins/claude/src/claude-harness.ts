@@ -7,8 +7,8 @@ import type {
 import { query } from "@anthropic-ai/claude-agent-sdk";
 import type { Cause } from "effect";
 import { Effect, FiberSet, Option, Predicate, Queue, Schema, Stream } from "effect";
-import type { Harness, HarnessError, OpenSession } from "@omen/sdk/harness";
-import { HarnessEvent, SessionStart } from "@omen/sdk/harness";
+import type { Harness, HarnessError, OpenSession } from "@caw/sdk/harness";
+import { HarnessEvent, SessionStart } from "@caw/sdk/harness";
 import { claudeError, claudeHarnessName } from "./claude-error.ts";
 import { claudeExecutable } from "./claude-executable.ts";
 import { decodeCursor } from "./cursor.ts";

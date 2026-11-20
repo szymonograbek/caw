@@ -1,6 +1,6 @@
 import { Effect, Layer, Option, Schema } from "effect";
-import { PluginName } from "@omen/sdk/ids";
-import { definePlugin, Omen } from "@omen/sdk/plugin";
+import { PluginName } from "@caw/sdk/ids";
+import { definePlugin, Caw } from "@caw/sdk/plugin";
 import { scheduleGuide } from "./guide.ts";
 import { scheduleCommand } from "./schedule-command.ts";
 import { ScheduleStore } from "./schedule-store.ts";
@@ -11,10 +11,10 @@ const schedulerLayer = Scheduler.layer.pipe(Layer.provide(ScheduleStore.layer));
 
 const pluginLayer = Layer.effectDiscard(
   Effect.gen(function* () {
-    const omen = yield* Omen;
+    const caw = yield* Caw;
     const command = yield* scheduleCommand;
 
-    yield* omen.registerCliCommand(command);
+    yield* caw.registerCliCommand(command);
   }),
 ).pipe(Layer.provide(schedulerLayer));
 

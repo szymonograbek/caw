@@ -1,5 +1,5 @@
 {
-  "name": "@omen/plugin-discord",
+  "name": "@caw/plugin-discord",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -7,14 +7,14 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "@omen/sdk": "workspace:*",
+    "@caw/sdk": "workspace:*",
     "discord.js": "14.28.1",
     "effect": "4.1.4"
   },
   "devDependencies": {
     "@effect/vitest": "4.1.4"
   },
-  "omen": {
+  "caw": {
     "name": "discord",
     "version": "0.0.0"
   }

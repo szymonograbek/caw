@@ -1,9 +1,9 @@
 import * as NodePath from "node:path";
-import type { ChannelMessage } from "@omen/sdk/channel";
+import type { ChannelMessage } from "@caw/sdk/channel";
 import { Context, Effect, Layer, Option } from "effect";
 import { HttpClient } from "effect/http";
 import { HostFiles } from "../home/host-files.ts";
-import { OmenHome } from "../home/omen-home.ts";
+import { CawHome } from "../home/caw-home.ts";
 import type { AttachmentRef } from "./inbound-format.ts";
 import { referencesOf } from "./inbound-format.ts";
 
@@ -17,13 +17,13 @@ export class Attachments extends Context.Service<
       message: ChannelMessage,
     ) => Effect.Effect<ReadonlyArray<AttachmentRef>>;
   }
->()("@omen/core/Attachments") {
+>()("@caw/core/Attachments") {
   static readonly layer = Layer.effect(
     Attachments,
     Effect.gen(function* () {
       const http = HttpClient.filterStatusOk(yield* HttpClient.HttpClient);
       const files = yield* HostFiles;
-      const home = yield* OmenHome;
+      const home = yield* CawHome;
 
       return {
         save: Effect.fn("Attachments.save")(function* (workspace: string, message: ChannelMessage) {

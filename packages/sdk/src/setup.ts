@@ -11,7 +11,7 @@ export interface SetupChoice {
 }
 
 /**
- * One answer `omen install` collects for a Plugin. It is prompted for, or read
+ * One answer `caw install` collects for a Plugin. It is prompted for, or read
  * from `--<flag>` so the wizard also runs without a terminal. `flag` must be
  * unique across Plugins, so prefix it with the Plugin's name when it is not
  * obviously the Plugin's own.
@@ -86,7 +86,7 @@ export interface HarnessConfigured {
 }
 
 /**
- * A Plugin's part in `omen install`. A Plugin without one is a feature: the
+ * A Plugin's part in `caw install`. A Plugin without one is a feature: the
  * wizard only asks whether to enable it.
  */
 export type PluginSetup = Data.TaggedEnum<{

@@ -1,7 +1,7 @@
 import { ConfigProvider, Context, Effect, Layer, Option } from "effect";
 import { HostFiles } from "./host-files.ts";
 import { parseDotEnv } from "./env-file.ts";
-import { OmenHome } from "./omen-home.ts";
+import { CawHome } from "./caw-home.ts";
 
 /**
  * The daemon's environment: `<home>/.env` overlaid by the process environment.
@@ -10,13 +10,13 @@ import { OmenHome } from "./omen-home.ts";
 export class DaemonEnvironment extends Context.Service<
   DaemonEnvironment,
   { readonly vars: Readonly<Record<string, string>> }
->()("@omen/core/DaemonEnvironment") {
+>()("@caw/core/DaemonEnvironment") {
   /** `process` holds the variables Bun started with; this is the one place core reads them. */
   static readonly layer = Layer.effect(
     DaemonEnvironment,
     Effect.gen(function* () {
       const files = yield* HostFiles;
-      const home = yield* OmenHome;
+      const home = yield* CawHome;
       const contents = yield* files.readText(home.envFile);
 
       return { vars: { ...parseDotEnv(Option.getOrElse(contents, () => "")), ...processVars() } };

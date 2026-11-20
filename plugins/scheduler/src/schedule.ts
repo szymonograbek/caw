@@ -1,5 +1,5 @@
 import { Cron, DateTime, Duration, Option, Result, Schema } from "effect";
-import { ConversationId } from "@omen/sdk/ids";
+import { ConversationId } from "@caw/sdk/ids";
 
 export const ScheduleId = Schema.Int.pipe(Schema.brand("ScheduleId"));
 

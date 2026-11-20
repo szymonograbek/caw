@@ -1,7 +1,7 @@
-import type { Channel } from "@omen/sdk/channel";
-import type { Conversation, Session } from "@omen/sdk/conversation";
-import type { SessionStart } from "@omen/sdk/harness";
-import type { Profile } from "@omen/sdk/profile";
+import type { Channel } from "@caw/sdk/channel";
+import type { Conversation, Session } from "@caw/sdk/conversation";
+import type { SessionStart } from "@caw/sdk/harness";
+import type { Profile } from "@caw/sdk/profile";
 
 /** Everything a Session needs to run, decided by routing. */
 export interface SessionTarget {

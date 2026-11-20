@@ -1,6 +1,6 @@
 import { Context, DateTime, Duration, Effect, Layer, Option, Queue } from "effect";
-import type { ConversationId } from "@omen/sdk/ids";
-import { Omen } from "@omen/sdk/plugin";
+import type { ConversationId } from "@caw/sdk/ids";
+import { Caw } from "@caw/sdk/plugin";
 import type { Schedule, ScheduleId } from "./schedule.ts";
 import { dueRun } from "./schedule.ts";
 import type { NewSchedule } from "./schedule-store.ts";
@@ -19,11 +19,11 @@ export class Scheduler extends Context.Service<
     ) => Effect.Effect<ReadonlyArray<Schedule>>;
     readonly remove: (id: ScheduleId) => Effect.Effect<boolean>;
   }
->()("@omen/plugin-scheduler/Scheduler") {
+>()("@caw/plugin-scheduler/Scheduler") {
   static readonly layer = Layer.effect(
     Scheduler,
     Effect.gen(function* () {
-      const omen = yield* Omen;
+      const caw = yield* Caw;
       const store = yield* ScheduleStore;
       const changed = yield* Queue.sliding<void>(1);
       const signalChange = Queue.offer(changed, undefined);
@@ -39,7 +39,7 @@ export class Scheduler extends Context.Service<
             store.markRun(schedule.id, next, run.deliver ? Option.some(now) : Option.none()),
         });
 
-        const deliver = omen
+        const deliver = caw
           .deliverTask(schedule.conversationId, schedule.prompt)
           .pipe(
             Effect.catchTag("ConversationNotFound", () =>

@@ -1,11 +1,11 @@
-import type { PluginName } from "@omen/sdk/ids";
-import { CliCommandError } from "@omen/sdk/plugin";
+import type { PluginName } from "@caw/sdk/ids";
+import { CliCommandError } from "@caw/sdk/plugin";
 import { Context, Effect, Layer, Option } from "effect";
 import { resolvePluginSource } from "../commands/plugin-command.ts";
 import { updateDotEnv } from "../home/env-file.ts";
 import type { HostFileError } from "../home/host-files.ts";
 import { HostFiles } from "../home/host-files.ts";
-import { OmenHome } from "../home/omen-home.ts";
+import { CawHome } from "../home/caw-home.ts";
 import { hostCoreLayer } from "../host-core-layer.ts";
 import { PluginRows } from "../store/plugin-rows.ts";
 import type { LoadedPlugin } from "./loaded-plugin.ts";
@@ -27,7 +27,7 @@ export class OfflineHost extends Context.Service<
     readonly saveEnv: (
       entries: Readonly<Record<string, string>>,
     ) => Effect.Effect<void, HostFileError>;
-    /** `omen plugin add` without a daemon; the daemon starts it on its next start. */
+    /** `caw plugin add` without a daemon; the daemon starts it on its next start. */
     readonly add: (source: string, cwd: string) => Effect.Effect<PluginName, PluginInstallError>;
     /**
      * Records the built-ins as the daemon's first start would, then sets each
@@ -38,7 +38,7 @@ export class OfflineHost extends Context.Service<
       choices: ReadonlyArray<readonly [PluginName, boolean]>,
     ) => Effect.Effect<void>;
     /**
-     * Starts only `plugin`, with its stored settings, and runs `omen <argv>`
+     * Starts only `plugin`, with its stored settings, and runs `caw <argv>`
      * against the commands it registers. For Plugins whose command just
      * writes their own store, such as `profile add`.
      */
@@ -47,7 +47,7 @@ export class OfflineHost extends Context.Service<
       argv: ReadonlyArray<string>,
     ) => Effect.Effect<string, CliCommandError>;
   }
->()("@omen/core/OfflineHost") {
+>()("@caw/core/OfflineHost") {
   static readonly layer = Layer.effect(
     OfflineHost,
     Effect.gen(function* () {
@@ -55,7 +55,7 @@ export class OfflineHost extends Context.Service<
       const installer = yield* PluginInstaller;
       const registry = yield* Registry;
       const scopes = yield* PluginScopes;
-      const home = yield* OmenHome;
+      const home = yield* CawHome;
       const files = yield* HostFiles;
 
       const saveEnv = Effect.fn("OfflineHost.saveEnv")(function* (
@@ -136,6 +136,6 @@ export class OfflineHost extends Context.Service<
     }),
   );
 
-  /** On this host's `OMEN_HOME`, with everything it needs. */
+  /** On this host's `CAW_HOME`, with everything it needs. */
   static readonly standalone = OfflineHost.layer.pipe(Layer.provide(hostCoreLayer));
 }

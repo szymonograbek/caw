@@ -18,7 +18,7 @@ import { CliCommandError } from "./plugin.ts";
 
 /** The `CliContext` of the invocation a command handler runs in. */
 export class CurrentCliContext extends Context.Service<CurrentCliContext, CliContext>()(
-  "@omen/sdk/CurrentCliContext",
+  "@caw/sdk/CurrentCliContext",
 ) {}
 
 /**
@@ -88,7 +88,7 @@ const makeBufferedConsole = () => {
 
 /**
  * Turns an `effect/cli` command into a `CliCommand`. `run` parses `args`
- * (everything after `omen <name>`) and returns everything the command printed:
+ * (everything after `caw <name>`) and returns everything the command printed:
  * help, usage errors and handler output. Handlers print with `Console`, read
  * the invocation through `CurrentCliContext`, and report domain failures as
  * `CliCommandError`. Usage errors fail with the help and errors as the message.

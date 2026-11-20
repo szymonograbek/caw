@@ -9,7 +9,7 @@ export interface Finished {
   readonly output: string;
 }
 
-/** The processes `omen install` starts: service-manager commands and the daemon. */
+/** The processes `caw install` starts: service-manager commands and the daemon. */
 export class Processes extends Context.Service<
   Processes,
   {
@@ -25,7 +25,7 @@ export class Processes extends Context.Service<
       output: string,
     ) => Effect.Effect<void, CliFailure>;
   }
->()("@omen/cli/Processes") {
+>()("@caw/cli/Processes") {
   static readonly layer = Layer.effect(
     Processes,
     Effect.gen(function* () {
@@ -63,7 +63,7 @@ export class Processes extends Context.Service<
               child.unref();
               Fs.closeSync(log);
             },
-            catch: (error) => new CliFailure({ message: `Starting Omen failed: ${String(error)}` }),
+            catch: (error) => new CliFailure({ message: `Starting Caw failed: ${String(error)}` }),
           }),
       };
     }),

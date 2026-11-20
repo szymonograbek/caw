@@ -4,7 +4,7 @@ import type { SqliteClient } from "@effect/sql-sqlite-bun";
 import type { SqlClient, SqlError } from "effect/sql";
 import type { Channel } from "./channel.ts";
 import type { Conversation } from "./conversation.ts";
-import type { OmenEvent } from "./events.ts";
+import type { CawEvent } from "./events.ts";
 import type { Harness } from "./harness.ts";
 import type { ConversationId, PluginName, ProfileName } from "./ids.ts";
 import type { Interceptor } from "./interceptors.ts";
@@ -12,7 +12,7 @@ import type { Profile } from "./profile.ts";
 import type { PluginSetup } from "./setup.ts";
 import type { Tool } from "./tool.ts";
 
-/** One page of `omen guide <topic>`. Pure data, readable without a running daemon. */
+/** One page of `caw guide <topic>`. Pure data, readable without a running daemon. */
 export interface GuidePage {
   readonly topic: string;
   readonly summary: string;
@@ -27,7 +27,7 @@ export interface Migration {
 }
 
 export interface CliContext {
-  /** From `OMEN_CONVERSATION_ID` when the agent runs the CLI inside a Session. */
+  /** From `CAW_CONVERSATION_ID` when the agent runs the CLI inside a Session. */
   readonly conversationId: Option.Option<ConversationId>;
   /** The invoking shell's working directory; resolve relative paths against it. */
   readonly cwd: string;
@@ -41,7 +41,7 @@ export class CliCommandError extends Schema.TaggedError<
   message: Schema.String,
 }) {}
 
-/** `omen <name> ...args`, run inside the daemon. Returns what the CLI prints. */
+/** `caw <name> ...args`, run inside the daemon. Returns what the CLI prints. */
 export interface CliCommand {
   readonly name: string;
   readonly summary: string;
@@ -69,8 +69,8 @@ export class ConversationNotFound extends Schema.TaggedError<
  * Core's services for Plugins. Every `register*` lasts for the calling scope:
  * a Plugin's registrations disappear when the Plugin is disabled.
  */
-export class Omen extends Context.Service<
-  Omen,
+export class Caw extends Context.Service<
+  Caw,
   {
     readonly registerChannel: (channel: Channel) => Effect.Effect<void, never, Scope.Scope>;
     readonly registerHarness: (harness: Harness) => Effect.Effect<void, never, Scope.Scope>;
@@ -81,7 +81,7 @@ export class Omen extends Context.Service<
     ) => Effect.Effect<void, never, Scope.Scope>;
     readonly registerCliCommand: (command: CliCommand) => Effect.Effect<void, never, Scope.Scope>;
     readonly registerProfiles: (lookup: ProfileLookup) => Effect.Effect<void, never, Scope.Scope>;
-    readonly events: Stream.Stream<OmenEvent>;
+    readonly events: Stream.Stream<CawEvent>;
     readonly bus: PubSub.PubSub<PluginMessage>;
     readonly conversation: (
       id: ConversationId,
@@ -100,7 +100,7 @@ export class Omen extends Context.Service<
       prompt: string,
     ) => Effect.Effect<void, ConversationNotFound>;
   }
->()("@omen/sdk/Omen") {}
+>()("@caw/sdk/Caw") {}
 
 /** A Plugin's identity and key-value store, provided to its own layer only. */
 export class PluginContext extends Context.Service<
@@ -113,10 +113,10 @@ export class PluginContext extends Context.Service<
     ) => Effect.Effect<Option.Option<A>>;
     readonly set: <A, I>(key: string, schema: Schema.Codec<A, I>, value: A) => Effect.Effect<void>;
   }
->()("@omen/sdk/PluginContext") {}
+>()("@caw/sdk/PluginContext") {}
 
 /** `SqliteClient` is what Drizzle's `effect-sqlite-bun` driver needs for a Plugin's own tables. */
-export type PluginServices = Omen | PluginContext | SqlClient.SqlClient | SqliteClient.SqliteClient;
+export type PluginServices = Caw | PluginContext | SqlClient.SqlClient | SqliteClient.SqliteClient;
 
 /**
  * What a Plugin package default-exports. The layer's scope is the Plugin's
@@ -124,13 +124,13 @@ export type PluginServices = Omen | PluginContext | SqlClient.SqlClient | Sqlite
  */
 export interface PluginDefinition<Settings> {
   readonly name: PluginName;
-  /** Decodes `omen plugin set` values; must decode `{}` to the defaults. */
+  /** Decodes `caw plugin set` values; must decode `{}` to the defaults. */
   readonly settings: Schema.Codec<Settings, unknown>;
   readonly migrations: ReadonlyArray<Migration>;
   readonly guide: ReadonlyArray<GuidePage>;
   /** A directory of agent skills loaded into every Session. */
   readonly skillDir: Option.Option<string>;
-  /** The Plugin's part in `omen install`; leave it out for a feature Plugin. */
+  /** The Plugin's part in `caw install`; leave it out for a feature Plugin. */
   readonly setup?: PluginSetup;
   readonly layer: (settings: Settings) => Layer.Layer<never, never, PluginServices>;
 }

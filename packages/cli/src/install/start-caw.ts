@@ -1,5 +1,5 @@
 import * as NodePath from "node:path";
-import { OmenHome } from "@omen/core/omen-home";
+import { CawHome } from "@caw/core/caw-home";
 import { Data, Effect, FileSystem, Match, Option, Schedule } from "effect";
 import { CliFailure } from "../cli-failure.ts";
 import { Daemon, pollStatus } from "../daemon.ts";
@@ -8,7 +8,7 @@ import { Processes } from "./processes.ts";
 import type { ServiceFile } from "./service-file.ts";
 import { WizardUi } from "./wizard-ui.ts";
 
-/** How Omen keeps running once the wizard ends. */
+/** How Caw keeps running once the wizard ends. */
 export type Launch = Data.TaggedEnum<{
   /** The service manager starts it now and at every login. */
   AtLogin: { readonly service: ServiceFile };
@@ -21,19 +21,19 @@ export const Launch = Data.taggedEnum<Launch>();
 /** Checks, 100 ms apart, that the service manager released the service. */
 const unloadPolls = 100;
 
-/** Polls of `pollStatus`, 100 ms apart, before Omen counts as not starting. */
+/** Polls of `pollStatus`, 100 ms apart, before Caw counts as not starting. */
 const startPolls = 300;
 
 /**
- * Starts Omen as `launch` says and waits until it answers. A daemon that
+ * Starts Caw as `launch` says and waits until it answers. A daemon that
  * already runs is stopped first, so it picks up the settings just written.
  */
-export const startOmen = Effect.fn("startOmen")(function* (launch: Launch) {
+export const startCaw = Effect.fn("startCaw")(function* (launch: Launch) {
   const ui = yield* WizardUi;
   const daemon = yield* Daemon;
   const processes = yield* Processes;
   const fs = yield* FileSystem.FileSystem;
-  const home = yield* OmenHome;
+  const home = yield* CawHome;
   const invocation = yield* Invocation;
 
   /** Waits until the service manager let go of the service, so loading it again works. */
@@ -48,7 +48,7 @@ export const startOmen = Effect.fn("startOmen")(function* (launch: Launch) {
         ({ code }) => code !== 0,
         () =>
           new CliFailure({
-            message: `The service manager still holds Omen; try \`${service.unload.map((command) => command.join(" ")).join(" && ")}\`.`,
+            message: `The service manager still holds Caw; try \`${service.unload.map((command) => command.join(" ")).join(" && ")}\`.`,
           }),
       ),
     );
@@ -80,14 +80,14 @@ export const startOmen = Effect.fn("startOmen")(function* (launch: Launch) {
       wasRunning
         ? ui.spin(
             {
-              running: "Stopping the running Omen, so it picks up the new settings",
-              done: () => "Stopped the running Omen",
-              failed: "Omen did not stop",
+              running: "Stopping the running Caw, so it picks up the new settings",
+              done: () => "Stopped the running Caw",
+              failed: "Caw did not stop",
             },
             pollStatus(daemon, Option.isNone, 100).pipe(
               Effect.filterOrFail(
                 Option.isNone,
-                () => new CliFailure({ message: "Omen is still stopping; check `omen status`." }),
+                () => new CliFailure({ message: "Caw is still stopping; check `caw status`." }),
               ),
             ),
           )
@@ -116,7 +116,7 @@ export const startOmen = Effect.fn("startOmen")(function* (launch: Launch) {
         for (const service of stale) {
           yield* unload(service);
           yield* fs.remove(service.path);
-          yield* ui.lines([`Removed ${service.path}, so Omen no longer starts at login`]);
+          yield* ui.lines([`Removed ${service.path}, so Caw no longer starts at login`]);
         }
 
         yield* stopRunning;
@@ -126,7 +126,7 @@ export const startOmen = Effect.fn("startOmen")(function* (launch: Launch) {
         yield* fs.makeDirectory(NodePath.dirname(output), { recursive: true });
         yield* processes.startDetached(
           [...invocation.cli, "start"],
-          { OMEN_HOME: home.root },
+          { CAW_HOME: home.root },
           output,
         );
 
@@ -140,16 +140,16 @@ export const startOmen = Effect.fn("startOmen")(function* (launch: Launch) {
 
   return yield* ui.spin(
     {
-      running: "Starting Omen",
-      done: (status) => `Omen is running (pid ${status.pid})`,
-      failed: "Omen did not start",
+      running: "Starting Caw",
+      done: (status) => `Caw is running (pid ${status.pid})`,
+      failed: "Caw did not start",
     },
     pollStatus(daemon, Option.isSome, startPolls).pipe(
       Effect.flatMap(Effect.fromOption),
       Effect.mapError(
         () =>
           new CliFailure({
-            message: `Omen did not answer within 30 seconds. See ${logs} and ${home.logFile}.`,
+            message: `Caw did not answer within 30 seconds. See ${logs} and ${home.logFile}.`,
           }),
       ),
     ),

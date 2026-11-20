@@ -1,5 +1,5 @@
-import { Conversation, ReplyMode } from "@omen/sdk/conversation";
-import { ChannelName, ConversationId, ExternalConversationId, ProfileName } from "@omen/sdk/ids";
+import { Conversation, ReplyMode } from "@caw/sdk/conversation";
+import { ChannelName, ConversationId, ExternalConversationId, ProfileName } from "@caw/sdk/ids";
 import { and, eq } from "drizzle-orm";
 import { sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { Context, Effect, Layer, Option, Schema } from "effect";
@@ -38,7 +38,7 @@ const firstConversation = (rows: ReadonlyArray<typeof conversationsTable.$inferS
     onSome: (row) => Effect.asSome(toConversation(row)),
   });
 
-/** The `conversations` table: one row per Channel place Omen has seen. */
+/** The `conversations` table: one row per Channel place Caw has seen. */
 export class Conversations extends Context.Service<
   Conversations,
   {
@@ -54,7 +54,7 @@ export class Conversations extends Context.Service<
     ) => Effect.Effect<void>;
     readonly setReplyMode: (id: ConversationId, replyMode: ReplyMode) => Effect.Effect<void>;
   }
->()("@omen/core/Conversations") {
+>()("@caw/core/Conversations") {
   static readonly layer = Layer.effect(
     Conversations,
     Effect.gen(function* () {

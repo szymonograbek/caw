@@ -2,10 +2,10 @@ import { SqliteClient } from "@effect/sql-sqlite-bun";
 import { describe, expect, it } from "@effect/vitest";
 import { Array, Effect, Exit, Layer, Option, PubSub, Scope, Stream } from "effect";
 import { TestClock } from "effect/testing";
-import { Conversation } from "@omen/sdk/conversation";
-import { ChannelName, ConversationId, ExternalConversationId } from "@omen/sdk/ids";
-import type { CliCommand, CliContext, PluginMessage } from "@omen/sdk/plugin";
-import { ConversationNotFound, Omen, PluginContext } from "@omen/sdk/plugin";
+import { Conversation } from "@caw/sdk/conversation";
+import { ChannelName, ConversationId, ExternalConversationId } from "@caw/sdk/ids";
+import type { CliCommand, CliContext, PluginMessage } from "@caw/sdk/plugin";
+import { ConversationNotFound, Caw, PluginContext } from "@caw/sdk/plugin";
 import scheduler from "./index.ts";
 
 interface Delivery {
@@ -52,7 +52,7 @@ const startPlugin = (core: Core) =>
     const unused = Effect.die("not used by the scheduler plugin");
     const known = lookupIn(core);
 
-    const omen = Layer.succeed(Omen)({
+    const caw = Layer.succeed(Caw)({
       registerChannel: () => unused,
       registerHarness: () => unused,
       registerTool: () => unused,
@@ -79,7 +79,7 @@ const startPlugin = (core: Core) =>
 
     yield* Effect.forEach(scheduler.migrations, (migration) => migration.run);
     yield* Layer.buildWithScope(
-      scheduler.layer({}).pipe(Layer.provide(Layer.merge(omen, pluginContext))),
+      scheduler.layer({}).pipe(Layer.provide(Layer.merge(caw, pluginContext))),
       scope,
     );
 
@@ -277,8 +277,8 @@ describe("missed runs at startup", () => {
   );
 });
 
-describe("omen schedule", () => {
-  it.effect("targets --conversation over OMEN_CONVERSATION_ID, and lists by Conversation", () =>
+describe("caw schedule", () => {
+  it.effect("targets --conversation over CAW_CONVERSATION_ID, and lists by Conversation", () =>
     Effect.gen(function* () {
       const core = makeCore();
       const other = ConversationId.make("room-2");
@@ -421,13 +421,13 @@ describe("omen schedule", () => {
         [
           ["add", ...every],
           outside,
-          "Pass --conversation <id>; there is no OMEN_CONVERSATION_ID here.",
+          "Pass --conversation <id>; there is no CAW_CONVERSATION_ID here.",
         ],
         [["add", ...every, "--conversation", "nope"], inRoom, "No Conversation nope."],
         [
           ["list"],
           outside,
-          "Pass --all or --conversation <id>; there is no OMEN_CONVERSATION_ID here.",
+          "Pass --all or --conversation <id>; there is no CAW_CONVERSATION_ID here.",
         ],
       ];
 

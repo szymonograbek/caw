@@ -1,9 +1,9 @@
 import type { HookInput } from "@anthropic-ai/claude-agent-sdk";
 import { describe, expect, it } from "@effect/vitest";
 import { Effect } from "effect";
-import type { ToolCallRequest } from "@omen/sdk/harness";
-import { ToolCallDecision } from "@omen/sdk/harness";
-import { SessionId } from "@omen/sdk/ids";
+import type { ToolCallRequest } from "@caw/sdk/harness";
+import { ToolCallDecision } from "@caw/sdk/harness";
+import { SessionId } from "@caw/sdk/ids";
 import { preToolUse } from "./pre-tool-use.ts";
 
 const sessionId = SessionId.make("session-1");

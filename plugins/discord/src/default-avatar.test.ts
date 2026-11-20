@@ -21,7 +21,7 @@ const fakeBot = (avatar: string | null, discord: "accepts" | "refuses") => {
 };
 
 describe("adoptDefaultAvatar", () => {
-  it.effect("gives a bot without an avatar Omen's PNG", () =>
+  it.effect("gives a bot without an avatar Caw's PNG", () =>
     Effect.gen(function* () {
       const bot = fakeBot(null, "accepts");
 

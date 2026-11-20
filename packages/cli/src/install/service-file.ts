@@ -1,10 +1,10 @@
 import * as NodePath from "node:path";
 import { Match, Option } from "effect";
 
-/** What the service runs: `<cli> start` with Omen's environment. */
+/** What the service runs: `<cli> start` with Caw's environment. */
 export interface ServiceTarget {
   readonly userHome: string;
-  readonly omenHome: string;
+  readonly cawHome: string;
   /** The command that starts the CLI (see `Invocation.cli`). */
   readonly cli: ReadonlyArray<string>;
   /** Baked in, so the agent's shell finds the same tools as the installing shell. */
@@ -16,20 +16,20 @@ export interface ServiceTarget {
 export interface ServiceFile {
   readonly path: string;
   readonly contents: string;
-  /** Load the written file and start Omen. */
+  /** Load the written file and start Caw. */
   readonly load: ReadonlyArray<ReadonlyArray<string>>;
-  /** Stop Omen and unload the service; they fail when it is not loaded. */
+  /** Stop Caw and unload the service; they fail when it is not loaded. */
   readonly unload: ReadonlyArray<ReadonlyArray<string>>;
   /**
    * Exits 0 while the service manager still holds the service. Unloading
    * finishes after `unload` returns (launchd refuses a new bootstrap until then).
    */
   readonly loaded: ReadonlyArray<string>;
-  /** Where the service's output goes, e.g. to point at when Omen does not start. */
+  /** Where the service's output goes, e.g. to point at when Caw does not start. */
   readonly logs: string;
 }
 
-const label = "omen";
+const label = "caw";
 
 const xml = (value: string): string =>
   value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
@@ -38,7 +38,7 @@ const string = (value: string) => `<string>${xml(value)}</string>`;
 
 const launchdPlist = (target: ServiceTarget): ServiceFile => {
   const path = NodePath.join(target.userHome, "Library", "LaunchAgents", `${label}.plist`);
-  const log = NodePath.join(target.omenHome, "logs", "service.log");
+  const log = NodePath.join(target.cawHome, "logs", "service.log");
   const domain = `gui/${Option.getOrElse(target.userId, () => 0)}`;
 
   return {
@@ -55,8 +55,8 @@ const launchdPlist = (target: ServiceTarget): ServiceFile => {
   </array>
   <key>EnvironmentVariables</key>
   <dict>
-    <key>OMEN_HOME</key>
-    ${string(target.omenHome)}
+    <key>CAW_HOME</key>
+    ${string(target.cawHome)}
     <key>PATH</key>
     ${string(target.path)}
   </dict>
@@ -87,12 +87,12 @@ const systemdUnit = (target: ServiceTarget): ServiceFile => {
   return {
     path,
     contents: `[Unit]
-Description=Omen
+Description=Caw
 After=network-online.target
 
 [Service]
 ExecStart=${[...target.cli, "start"].map(quoted).join(" ")}
-Environment=${quoted(`OMEN_HOME=${target.omenHome}`)} ${quoted(`PATH=${target.path}`)}
+Environment=${quoted(`CAW_HOME=${target.cawHome}`)} ${quoted(`PATH=${target.path}`)}
 Restart=on-failure
 
 [Install]
@@ -108,7 +108,7 @@ WantedBy=default.target
   };
 };
 
-/** `None` on a platform Omen has no service manager support for. */
+/** `None` on a platform Caw has no service manager support for. */
 export const serviceFile = (platform: string, target: ServiceTarget): Option.Option<ServiceFile> =>
   Match.value(platform).pipe(
     Match.when("darwin", () => Option.some(launchdPlist(target))),

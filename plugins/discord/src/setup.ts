@@ -1,4 +1,4 @@
-import { answer, PluginSetup, SetupError, SetupQuestion } from "@omen/sdk/setup";
+import { answer, PluginSetup, SetupError, SetupQuestion } from "@caw/sdk/setup";
 import { Effect, Match, Schema } from "effect";
 import type { HttpClientError } from "effect/http";
 import { HttpClient, HttpClientRequest, HttpClientResponse } from "effect/http";
@@ -6,7 +6,7 @@ import { HttpClient, HttpClientRequest, HttpClientResponse } from "effect/http";
 const api = "https://discord.com/api/v10";
 
 /**
- * What Omen does in a server: read and answer messages, open and answer in
+ * What Caw does in a server: read and answer messages, open and answer in
  * threads, react, read history for lost-Session recovery, and slash commands.
  */
 const permissions = [
@@ -30,7 +30,7 @@ const Application = Schema.Struct({
 /** `GATEWAY_MESSAGE_CONTENT` or its `_LIMITED` variant: without one, message text arrives empty. */
 const messageContentIntent = (1 << 19) | (1 << 18);
 
-/** The URL that adds the bot to a server with the permissions Omen needs. */
+/** The URL that adds the bot to a server with the permissions Caw needs. */
 const inviteUrl = (applicationId: string): string =>
   `https://discord.com/oauth2/authorize?client_id=${applicationId}&scope=bot%20applications.commands&permissions=${permissions}`;
 

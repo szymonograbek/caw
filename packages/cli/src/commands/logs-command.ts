@@ -1,4 +1,4 @@
-import { OmenHome } from "@omen/core/omen-home";
+import { CawHome } from "@caw/core/caw-home";
 import { Effect, FileSystem, Ref, Schedule, Stdio, Stream } from "effect";
 import { Command, Flag } from "effect/cli";
 import { CliFailure } from "../cli-failure.ts";
@@ -14,7 +14,7 @@ export const logsCommand = Command.make(
   },
   ({ follow }) =>
     Effect.gen(function* () {
-      const home = yield* OmenHome;
+      const home = yield* CawHome;
       const fs = yield* FileSystem.FileSystem;
       const stdio = yield* Stdio.Stdio;
 

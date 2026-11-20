@@ -1,9 +1,9 @@
 import { describe, expect, it } from "@effect/vitest";
-import type { ChannelMessage } from "@omen/sdk/channel";
-import { Conversation } from "@omen/sdk/conversation";
-import { ToolCallDecision } from "@omen/sdk/harness";
-import { ConversationId, PluginName, SessionId } from "@omen/sdk/ids";
-import { InboundDecision, Interceptor } from "@omen/sdk/interceptors";
+import type { ChannelMessage } from "@caw/sdk/channel";
+import { Conversation } from "@caw/sdk/conversation";
+import { ToolCallDecision } from "@caw/sdk/harness";
+import { ConversationId, PluginName, SessionId } from "@caw/sdk/ids";
+import { InboundDecision, Interceptor } from "@caw/sdk/interceptors";
 import { Effect, Layer, Option, Ref } from "effect";
 import { message } from "../testing/test-daemon.ts";
 import { InterceptorChains } from "./interceptor-chains.ts";

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "@effect/vitest";
 import { Effect } from "effect";
-import { HarnessError } from "@omen/sdk/harness";
+import { HarnessError } from "@caw/sdk/harness";
 import { ClaudeSessionId, decodeCursor, encodeCursor } from "./cursor.ts";
 
 describe("resume cursor", () => {

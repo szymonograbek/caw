@@ -12,21 +12,21 @@ interface Run {
   readonly stderr: string;
 }
 
-/** A fresh `OMEN_HOME` (also `HOME` and the cwd, so no checkout `.env` loads), removed with the scope. */
+/** A fresh `CAW_HOME` (also `HOME` and the cwd, so no checkout `.env` loads), removed with the scope. */
 const temporaryHome = Effect.acquireRelease(
-  Effect.promise(() => Fs.mkdtemp(NodePath.join(NodeOs.tmpdir(), "omen-cli-"))),
+  Effect.promise(() => Fs.mkdtemp(NodePath.join(NodeOs.tmpdir(), "caw-cli-"))),
   (path) => Effect.promise(() => Fs.rm(path, { recursive: true, force: true })),
 );
 
 const environment = (home: string, extra: Record<string, string> = {}) => ({
   PATH: process.env["PATH"] ?? "/usr/bin:/bin",
   HOME: home,
-  OMEN_HOME: home,
+  CAW_HOME: home,
   ...extra,
 });
 
-/** Runs the real `omen` binary to completion. */
-const omen = (home: string, argv: ReadonlyArray<string>, extra: Record<string, string> = {}) =>
+/** Runs the real `caw` binary to completion. */
+const caw = (home: string, argv: ReadonlyArray<string>, extra: Record<string, string> = {}) =>
   Effect.promise(async (): Promise<Run> => {
     const child = Bun.spawn([process.execPath, main, ...argv], {
       cwd: home,
@@ -44,7 +44,7 @@ const omen = (home: string, argv: ReadonlyArray<string>, extra: Record<string, s
     return { code, stdout: stdout.trim(), stderr: stderr.trim() };
   });
 
-/** `omen start` in the background, without a Discord token; killed with the scope. */
+/** `caw start` in the background, without a Discord token; killed with the scope. */
 const startDaemon = (home: string) =>
   Effect.gen(function* () {
     yield* Effect.acquireRelease(
@@ -59,30 +59,30 @@ const startDaemon = (home: string) =>
       (child) => Effect.sync(() => child.kill()),
     );
 
-    yield* omen(home, ["status"]).pipe(
+    yield* caw(home, ["status"]).pipe(
       Effect.filterOrFail((run) => run.code === 0),
       Effect.retry({ schedule: Schedule.spaced("100 millis"), times: 100 }),
       Effect.orDie,
     );
   });
 
-describe("omen", () => {
+describe("caw", () => {
   it.live(
     "says the daemon is not running, and still serves the guide without it",
     () =>
       Effect.gen(function* () {
         const home = yield* temporaryHome;
 
-        const status = yield* omen(home, ["status"]);
-        const forwarded = yield* omen(home, ["profile", "list"]);
-        const guide = yield* omen(home, ["guide"]);
-        const page = yield* omen(home, ["guide", "schedule"]);
-        const unknownTopic = yield* omen(home, ["guide", "nope"]);
+        const status = yield* caw(home, ["status"]);
+        const forwarded = yield* caw(home, ["profile", "list"]);
+        const guide = yield* caw(home, ["guide"]);
+        const page = yield* caw(home, ["guide", "schedule"]);
+        const unknownTopic = yield* caw(home, ["guide", "nope"]);
 
-        expect(status).toMatchObject({ code: 1, stderr: `Omen is not running (home ${home}).` });
+        expect(status).toMatchObject({ code: 1, stderr: `Caw is not running (home ${home}).` });
         expect(forwarded).toMatchObject({
           code: 1,
-          stderr: "Omen is not running. Start it with `omen start`.",
+          stderr: "Caw is not running. Start it with `caw start`.",
         });
         expect(guide.code).toBe(0);
 
@@ -100,7 +100,7 @@ describe("omen", () => {
         expect(page.stdout).toMatch(/^schedule: /);
         expect(unknownTopic).toMatchObject({
           code: 1,
-          stderr: 'No guide topic "nope". Run `omen guide` to list topics.',
+          stderr: 'No guide topic "nope". Run `caw guide` to list topics.',
         });
       }).pipe(Effect.scoped),
     30_000,
@@ -114,10 +114,10 @@ describe("omen", () => {
 
         yield* startDaemon(home);
 
-        const again = yield* omen(home, ["start"]);
-        const status = yield* omen(home, ["status"]);
+        const again = yield* caw(home, ["start"]);
+        const status = yield* caw(home, ["status"]);
 
-        const added = yield* omen(home, [
+        const added = yield* caw(home, [
           "profile",
           "add",
           "--harness",
@@ -127,27 +127,27 @@ describe("omen", () => {
           "default",
         ]);
 
-        const disabled = yield* omen(home, ["plugin", "disable", "discord"]);
-        const listed = yield* omen(home, ["plugin", "list"]);
-        const unknown = yield* omen(home, ["nope"]);
+        const disabled = yield* caw(home, ["plugin", "disable", "discord"]);
+        const listed = yield* caw(home, ["plugin", "list"]);
+        const unknown = yield* caw(home, ["nope"]);
 
-        const outside = yield* omen(home, ["conversation", "show"], {
-          OMEN_CONVERSATION_ID: "c-missing",
+        const outside = yield* caw(home, ["conversation", "show"], {
+          CAW_CONVERSATION_ID: "c-missing",
         });
 
         const fromShim = yield* Effect.promise(() =>
-          Bun.spawn([NodePath.join(home, "bin", "omen"), "status"], {
+          Bun.spawn([NodePath.join(home, "bin", "caw"), "status"], {
             cwd: home,
             env: { PATH: "/usr/bin:/bin" },
             stdout: "pipe",
           }).stdout.text(),
         );
 
-        const stopped = yield* omen(home, ["stop"]);
-        const after = yield* omen(home, ["status"]);
+        const stopped = yield* caw(home, ["stop"]);
+        const after = yield* caw(home, ["status"]);
 
         expect(again).toMatchObject({ code: 1 });
-        expect(again.stderr).toMatch(/^Omen is already running \(pid \d+\)\.$/);
+        expect(again.stderr).toMatch(/^Caw is already running \(pid \d+\)\.$/);
         expect(status.code).toBe(0);
         expect(status.stdout).toMatch(/discord +failed: .*DISCORD_TOKEN/);
         expect(status.stdout).toMatch(/claude +running/);
@@ -159,8 +159,8 @@ describe("omen", () => {
         expect(listed.stdout).toMatch(/^discord +disabled +\(built in\)$/m);
         expect(unknown).toMatchObject({ code: 1, stderr: "Unknown command: nope" });
         expect(outside).toMatchObject({ code: 1, stderr: "No conversation c-missing." });
-        expect(fromShim).toMatch(/^Omen is running/);
-        expect(stopped).toMatchObject({ code: 0, stdout: "Omen stopped." });
+        expect(fromShim).toMatch(/^Caw is running/);
+        expect(stopped).toMatchObject({ code: 0, stdout: "Caw stopped." });
         expect(after.code).toBe(1);
       }).pipe(Effect.scoped),
     30_000,

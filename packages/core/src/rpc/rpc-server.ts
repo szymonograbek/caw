@@ -1,18 +1,18 @@
 import { BunSocketServer } from "@effect/platform-bun";
-import { CliCommandError } from "@omen/sdk/plugin";
+import { CliCommandError } from "@caw/sdk/plugin";
 import { Effect, Layer, Option } from "effect";
 import { RpcSerialization, RpcServer } from "effect/rpc";
 import { conversationCommand } from "../commands/conversation-command.ts";
 import { pluginCommand } from "../commands/plugin-command.ts";
 import { HostFiles } from "../home/host-files.ts";
-import { OmenHome } from "../home/omen-home.ts";
+import { CawHome } from "../home/caw-home.ts";
 import { PluginHost } from "../plugins/plugin-host.ts";
 import { Registry } from "../plugins/registry.ts";
 import { SessionPool } from "../sessions/session-pool.ts";
 import { DaemonLifecycle } from "./daemon-lifecycle.ts";
-import { DaemonStatus, OmenRpcs, PluginStatus } from "./omen-rpcs.ts";
+import { DaemonStatus, CawRpcs, PluginStatus } from "./caw-rpcs.ts";
 
-const handlers = OmenRpcs.toLayer(
+const handlers = CawRpcs.toLayer(
   Effect.gen(function* () {
     const lifecycle = yield* DaemonLifecycle;
     const plugins = yield* PluginHost;
@@ -20,7 +20,7 @@ const handlers = OmenRpcs.toLayer(
     const registry = yield* Registry;
     const coreCommands = [yield* pluginCommand, yield* conversationCommand];
 
-    return OmenRpcs.of({
+    return CawRpcs.of({
       Status: () =>
         Effect.gen(function* () {
           const entries = yield* plugins.list;
@@ -62,10 +62,10 @@ const handlers = OmenRpcs.toLayer(
   }),
 );
 
-/** Serves `OmenRpcs` on `<home>/omen.sock`, replacing a socket file a crashed daemon left. */
+/** Serves `CawRpcs` on `<home>/caw.sock`, replacing a socket file a crashed daemon left. */
 export const rpcServerLayer = Layer.unwrap(
   Effect.gen(function* () {
-    const home = yield* OmenHome;
+    const home = yield* CawHome;
     const files = yield* HostFiles;
 
     yield* files.remove(home.socket).pipe(Effect.orDie);
@@ -80,6 +80,6 @@ export const rpcServerLayer = Layer.unwrap(
       ]),
     );
 
-    return RpcServer.layer(OmenRpcs).pipe(Layer.provide([handlers, protocol]));
+    return RpcServer.layer(CawRpcs).pipe(Layer.provide([handlers, protocol]));
   }),
 );

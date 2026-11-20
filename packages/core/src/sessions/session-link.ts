@@ -1,5 +1,5 @@
-import { ChannelMessageId, ExternalConversationId } from "@omen/sdk/ids";
-import type { HarnessError, SessionNotFound } from "@omen/sdk/harness";
+import { ChannelMessageId, ExternalConversationId } from "@caw/sdk/ids";
+import type { HarnessError, SessionNotFound } from "@caw/sdk/harness";
 import type { Effect, Stream } from "effect";
 import { Context, Schema } from "effect";
 
@@ -61,4 +61,4 @@ export class SessionLink extends Context.Service<
     readonly stopTurn: (inFlight: ReadonlyArray<SessionInput>) => Effect.Effect<void>;
     readonly reportFailure: (failure: TurnFailure) => Effect.Effect<void>;
   }
->()("@omen/core/SessionLink") {}
+>()("@caw/core/SessionLink") {}

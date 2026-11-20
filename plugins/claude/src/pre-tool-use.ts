@@ -1,7 +1,7 @@
 import type { HookInput, SyncHookJSONOutput } from "@anthropic-ai/claude-agent-sdk";
 import { Effect, Match, Schema } from "effect";
-import type { OpenSession } from "@omen/sdk/harness";
-import { ToolCallDecision } from "@omen/sdk/harness";
+import type { OpenSession } from "@caw/sdk/harness";
+import { ToolCallDecision } from "@caw/sdk/harness";
 
 const decodeJson = Schema.decodeUnknownEffect(Schema.Json);
 

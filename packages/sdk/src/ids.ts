@@ -1,11 +1,11 @@
 import { Schema } from "effect";
 
-/** Omen's own id for a Conversation (a Discord channel, thread or DM). */
+/** Caw's own id for a Conversation (a Discord channel, thread or DM). */
 export const ConversationId = Schema.String.pipe(Schema.brand("ConversationId"));
 
 export type ConversationId = typeof ConversationId.Type;
 
-/** Omen's own id for a Session. Exposed to the agent as `OMEN_SESSION_ID`. */
+/** Caw's own id for a Session. Exposed to the agent as `CAW_SESSION_ID`. */
 export const SessionId = Schema.String.pipe(Schema.brand("SessionId"));
 
 export type SessionId = typeof SessionId.Type;
@@ -30,7 +30,7 @@ export const HarnessName = Schema.String.pipe(Schema.brand("HarnessName"));
 
 export type HarnessName = typeof HarnessName.Type;
 
-/** A Plugin's name; also the suffix of its tables (`plugin_<name>_*`) and MCP server (`omen_<name>`). */
+/** A Plugin's name; also the suffix of its tables (`plugin_<name>_*`) and MCP server (`caw_<name>`). */
 export const PluginName = Schema.String.check(Schema.isPattern(/^[a-z][a-z0-9_]*$/)).pipe(
   Schema.brand("PluginName"),
 );

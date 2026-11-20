@@ -1,5 +1,5 @@
-import { HarnessName } from "@omen/sdk/ids";
-import { HarnessError } from "@omen/sdk/harness";
+import { HarnessName } from "@caw/sdk/ids";
+import { HarnessError } from "@caw/sdk/harness";
 
 export const claudeHarnessName = HarnessName.make("claude");
 

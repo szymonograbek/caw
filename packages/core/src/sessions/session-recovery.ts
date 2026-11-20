@@ -1,7 +1,7 @@
-import type { ChannelError } from "@omen/sdk/channel";
-import { Session } from "@omen/sdk/conversation";
-import { OmenEvent } from "@omen/sdk/events";
-import { SessionStart } from "@omen/sdk/harness";
+import type { ChannelError } from "@caw/sdk/channel";
+import { Session } from "@caw/sdk/conversation";
+import { CawEvent } from "@caw/sdk/events";
+import { SessionStart } from "@caw/sdk/harness";
 import { Context, Effect, Layer, Option } from "effect";
 import { EventBus } from "../events/event-bus.ts";
 import { DaemonConfig } from "../home/daemon-config.ts";
@@ -37,7 +37,7 @@ export class SessionRecovery extends Context.Service<
       message: string,
     ) => Effect.Effect<void>;
   }
->()("@omen/core/SessionRecovery") {
+>()("@caw/core/SessionRecovery") {
   static readonly layer = Layer.effect(
     SessionRecovery,
     Effect.gen(function* () {
@@ -71,7 +71,7 @@ export class SessionRecovery extends Context.Service<
 
           yield* sessions.insert(replacement);
           yield* bus.publish(
-            OmenEvent.SessionLost({ sessionId: lost.session.id, replacement: replacement.id }),
+            CawEvent.SessionLost({ sessionId: lost.session.id, replacement: replacement.id }),
           );
           yield* channel
             .send(conversation.externalId, lostNotice)

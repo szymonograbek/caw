@@ -1,10 +1,10 @@
 import { SqliteClient } from "@effect/sql-sqlite-bun";
 import { describe, expect, it } from "@effect/vitest";
 import { Array, Effect, Layer, Option, PubSub, Stream } from "effect";
-import { HarnessName, ProfileName } from "@omen/sdk/ids";
-import type { CliCommand, CliContext, PluginMessage, ProfileLookup } from "@omen/sdk/plugin";
-import { Omen, PluginContext } from "@omen/sdk/plugin";
-import { Profile } from "@omen/sdk/profile";
+import { HarnessName, ProfileName } from "@caw/sdk/ids";
+import type { CliCommand, CliContext, PluginMessage, ProfileLookup } from "@caw/sdk/plugin";
+import { Caw, PluginContext } from "@caw/sdk/plugin";
+import { Profile } from "@caw/sdk/profile";
 import profiles from "./index.ts";
 
 interface Registered {
@@ -12,12 +12,12 @@ interface Registered {
   readonly lookups: Array<ProfileLookup>;
 }
 
-/** Starts the plugin as core would: migrations first, then its layer with a fake Omen. */
+/** Starts the plugin as core would: migrations first, then its layer with a fake Caw. */
 const startPlugin = Effect.gen(function* () {
   const registered: Registered = { commands: [], lookups: [] };
   const unused = Effect.die("not used by the profiles plugin");
 
-  const omen = Layer.succeed(Omen)({
+  const caw = Layer.succeed(Caw)({
     registerChannel: () => unused,
     registerHarness: () => unused,
     registerTool: () => unused,
@@ -38,7 +38,7 @@ const startPlugin = Effect.gen(function* () {
   });
 
   yield* Effect.forEach(profiles.migrations, (migration) => migration.run);
-  yield* Layer.build(profiles.layer({}).pipe(Layer.provide(Layer.merge(omen, pluginContext))));
+  yield* Layer.build(profiles.layer({}).pipe(Layer.provide(Layer.merge(caw, pluginContext))));
 
   return registered;
 });

@@ -1,4 +1,4 @@
-# Omen
+# Caw
 
 A minimal daemon that lets people talk to agent harnesses through chat platforms, with behavior extended by plugins.
 
@@ -21,7 +21,7 @@ _Avoid_: Session mode, thread policy
 ### Agents
 
 **Harness**:
-An agent runtime that Omen drives on the user's behalf (e.g. the Claude Agent SDK).
+An agent runtime that Caw drives on the user's behalf (e.g. the Claude Agent SDK).
 _Avoid_: Provider, backend, model, engine
 
 **Session**:
@@ -51,11 +51,11 @@ _Avoid_: Cwd, project, folder
 ### Extension
 
 **Plugin**:
-A unit of behavior installed into Omen that reacts to hooks, alters what flows between Channels and Harnesses, or exposes tools to the Harness.
+A unit of behavior installed into Caw that reacts to hooks, alters what flows between Channels and Harnesses, or exposes tools to the Harness.
 _Avoid_: Extension, addon, module
 
 **Event**:
-A notification of something that happened in Omen, which Plugins can observe but not change.
+A notification of something that happened in Caw, which Plugins can observe but not change.
 _Avoid_: Hook, signal, notification
 
 **Interceptor**:
@@ -75,5 +75,5 @@ _Avoid_: Cron, job, task, reminder
 ### Control
 
 **Guide**:
-Omen's built-in manual, read via `omen guide [topic]`, from which the agent learns how to control Omen.
-_Avoid_: Docs, help, omen skill
+Caw's built-in manual, read via `caw guide [topic]`, from which the agent learns how to control Caw.
+_Avoid_: Docs, help, caw skill

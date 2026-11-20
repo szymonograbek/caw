@@ -1,7 +1,7 @@
-import type { SessionStatus } from "@omen/sdk/conversation";
-import type { SessionCloseReason } from "@omen/sdk/events";
-import { OmenEvent } from "@omen/sdk/events";
-import type { SessionId } from "@omen/sdk/ids";
+import type { SessionStatus } from "@caw/sdk/conversation";
+import type { SessionCloseReason } from "@caw/sdk/events";
+import { CawEvent } from "@caw/sdk/events";
+import type { SessionId } from "@caw/sdk/ids";
 import { Machine } from "@typeonce/effect-machine";
 import {
   Array,
@@ -63,7 +63,7 @@ export class SessionPool extends Context.Service<
     readonly closeAll: (reason: SessionCloseReason) => Effect.Effect<void>;
     readonly live: Effect.Effect<ReadonlyArray<SessionId>>;
   }
->()("@omen/core/SessionPool") {
+>()("@caw/core/SessionPool") {
   static readonly layer = Layer.effect(
     SessionPool,
     Effect.gen(function* () {
@@ -122,7 +122,7 @@ export class SessionPool extends Context.Service<
             Closed: ({ reason }) =>
               Effect.gen(function* () {
                 yield* sessions.setStatus(session.id, statusAfterClose(reason));
-                yield* bus.publish(OmenEvent.SessionClosed({ sessionId: session.id, reason }));
+                yield* bus.publish(CawEvent.SessionClosed({ sessionId: session.id, reason }));
                 yield* Deferred.succeed(runner.ended, undefined);
               }),
             Lost: ({ replay }) =>
@@ -228,7 +228,7 @@ export class SessionPool extends Context.Service<
                     .setStatus(session, statusAfterClose(reason))
                     .pipe(
                       Effect.andThen(
-                        bus.publish(OmenEvent.SessionClosed({ sessionId: session, reason })),
+                        bus.publish(CawEvent.SessionClosed({ sessionId: session, reason })),
                       ),
                     ),
               }),

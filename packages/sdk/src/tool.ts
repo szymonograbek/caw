@@ -33,7 +33,7 @@ export interface Tool {
   readonly run: (input: Schema.Json, context: ToolContext) => Effect.Effect<string, ToolError>;
 }
 
-/** Tools grouped by the Plugin that owns them; Claude maps each group to one `omen_<plugin>` MCP server. */
+/** Tools grouped by the Plugin that owns them; Claude maps each group to one `caw_<plugin>` MCP server. */
 export interface ToolGroup {
   readonly plugin: PluginName;
   readonly tools: ReadonlyArray<Tool>;

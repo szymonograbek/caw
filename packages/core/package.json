@@ -1,22 +1,22 @@
 {
-  "name": "@omen/core",
+  "name": "@caw/core",
   "version": "0.0.0",
   "private": true,
   "type": "module",
   "exports": {
     "./daemon": "./src/daemon.ts",
     "./loaded-plugin": "./src/plugins/loaded-plugin.ts",
-    "./omen-home": "./src/home/omen-home.ts",
-    "./omen-rpcs": "./src/rpc/omen-rpcs.ts",
+    "./caw-home": "./src/home/caw-home.ts",
+    "./caw-rpcs": "./src/rpc/caw-rpcs.ts",
     "./rpc-client": "./src/rpc/rpc-client.ts",
     "./guide": "./src/guide/guide.ts",
     "./offline-host": "./src/plugins/offline-host.ts",
     "./plugin-state": "./src/plugins/plugin-state.ts"
   },
   "dependencies": {
+    "@caw/sdk": "workspace:*",
     "@effect/platform-bun": "4.1.4",
     "@effect/sql-sqlite-bun": "4.1.4",
-    "@omen/sdk": "workspace:*",
     "@typeonce/effect-machine": "0.46.0",
     "drizzle-orm": "1.0.0-rc.5",
     "effect": "4.1.4"

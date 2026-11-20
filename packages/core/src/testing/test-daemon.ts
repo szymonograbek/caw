@@ -1,11 +1,11 @@
 import * as Fs from "node:fs/promises";
 import * as NodeOs from "node:os";
 import * as NodePath from "node:path";
-import type { ChannelMessage, ConversationPlace } from "@omen/sdk/channel";
-import { ConversationPlace as Place } from "@omen/sdk/channel";
-import { ChannelMessageId, ChannelName, ExternalConversationId, PluginName } from "@omen/sdk/ids";
-import { definePlugin, Omen } from "@omen/sdk/plugin";
-import { Profile } from "@omen/sdk/profile";
+import type { ChannelMessage, ConversationPlace } from "@caw/sdk/channel";
+import { ConversationPlace as Place } from "@caw/sdk/channel";
+import { ChannelMessageId, ChannelName, ExternalConversationId, PluginName } from "@caw/sdk/ids";
+import { definePlugin, Caw } from "@caw/sdk/plugin";
+import { Profile } from "@caw/sdk/profile";
 import { DateTime, Duration, Effect, Layer, Option, Schema } from "effect";
 import { HttpClient, HttpClientResponse } from "effect/http";
 import { TestClock } from "effect/testing";
@@ -13,15 +13,15 @@ import { coreLayer } from "../core-layer.ts";
 import { DaemonConfig } from "../home/daemon-config.ts";
 import { DaemonEnvironment } from "../home/daemon-environment.ts";
 import { HostFiles } from "../home/host-files.ts";
-import { OmenHome } from "../home/omen-home.ts";
+import { CawHome } from "../home/caw-home.ts";
 import { fromDefinition } from "../plugins/loaded-plugin.ts";
 import { PluginHost } from "../plugins/plugin-host.ts";
 import type { FakeChannel } from "./fake-channel.ts";
 import type { FakeHarness } from "./fake-harness.ts";
 
-/** A fresh `OMEN_HOME` under the OS temp directory, removed with the scope. */
+/** A fresh `CAW_HOME` under the OS temp directory, removed with the scope. */
 export const temporaryHome = Effect.acquireRelease(
-  Effect.promise(() => Fs.mkdtemp(NodePath.join(NodeOs.tmpdir(), "omen-core-"))),
+  Effect.promise(() => Fs.mkdtemp(NodePath.join(NodeOs.tmpdir(), "caw-core-"))),
   (path) => Effect.promise(() => Fs.rm(path, { recursive: true, force: true })),
 );
 
@@ -42,7 +42,7 @@ export const testCoreLayer = (home: string, config: typeof testConfig = testConf
   coreLayer.pipe(
     Layer.provideMerge(
       Layer.mergeAll(
-        Layer.succeed(OmenHome, OmenHome.at(home)),
+        Layer.succeed(CawHome, CawHome.at(home)),
         HostFiles.layer,
         Layer.succeed(DaemonConfig, config),
         Layer.succeed(DaemonEnvironment, { vars: { FROM_ENV: "1" } }),
@@ -63,10 +63,10 @@ const fakePlugin = (channel: FakeChannel, harness: FakeHarness) =>
       layer: () =>
         Layer.effectDiscard(
           Effect.gen(function* () {
-            const omen = yield* Omen;
+            const caw = yield* Caw;
 
-            yield* omen.registerHarness(harness.harness);
-            yield* omen.registerProfiles((name) =>
+            yield* caw.registerHarness(harness.harness);
+            yield* caw.registerProfiles((name) =>
               Effect.succeedSome(
                 new Profile({
                   name,
@@ -79,7 +79,7 @@ const fakePlugin = (channel: FakeChannel, harness: FakeHarness) =>
                 }),
               ),
             );
-            yield* omen.registerChannel(channel.channel);
+            yield* caw.registerChannel(channel.channel);
           }),
         ),
     }),

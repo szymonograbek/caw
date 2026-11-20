@@ -1,6 +1,6 @@
-import type { PluginName } from "@omen/sdk/ids";
-import type { GuidePage, Migration, PluginDefinition, PluginServices } from "@omen/sdk/plugin";
-import type { PluginSetup } from "@omen/sdk/setup";
+import type { PluginName } from "@caw/sdk/ids";
+import type { GuidePage, Migration, PluginDefinition, PluginServices } from "@caw/sdk/plugin";
+import type { PluginSetup } from "@caw/sdk/setup";
 import type { Layer } from "effect";
 import { Effect, Option, Schema } from "effect";
 
@@ -21,7 +21,7 @@ export interface LoadedPlugin {
   readonly migrations: ReadonlyArray<Migration>;
   readonly guide: ReadonlyArray<GuidePage>;
   readonly skillDir: Option.Option<string>;
-  /** Its part in `omen install`; `None` for a feature Plugin. */
+  /** Its part in `caw install`; `None` for a feature Plugin. */
   readonly setup: Option.Option<PluginSetup>;
   readonly layerFor: (
     settings: Schema.Json,

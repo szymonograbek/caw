@@ -1,5 +1,5 @@
-import { OmenEvent } from "@omen/sdk/events";
-import type { PluginName } from "@omen/sdk/ids";
+import { CawEvent } from "@caw/sdk/events";
+import type { PluginName } from "@caw/sdk/ids";
 import { Cause, Context, Effect, Exit, Layer, Option, Predicate, Ref, Schema, Scope } from "effect";
 import { EventBus } from "../events/event-bus.ts";
 import { SessionPool } from "../sessions/session-pool.ts";
@@ -22,7 +22,7 @@ export class BuiltinPluginNotRemovable extends Schema.TaggedError<
   { readonly brand: unique symbol }
 >()("BuiltinPluginNotRemovable", { plugin: Schema.String }) {}
 
-/** One line for `omen status`: the error's message, without its stack. */
+/** One line for `caw status`: the error's message, without its stack. */
 const failureSummary = (cause: Cause.Cause<unknown>): string => {
   const error = Cause.squash(cause);
 
@@ -48,7 +48,7 @@ export class PluginHost extends Context.Service<
     readonly start: (builtins: ReadonlyArray<LoadedPlugin>) => Effect.Effect<void>;
     /** Every installed Plugin, in Plugin order. */
     readonly list: Effect.Effect<ReadonlyArray<PluginEntry>>;
-    /** Installs an external Plugin (`omen plugin add`), enabled and last in order. */
+    /** Installs an external Plugin (`caw plugin add`), enabled and last in order. */
     readonly install: (source: string) => Effect.Effect<PluginName, PluginInstallError>;
     readonly enable: (name: PluginName) => Effect.Effect<void, PluginNotFound>;
     readonly disable: (name: PluginName) => Effect.Effect<void, PluginNotFound>;
@@ -63,7 +63,7 @@ export class PluginHost extends Context.Service<
       settings: Schema.Json,
     ) => Effect.Effect<void, PluginNotFound | InvalidPluginSettings>;
   }
->()("@omen/core/PluginHost") {
+>()("@caw/core/PluginHost") {
   static readonly layer = Layer.effect(
     PluginHost,
     Effect.gen(function* () {
@@ -124,7 +124,7 @@ export class PluginHost extends Context.Service<
         }
 
         yield* Ref.update(running, (all) => new Map(all).set(plugin.name, scope));
-        yield* bus.publish(OmenEvent.PluginEnabled({ plugin: plugin.name }));
+        yield* bus.publish(CawEvent.PluginEnabled({ plugin: plugin.name }));
       });
 
       const startRow = (row: PluginRow) =>
@@ -164,7 +164,7 @@ export class PluginHost extends Context.Service<
           return next;
         });
         yield* Scope.close(scope, Exit.void);
-        yield* bus.publish(OmenEvent.PluginDisabled({ plugin: name }));
+        yield* bus.publish(CawEvent.PluginDisabled({ plugin: name }));
       });
 
       const rowOf = (name: PluginName) =>

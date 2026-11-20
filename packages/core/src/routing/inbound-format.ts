@@ -1,4 +1,4 @@
-import type { ChannelMessage } from "@omen/sdk/channel";
+import type { ChannelMessage } from "@caw/sdk/channel";
 import { DateTime, Option } from "effect";
 
 /** An attachment as the agent sees it: saved into the Workspace inbox when the download worked. */
@@ -93,7 +93,7 @@ export const formatHistory = (messages: ReadonlyArray<ChannelMessage>, timezone:
     "</channel-history>",
   ].join("\n");
 
-/** Attachments referenced by name only, for messages Omen did not download. */
+/** Attachments referenced by name only, for messages Caw did not download. */
 export const referencesOf = (message: ChannelMessage): ReadonlyArray<AttachmentRef> =>
   message.attachments.map((attachment) => ({
     name: attachment.name,

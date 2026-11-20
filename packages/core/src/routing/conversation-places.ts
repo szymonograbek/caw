@@ -1,8 +1,8 @@
-import type { ConversationPlace } from "@omen/sdk/channel";
-import type { ReplyMode } from "@omen/sdk/conversation";
-import { Conversation } from "@omen/sdk/conversation";
-import { OmenEvent } from "@omen/sdk/events";
-import type { ChannelName, ConversationId, ExternalConversationId } from "@omen/sdk/ids";
+import type { ConversationPlace } from "@caw/sdk/channel";
+import type { ReplyMode } from "@caw/sdk/conversation";
+import { Conversation } from "@caw/sdk/conversation";
+import { CawEvent } from "@caw/sdk/events";
+import type { ChannelName, ConversationId, ExternalConversationId } from "@caw/sdk/ids";
 import { Context, Effect, Layer, Match, Option } from "effect";
 import { EventBus } from "../events/event-bus.ts";
 import { Conversations } from "../store/conversations.ts";
@@ -21,7 +21,7 @@ export class ConversationPlaces extends Context.Service<
     /** The top-level Conversation that owns the Workspace and profile. */
     readonly root: (conversation: Conversation) => Effect.Effect<Conversation>;
   }
->()("@omen/core/ConversationPlaces") {
+>()("@caw/core/ConversationPlaces") {
   static readonly layer = Layer.effect(
     ConversationPlaces,
     Effect.gen(function* () {
@@ -50,7 +50,7 @@ export class ConversationPlaces extends Context.Service<
         });
 
         yield* conversations.insert(conversation);
-        yield* bus.publish(OmenEvent.ConversationCreated({ conversation }));
+        yield* bus.publish(CawEvent.ConversationCreated({ conversation }));
 
         return conversation;
       });

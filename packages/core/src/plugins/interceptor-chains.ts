@@ -1,15 +1,15 @@
-import type { ChannelMessage } from "@omen/sdk/channel";
-import type { Conversation } from "@omen/sdk/conversation";
-import type { ToolCallRequest } from "@omen/sdk/harness";
-import { ToolCallDecision } from "@omen/sdk/harness";
-import type { PluginName } from "@omen/sdk/ids";
+import type { ChannelMessage } from "@caw/sdk/channel";
+import type { Conversation } from "@caw/sdk/conversation";
+import type { ToolCallRequest } from "@caw/sdk/harness";
+import { ToolCallDecision } from "@caw/sdk/harness";
+import type { PluginName } from "@caw/sdk/ids";
 import type {
   OutboundReplyContext,
   SessionOpeningContext,
   TurnInputContext,
-} from "@omen/sdk/interceptors";
-import { Interceptor } from "@omen/sdk/interceptors";
-import type { Tool, ToolGroup } from "@omen/sdk/tool";
+} from "@caw/sdk/interceptors";
+import { Interceptor } from "@caw/sdk/interceptors";
+import type { Tool, ToolGroup } from "@caw/sdk/tool";
 import { Context, Effect, Layer, Match, Option } from "effect";
 import { Registration, Registry } from "./registry.ts";
 
@@ -41,7 +41,7 @@ export class InterceptorChains extends Context.Service<
       context: OutboundReplyContext,
     ) => Effect.Effect<Option.Option<string>>;
   }
->()("@omen/core/InterceptorChains") {
+>()("@caw/core/InterceptorChains") {
   static readonly layer = Layer.effect(
     InterceptorChains,
     Effect.gen(function* () {

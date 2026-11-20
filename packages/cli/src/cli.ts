@@ -1,4 +1,4 @@
-import { OfflineHost } from "@omen/core/offline-host";
+import { OfflineHost } from "@caw/core/offline-host";
 import { Effect } from "effect";
 import { Command } from "effect/cli";
 import { builtins } from "./builtins.ts";
@@ -15,9 +15,9 @@ export const runLocal = (argv: ReadonlyArray<string>) =>
   Effect.gen(function* () {
     const installed = yield* OfflineHost.use((host) => host.installed);
 
-    const omen = Command.make("omen").pipe(
+    const caw = Command.make("caw").pipe(
       Command.withDescription(
-        "Control Omen. Commands not listed here (plugin, conversation, profile, schedule, memory) run in the daemon; see `omen guide`.",
+        "Control Caw. Commands not listed here (plugin, conversation, profile, schedule, memory) run in the daemon; see `caw guide`.",
       ),
       Command.withSubcommands([
         installCommand(builtins, installed),
@@ -30,5 +30,5 @@ export const runLocal = (argv: ReadonlyArray<string>) =>
       ]),
     );
 
-    yield* Command.runWith(omen, { version: "0.0.0" })(argv);
+    yield* Command.runWith(caw, { version: "0.0.0" })(argv);
   });

@@ -1,6 +1,6 @@
 node_modules/
 .env.local
-.omen-dev/
+.caw-dev/
 *.tsbuildinfo
 coverage/
 dist/

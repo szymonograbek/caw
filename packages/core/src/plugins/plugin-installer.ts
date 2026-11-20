@@ -1,11 +1,11 @@
 import * as Fs from "node:fs/promises";
 import * as NodePath from "node:path";
-import { PluginName } from "@omen/sdk/ids";
-import type { Migration, PluginServices } from "@omen/sdk/plugin";
-import { PluginSetup } from "@omen/sdk/setup";
+import { PluginName } from "@caw/sdk/ids";
+import type { Migration, PluginServices } from "@caw/sdk/plugin";
+import { PluginSetup } from "@caw/sdk/setup";
 import { Context, Effect, Layer, Option, Predicate, Schema } from "effect";
 import { HostFiles } from "../home/host-files.ts";
-import { OmenHome } from "../home/omen-home.ts";
+import { CawHome } from "../home/caw-home.ts";
 import { newSessionId } from "../store/new-ids.ts";
 import type { LoadedPlugin } from "./loaded-plugin.ts";
 import { InvalidPluginSettings } from "./loaded-plugin.ts";
@@ -60,7 +60,7 @@ const PackageJson = Schema.fromJsonString(
   Schema.Struct({
     version: Schema.optional(Schema.String),
     dependencies: Schema.optional(Schema.Record(Schema.String, Schema.String)),
-    omen: Schema.optional(Schema.Struct({ name: PluginName, version: Schema.String })),
+    caw: Schema.optional(Schema.Struct({ name: PluginName, version: Schema.String })),
   }),
 );
 
@@ -68,8 +68,8 @@ const failWith = (source: string) => (cause: unknown) =>
   new PluginInstallError({ source, message: String(cause) });
 
 /**
- * Runs `bun add <source>` in `folder` with the Bun running Omen. `BUN_BE_BUN`
- * makes a compiled `omen` binary act as the Bun it embeds.
+ * Runs `bun add <source>` in `folder` with the Bun running Caw. `BUN_BE_BUN`
+ * makes a compiled `caw` binary act as the Bun it embeds.
  */
 const bunAdd = (folder: string, source: string) =>
   Effect.gen(function* () {
@@ -108,11 +108,11 @@ export class PluginInstaller extends Context.Service<
     /** Deletes the Plugin's folder. */
     readonly uninstall: (name: PluginName) => Effect.Effect<void, PluginInstallError>;
   }
->()("@omen/core/PluginInstaller") {
+>()("@caw/core/PluginInstaller") {
   static readonly layer = Layer.effect(
     PluginInstaller,
     Effect.gen(function* () {
-      const home = yield* OmenHome;
+      const home = yield* CawHome;
       const files = yield* HostFiles;
 
       const readPackage = (path: string, source: string) =>
@@ -153,14 +153,14 @@ export class PluginInstaller extends Context.Service<
           const installedAt = yield* installedPackage(staging, source);
           const manifest = yield* readPackage(installedAt, source);
 
-          if (manifest.omen === undefined) {
+          if (manifest.caw === undefined) {
             return yield* new PluginInstallError({
               source,
-              message: 'The package has no "omen" key in its package.json.',
+              message: 'The package has no "caw" key in its package.json.',
             });
           }
 
-          const target = NodePath.join(home.pluginsDir, manifest.omen.name);
+          const target = NodePath.join(home.pluginsDir, manifest.caw.name);
 
           yield* files.remove(target).pipe(Effect.mapError(failWith(source)));
           yield* Effect.tryPromise({
@@ -168,7 +168,7 @@ export class PluginInstaller extends Context.Service<
             catch: failWith(source),
           });
 
-          return { name: manifest.omen.name, version: manifest.omen.version };
+          return { name: manifest.caw.name, version: manifest.caw.version };
         }).pipe(Effect.ensuring(Effect.ignore(files.remove(staging))));
 
         return installed;

@@ -1,8 +1,8 @@
 import { asc, eq } from "drizzle-orm";
 import * as SqliteDrizzle from "drizzle-orm/effect-sqlite-bun";
 import { Context, Effect, Layer, Option, Schema } from "effect";
-import { HarnessName, ProfileName } from "@omen/sdk/ids";
-import { Profile } from "@omen/sdk/profile";
+import { HarnessName, ProfileName } from "@caw/sdk/ids";
+import { Profile } from "@caw/sdk/profile";
 import { profilesTable } from "./profiles-table.ts";
 
 /** A `plugin_profiles_profiles` row, decoded into a Profile's fields. */
@@ -19,7 +19,7 @@ const ProfileRow = Schema.Struct({
 const decodeRow = (row: typeof profilesTable.$inferSelect) =>
   Schema.decodeEffect(ProfileRow)(row).pipe(Effect.map((fields) => new Profile(fields)));
 
-/** The Harness profiles users stored with `omen profile add`. */
+/** The Harness profiles users stored with `caw profile add`. */
 export class ProfileStore extends Context.Service<
   ProfileStore,
   {
@@ -31,7 +31,7 @@ export class ProfileStore extends Context.Service<
     /** Whether a profile with that name existed. */
     readonly remove: (name: ProfileName) => Effect.Effect<boolean>;
   }
->()("@omen/plugin-profiles/ProfileStore") {
+>()("@caw/plugin-profiles/ProfileStore") {
   static readonly layer = Layer.effect(
     ProfileStore,
     Effect.gen(function* () {

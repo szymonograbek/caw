@@ -1,13 +1,13 @@
 import * as NodePath from "node:path";
-import type { ChannelMessageId, ConversationId } from "@omen/sdk/ids";
+import type { ChannelMessageId, ConversationId } from "@caw/sdk/ids";
 import { Config, Context, Effect, Layer } from "effect";
 
 /**
- * Every path Omen keeps state under. The root is `OMEN_HOME`, else `~/.omen`,
+ * Every path Caw keeps state under. The root is `CAW_HOME`, else `~/.caw`,
  * so moving machines is a folder copy.
  */
-export class OmenHome extends Context.Service<
-  OmenHome,
+export class CawHome extends Context.Service<
+  CawHome,
   {
     readonly root: string;
     readonly database: string;
@@ -15,24 +15,24 @@ export class OmenHome extends Context.Service<
     readonly logFile: string;
     readonly envFile: string;
     readonly pluginsDir: string;
-    /** Holds the `omen` shim Sessions find on their `PATH`. */
+    /** Holds the `caw` shim Sessions find on their `PATH`. */
     readonly binDir: string;
-    /** Omen's core skill, a Claude Code local plugin every Session loads. */
+    /** Caw's core skill, a Claude Code local plugin every Session loads. */
     readonly skillDir: string;
     /** The Workspace of a top-level Conversation. */
     readonly workspace: (root: ConversationId) => string;
     /** Where one message's attachments are saved inside a Workspace. */
     readonly inbox: (workspace: string, message: ChannelMessageId) => string;
   }
->()("@omen/core/OmenHome") {
-  static readonly at = (root: string): OmenHome["Service"] => {
+>()("@caw/core/CawHome") {
+  static readonly at = (root: string): CawHome["Service"] => {
     const absolute = NodePath.resolve(root);
 
     return {
       root: absolute,
-      database: NodePath.join(absolute, "omen.db"),
-      socket: NodePath.join(absolute, "omen.sock"),
-      logFile: NodePath.join(absolute, "logs", "omen.log"),
+      database: NodePath.join(absolute, "caw.db"),
+      socket: NodePath.join(absolute, "caw.sock"),
+      logFile: NodePath.join(absolute, "logs", "caw.log"),
       envFile: NodePath.join(absolute, ".env"),
       pluginsDir: NodePath.join(absolute, "plugins"),
       binDir: NodePath.join(absolute, "bin"),
@@ -43,16 +43,16 @@ export class OmenHome extends Context.Service<
   };
 
   static readonly layer = Layer.effect(
-    OmenHome,
+    CawHome,
     Effect.gen(function* () {
-      // `HOME` is read only without `OMEN_HOME`, so the agent's shim runs in any environment.
-      const root = yield* Config.String("OMEN_HOME").pipe(
+      // `HOME` is read only without `CAW_HOME`, so the agent's shim runs in any environment.
+      const root = yield* Config.String("CAW_HOME").pipe(
         Config.orElse(() =>
-          Config.String("HOME").pipe(Config.map((home) => NodePath.join(home, ".omen"))),
+          Config.String("HOME").pipe(Config.map((home) => NodePath.join(home, ".caw"))),
         ),
       );
 
-      return OmenHome.at(root);
+      return CawHome.at(root);
     }),
   );
 }

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "@effect/vitest";
-import { ConversationPlace } from "@omen/sdk/channel";
-import { PluginName } from "@omen/sdk/ids";
+import { ConversationPlace } from "@caw/sdk/channel";
+import { PluginName } from "@caw/sdk/ids";
 import { Effect, Layer, Ref } from "effect";
 import { makeFakeChannel } from "../testing/fake-channel.ts";
 import { makeFakeHarness } from "../testing/fake-harness.ts";

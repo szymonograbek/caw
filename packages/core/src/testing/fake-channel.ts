@@ -3,9 +3,9 @@ import type {
   ChannelCommandName,
   ChannelMessage,
   ConversationPlace,
-} from "@omen/sdk/channel";
-import { ChannelInput } from "@omen/sdk/channel";
-import { ChannelMessageId, ChannelName, ExternalConversationId } from "@omen/sdk/ids";
+} from "@caw/sdk/channel";
+import { ChannelInput } from "@caw/sdk/channel";
+import { ChannelMessageId, ChannelName, ExternalConversationId } from "@caw/sdk/ids";
 import { Effect, Queue, Ref, Stream } from "effect";
 
 export interface SentMessage {

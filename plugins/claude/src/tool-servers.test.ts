@@ -1,7 +1,7 @@
 import { describe, expect, it } from "@effect/vitest";
 import { Effect, Schema } from "effect";
-import { ConversationId, PluginName, SessionId } from "@omen/sdk/ids";
-import { makeTool } from "@omen/sdk/tool";
+import { ConversationId, PluginName, SessionId } from "@caw/sdk/ids";
+import { makeTool } from "@caw/sdk/tool";
 import { toolServers } from "./tool-servers.ts";
 
 const context = {
@@ -27,7 +27,7 @@ const ping = makeTool({
 const runToolCall = Effect.runPromise;
 
 describe("toolServers", () => {
-  it.effect("serves each Plugin's tools as its own omen_<plugin> MCP server", () =>
+  it.effect("serves each Plugin's tools as its own caw_<plugin> MCP server", () =>
     Effect.gen(function* () {
       const servers = yield* toolServers(
         [
@@ -38,8 +38,8 @@ describe("toolServers", () => {
         runToolCall,
       );
 
-      expect(Object.keys(servers)).toEqual(["omen_memory", "omen_scheduler"]);
-      expect(servers["omen_memory"]).toMatchObject({ type: "sdk", name: "omen_memory" });
+      expect(Object.keys(servers)).toEqual(["caw_memory", "caw_scheduler"]);
+      expect(servers["caw_memory"]).toMatchObject({ type: "sdk", name: "caw_memory" });
     }),
   );
 
@@ -51,7 +51,7 @@ describe("toolServers", () => {
         runToolCall,
       );
 
-      expect(Object.keys(servers)).toEqual(["omen_memory"]);
+      expect(Object.keys(servers)).toEqual(["caw_memory"]);
     }),
   );
 });

@@ -14,7 +14,7 @@ export default defineConfig({
     ".codex/**",
     ".cursor/**",
     ".opencode/**",
-    ".omen-dev/**",
+    ".caw-dev/**",
     "tools/oxlint/**",
     "coverage/**",
     "dist/**",

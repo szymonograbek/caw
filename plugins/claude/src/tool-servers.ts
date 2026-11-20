@@ -4,9 +4,9 @@ import type {
 } from "@anthropic-ai/claude-agent-sdk";
 import { createSdkMcpServer } from "@anthropic-ai/claude-agent-sdk";
 import { Effect, Schema } from "effect";
-import type { HarnessError } from "@omen/sdk/harness";
-import type { Tool, ToolContext, ToolGroup } from "@omen/sdk/tool";
-import { ToolError } from "@omen/sdk/tool";
+import type { HarnessError } from "@caw/sdk/harness";
+import type { Tool, ToolContext, ToolGroup } from "@caw/sdk/tool";
+import { ToolError } from "@caw/sdk/tool";
 import { z } from "zod";
 import { claudeError } from "./claude-error.ts";
 
@@ -23,7 +23,7 @@ const decodeJson = Schema.decodeUnknownEffect(Schema.Json);
 
 /**
  * One always-loaded in-process MCP server per ToolGroup, keyed by its
- * `omen_<plugin>` name as `mcpServers` expects.
+ * `caw_<plugin>` name as `mcpServers` expects.
  */
 export const toolServers = Effect.fn("ClaudeHarness.toolServers")(function* (
   groups: ReadonlyArray<ToolGroup>,
@@ -33,7 +33,7 @@ export const toolServers = Effect.fn("ClaudeHarness.toolServers")(function* (
   const servers: Record<string, McpSdkServerConfigWithInstance> = {};
 
   for (const group of groups) {
-    const name = `omen_${group.plugin}`;
+    const name = `caw_${group.plugin}`;
 
     const tools = yield* Effect.forEach(group.tools, (tool) =>
       toolDefinition(tool, context, runToolCall),

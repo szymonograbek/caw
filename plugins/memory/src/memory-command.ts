@@ -1,7 +1,7 @@
 import { Console, Effect, Option, Schema } from "effect";
 import { Command, Flag } from "effect/cli";
-import { fromCommand } from "@omen/sdk/cli-command";
-import { CliCommandError } from "@omen/sdk/plugin";
+import { fromCommand } from "@caw/sdk/cli-command";
+import { CliCommandError } from "@caw/sdk/plugin";
 import { exportMarkdown } from "./memory-export.ts";
 import { MemoryStore } from "./memory-store.ts";
 
@@ -16,7 +16,7 @@ const writeFile = (path: string, text: string) =>
     catch: (cause) => new CliCommandError({ message: `Could not write ${path}: ${String(cause)}` }),
   });
 
-/** `omen memory export [--out <file>]`. */
+/** `caw memory export [--out <file>]`. */
 export const memoryCommand = Effect.gen(function* () {
   const store = yield* MemoryStore;
 

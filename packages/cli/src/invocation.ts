@@ -1,35 +1,35 @@
 import * as NodePath from "node:path";
-import { ConversationId } from "@omen/sdk/ids";
+import { ConversationId } from "@caw/sdk/ids";
 import { Config, Context, Effect, Layer, Option } from "effect";
 
 /** `bun build --compile` serves the bundled modules from Bun's virtual `/$bunfs` root. */
 const compiled = import.meta.dirname.startsWith("/$bunfs");
 
-/** Facts about this `omen` process that commands act on; tests substitute their own. */
+/** Facts about this `caw` process that commands act on; tests substitute their own. */
 export class Invocation extends Context.Service<
   Invocation,
   {
     /** The invoking shell's working directory. */
     readonly cwd: string;
-    /** `OMEN_CONVERSATION_ID`, set when the agent runs `omen` inside a Session. */
+    /** `CAW_CONVERSATION_ID`, set when the agent runs `caw` inside a Session. */
     readonly conversationId: Option.Option<ConversationId>;
-    /** `process.platform`; decides which service file `omen install` writes. */
+    /** `process.platform`; decides which service file `caw install` writes. */
     readonly platform: string;
     /**
-     * The command that starts this CLI, for the `omen` shim and service files:
+     * The command that starts this CLI, for the `caw` shim and service files:
      * `[bun, main.ts]` from source, or just the binary when compiled.
      */
     readonly cli: ReadonlyArray<string>;
     /** The user id `launchctl bootstrap gui/<uid>` needs. */
     readonly userId: Option.Option<number>;
   }
->()("@omen/cli/Invocation") {
+>()("@caw/cli/Invocation") {
   /** This process: the one place the CLI reads `process`. */
   static readonly layer = Layer.effect(
     Invocation,
     Effect.gen(function* () {
       const conversationId = yield* Config.option(
-        Config.String("OMEN_CONVERSATION_ID").pipe(Config.map((id) => ConversationId.make(id))),
+        Config.String("CAW_CONVERSATION_ID").pipe(Config.map((id) => ConversationId.make(id))),
       );
 
       return {

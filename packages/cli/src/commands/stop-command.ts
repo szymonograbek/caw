@@ -9,7 +9,7 @@ export const stopCommand = Command.make("stop", {}, () =>
 
     yield* daemon.shutdown.pipe(
       Effect.catchTag("DaemonNotRunning", () =>
-        Effect.fail(new CliFailure({ message: "Omen is not running." })),
+        Effect.fail(new CliFailure({ message: "Caw is not running." })),
       ),
     );
 
@@ -17,7 +17,7 @@ export const stopCommand = Command.make("stop", {}, () =>
     const gone = yield* pollStatus(daemon, Option.isNone, 100);
 
     yield* Option.isNone(gone)
-      ? Console.log("Omen stopped.")
-      : Effect.fail(new CliFailure({ message: "Omen is still stopping; check `omen status`." }));
+      ? Console.log("Caw stopped.")
+      : Effect.fail(new CliFailure({ message: "Caw is still stopping; check `caw status`." }));
   }),
 ).pipe(Command.withDescription("Stop the running daemon"));

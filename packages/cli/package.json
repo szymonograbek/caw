@@ -1,21 +1,21 @@
 {
-  "name": "omen",
+  "name": "caw",
   "version": "0.0.0",
   "private": true,
   "bin": {
-    "omen": "./src/main.ts"
+    "caw": "./src/main.ts"
   },
   "type": "module",
   "dependencies": {
+    "@caw/core": "workspace:*",
+    "@caw/plugin-claude": "workspace:*",
+    "@caw/plugin-discord": "workspace:*",
+    "@caw/plugin-memory": "workspace:*",
+    "@caw/plugin-profiles": "workspace:*",
+    "@caw/plugin-scheduler": "workspace:*",
+    "@caw/sdk": "workspace:*",
     "@clack/prompts": "1.9.0",
     "@effect/platform-bun": "4.1.4",
-    "@omen/core": "workspace:*",
-    "@omen/plugin-claude": "workspace:*",
-    "@omen/plugin-discord": "workspace:*",
-    "@omen/plugin-memory": "workspace:*",
-    "@omen/plugin-profiles": "workspace:*",
-    "@omen/plugin-scheduler": "workspace:*",
-    "@omen/sdk": "workspace:*",
     "effect": "4.1.4"
   },
   "devDependencies": {

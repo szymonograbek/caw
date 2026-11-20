@@ -1,4 +1,4 @@
-# Omen
+# Caw
 
 A minimal daemon that lets trusted people talk to agent Harnesses (Claude Agent SDK first) through Channels (Discord first), with everything beyond the core built as Plugins.
 
@@ -6,7 +6,7 @@ A minimal daemon that lets trusted people talk to agent Harnesses (Claude Agent 
 
 ## Stack
 
-Bun workspaces: `packages/sdk` (`@omen/sdk`, the only package plugins import), `packages/core` (`@omen/core`), `packages/cli` (`omen`, bin `src/main.ts`), and `plugins/{discord,claude,memory,scheduler,profiles}` (`@omen/plugin-<name>`). Packages reference each other with `workspace:*`, and each runtime dependency lives only in the package that uses it.
+Bun workspaces: `packages/sdk` (`@caw/sdk`, the only package plugins import), `packages/core` (`@caw/core`), `packages/cli` (`caw`, bin `src/main.ts`), and `plugins/{discord,claude,memory,scheduler,profiles}` (`@caw/plugin-<name>`). Packages reference each other with `workspace:*`, and each runtime dependency lives only in the package that uses it.
 
 | Package                                         | Version    | Where                                                                              |
 | ----------------------------------------------- | ---------- | ---------------------------------------------------------------------------------- |
@@ -34,9 +34,9 @@ Prerelease: `drizzle-orm` 1.0.0-rc.5, pinned exactly. No patched packages beyond
 
 Deviations from the kickoff guides:
 
-- **Tests run on two runtimes.** `bun run test` runs the `omen` Vitest project under Bun (`bun --bun vitest`) with `pool: "threads"`, because `bun:sqlite` exists only under Bun and Vitest's default `forks` pool crashes there (`child.channel.unref is not a function`). It then runs the `oxlint` project (the vendored lint-rule tests) under Node, because oxlint's `RuleTester` refuses non-Node runtimes. `packages/core/src/sqlite.test.ts` proves Drizzle over `@effect/sql-sqlite-bun` runs in tests.
+- **Tests run on two runtimes.** `bun run test` runs the `caw` Vitest project under Bun (`bun --bun vitest`) with `pool: "threads"`, because `bun:sqlite` exists only under Bun and Vitest's default `forks` pool crashes there (`child.channel.unref is not a function`). It then runs the `oxlint` project (the vendored lint-rule tests) under Node, because oxlint's `RuleTester` refuses non-Node runtimes. `packages/core/src/sqlite.test.ts` proves Drizzle over `@effect/sql-sqlite-bun` runs in tests.
 - **No UI.** Skipped: StyleX, TanStack, React, Lingui, i18n, Playwright, the `react`, `jsx-a11y`, StyleX and Lingui lint rules, and ai-automation's React and UI-folder rules. Dropped from the TypeScript rules below: React, URL state, Copy and locales, Styling and design system, and the web layout tree. The "TypeScript stack" paragraph is rewritten for this stack.
-- **No OpenTelemetry.** The spec says logs are structured JSON in `~/.omen/logs/omen.log` with no telemetry, so there is no OTLP exporter and the Observability rules below say so.
+- **No OpenTelemetry.** The spec says logs are structured JSON in `~/.caw/logs/caw.log` with no telemetry, so there is no OTLP exporter and the Observability rules below say so.
 - **No backend, Alchemy or cloud**, so no `@alchemy.run/*`. The GitHub repository is private, so there are no workflows (release-please, CI, PR-title check).
 - `@effect/language-service` is in the root Knip `ignoreDependencies`, since `@effect/tsgo` serves the tsconfig plugin under that name. `allowedUnstableApis` lists `@effect/vitest`, `@effect/platform-bun` and `@effect/sql-sqlite-bun`.
 - Knip `ignoreDependencies` per package are temporary: the placeholders do not import their package's dependencies yet. Delete each entry once code imports that dependency.
@@ -45,12 +45,12 @@ Deviations from the kickoff guides:
 
 ## Commands
 
-`bun run verify` (format check, lint, typecheck, Knip, tests) must pass before any handoff. The other scripts are in `package.json`. Run `bun run dev:setup` once per checkout: it writes `.env.local` with this checkout's `OMEN_HOME` (`.omen-dev/`), and Bun loads `.env.local` automatically. `bun run build` compiles the CLI into `dist/omen`, and `bun run install:global` builds it and copies it to `$OMEN_INSTALL_DIR` (default: Bun's global bin). The compiled binary keeps its modules in Bun's virtual `/$bunfs`, which other processes cannot read: anything a Session's processes need (the `omen` shim, the core skill, Claude Code itself) must come from disk.
+`bun run verify` (format check, lint, typecheck, Knip, tests) must pass before any handoff. The other scripts are in `package.json`. Run `bun run dev:setup` once per checkout: it writes `.env.local` with this checkout's `CAW_HOME` (`.caw-dev/`), and Bun loads `.env.local` automatically. `bun run build` compiles the CLI into `dist/caw`, and `bun run install:global` builds it and copies it to `$CAW_INSTALL_DIR` (default: Bun's global bin). The compiled binary keeps its modules in Bun's virtual `/$bunfs`, which other processes cannot read: anything a Session's processes need (the `caw` shim, the core skill, Claude Code itself) must come from disk.
 
-## Omen
+## Caw
 
 - Read `docs/spec.md`, `GLOSSARY.md` and `docs/adr/` before changing behavior. Name code, logs and docs with the glossary's terms, and avoid the synonyms it lists under _Avoid_.
-- Every state path comes from `OMEN_HOME`, never a hardcoded `~/.omen`.
+- Every state path comes from `CAW_HOME`, never a hardcoded `~/.caw`.
 
 ## Definition of done
 
@@ -77,7 +77,7 @@ Deviations from the kickoff guides:
 
 ## Observability
 
-- Logs are structured JSON written to `$OMEN_HOME/logs/omen.log`. There is no telemetry and no exporter.
+- Logs are structured JSON written to `$CAW_HOME/logs/caw.log`. There is no telemetry and no exporter.
 - Log with `Effect.log*` and annotate with the IDs that identify the operation. Never put secrets or personal data in logs.
 - Configure the logger only at the entry point. Tests write no log files.
 

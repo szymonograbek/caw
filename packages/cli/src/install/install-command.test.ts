@@ -4,9 +4,9 @@ import * as NodeOs from "node:os";
 import * as NodePath from "node:path";
 import { BunServices } from "@effect/platform-bun";
 import { describe, expect, it } from "@effect/vitest";
-import { OfflineHost } from "@omen/core/offline-host";
-import { OmenHome } from "@omen/core/omen-home";
-import { DaemonStatus } from "@omen/core/omen-rpcs";
+import { OfflineHost } from "@caw/core/offline-host";
+import { CawHome } from "@caw/core/caw-home";
+import { DaemonStatus } from "@caw/core/caw-rpcs";
 import { ConfigProvider, DateTime, Effect, Exit, Layer, Option, Ref, Schema } from "effect";
 import { HttpClient, HttpClientResponse } from "effect/http";
 import { runLocal } from "../cli.ts";
@@ -16,7 +16,7 @@ import { Processes } from "./processes.ts";
 import { WizardUi } from "./wizard-ui.ts";
 
 const temporaryHome = Effect.acquireRelease(
-  Effect.promise(() => Fs.mkdtemp(NodePath.join(NodeOs.tmpdir(), "omen-install-"))),
+  Effect.promise(() => Fs.mkdtemp(NodePath.join(NodeOs.tmpdir(), "caw-install-"))),
   (path) => Effect.promise(() => Fs.rm(path, { recursive: true, force: true })),
 );
 
@@ -35,7 +35,7 @@ const fakeDiscord = HttpClient.make((request) => {
   }
 
   if (request.url.endsWith("/users/@me")) {
-    return body('{"id":"bot-1","username":"omen-bot"}');
+    return body('{"id":"bot-1","username":"caw-bot"}');
   }
 
   if (request.url.endsWith("/users/@me/guilds")) {
@@ -65,7 +65,7 @@ const record = (line: string) =>
  * launchd: `bootout` fails when nothing is loaded, the service stays held for
  * two `print` checks after `bootout`, and `bootstrap` fails with 5 while it is held.
  */
-const fakeOmen = (alreadyRunning: boolean, serviceLoaded: boolean) =>
+const fakeCaw = (alreadyRunning: boolean, serviceLoaded: boolean) =>
   Layer.unwrap(
     Effect.gen(function* () {
       const status = yield* Ref.make(alreadyRunning ? Option.some(running) : Option.none());
@@ -130,7 +130,7 @@ const fakeOmen = (alreadyRunning: boolean, serviceLoaded: boolean) =>
             }),
           startDetached: (command, env, output) =>
             Effect.andThen(
-              record(`detached ${command.join(" ")} OMEN_HOME=${env["OMEN_HOME"]} >> ${output}`),
+              record(`detached ${command.join(" ")} CAW_HOME=${env["CAW_HOME"]} >> ${output}`),
               Ref.set(status, Option.some(running)),
             ),
         }),
@@ -138,8 +138,8 @@ const fakeOmen = (alreadyRunning: boolean, serviceLoaded: boolean) =>
     }),
   );
 
-/** `omen <argv>` in this process, on `home`, with Discord and the daemon faked and macOS as the platform. */
-const omen = (
+/** `caw <argv>` in this process, on `home`, with Discord and the daemon faked and macOS as the platform. */
+const caw = (
   home: string,
   argv: ReadonlyArray<string>,
   alreadyRunning = false,
@@ -149,14 +149,14 @@ const omen = (
     Effect.provide(
       Layer.mergeAll(
         OfflineHost.standalone,
-        OmenHome.layer,
-        fakeOmen(alreadyRunning, serviceLoaded),
+        CawHome.layer,
+        fakeCaw(alreadyRunning, serviceLoaded),
         WizardUi.recording(printed),
         Layer.succeed(Invocation, {
           cwd: home,
           conversationId: Option.none(),
           platform: "darwin",
-          cli: ["/usr/local/bin/bun", "/opt/omen/main.ts"],
+          cli: ["/usr/local/bin/bun", "/opt/caw/main.ts"],
           userId: Option.some(501),
         }),
         Layer.succeed(HttpClient.HttpClient, fakeDiscord),
@@ -166,7 +166,7 @@ const omen = (
           ConfigProvider.layer(
             ConfigProvider.fromEnv({
               env: {
-                OMEN_HOME: home,
+                CAW_HOME: home,
                 HOME: home,
                 PATH: "/usr/bin",
                 CLAUDE_CONFIG_DIR: NodePath.join(home, ".claude"),
@@ -192,7 +192,7 @@ const freshHome = Effect.gen(function* () {
 
 /** The `default` profile's env and effort, as the profiles Plugin stored them. */
 const defaultProfile = (home: string) => {
-  const db = new Database(NodePath.join(home, "omen.db"), { readonly: true });
+  const db = new Database(NodePath.join(home, "caw.db"), { readonly: true });
 
   const row = db
     .query<{ env_json: string; effort: string | null }, []>(
@@ -211,7 +211,7 @@ const defaultProfile = (home: string) => {
 };
 
 const pluginsTable = (home: string) => {
-  const db = new Database(NodePath.join(home, "omen.db"), { readonly: true });
+  const db = new Database(NodePath.join(home, "caw.db"), { readonly: true });
   const rows = db.query('select name, enabled from plugins order by "order"').all();
 
   db.close();
@@ -219,14 +219,14 @@ const pluginsTable = (home: string) => {
   return rows;
 };
 
-describe("omen install", () => {
-  it.live("sets Omen up from flags alone and starts it at login", () =>
+describe("caw install", () => {
+  it.live("sets Caw up from flags alone and starts it at login", () =>
     Effect.gen(function* () {
       const { home, tokenFile } = yield* freshHome;
 
       yield* Effect.promise(() => Fs.writeFile(NodePath.join(home, ".env"), "# mine\nOTHER=1\n"));
 
-      yield* omen(home, [
+      yield* caw(home, [
         "install",
         "--yes",
         "--discord-token-file",
@@ -241,14 +241,14 @@ describe("omen install", () => {
         "memory,profiles",
       ]);
 
-      const plist = NodePath.join(home, "Library", "LaunchAgents", "omen.plist");
+      const plist = NodePath.join(home, "Library", "LaunchAgents", "caw.plist");
 
       expect(printed).toEqual([
-        "Omen setup",
+        "Caw setup",
         "Channel: Discord",
         `Discord bot token: read from ${tokenFile}`,
         "Discord settings checked",
-        "Bot: omen-bot",
+        "Bot: caw-bot",
         "The bot is in no server yet. Add it with:",
         expect.stringContaining(
           "  https://discord.com/oauth2/authorize?client_id=app-1&scope=bot%20applications.commands&permissions=",
@@ -263,17 +263,17 @@ describe("omen install", () => {
         expect.stringMatching(/^Claude Code: /),
         `Claude config: ${NodePath.join(home, ".claude")}`,
         "Features: memory, profiles",
-        "Saved them as the default profile (omen profile list)",
-        "Start Omen at login?: Yes",
+        "Saved them as the default profile (caw profile list)",
+        "Start Caw at login?: Yes",
         `Wrote ${plist}`,
-        "Omen is running (pid 4242)",
-        "omen status  check on it",
-        "omen guide  what it can do",
-        "omen logs -f  follow its log",
-        "Omen is set up. Say hello on Discord.",
+        "Caw is running (pid 4242)",
+        "caw status  check on it",
+        "caw guide  what it can do",
+        "caw logs -f  follow its log",
+        "Caw is set up. Say hello on Discord.",
       ]);
       expect(ran).toEqual([
-        "launchctl bootout gui/501/omen",
+        "launchctl bootout gui/501/caw",
         `launchctl bootstrap gui/501 ${plist}`,
       ]);
 
@@ -298,26 +298,26 @@ describe("omen install", () => {
 
       const contents = yield* Effect.promise(() => Fs.readFile(plist, "utf8"));
 
-      expect(contents).toContain(`<key>OMEN_HOME</key>\n    <string>${home}</string>`);
+      expect(contents).toContain(`<key>CAW_HOME</key>\n    <string>${home}</string>`);
       expect(contents).toContain(
-        "<string>/usr/local/bin/bun</string>\n    <string>/opt/omen/main.ts</string>\n    <string>start</string>",
+        "<string>/usr/local/bin/bun</string>\n    <string>/opt/caw/main.ts</string>\n    <string>start</string>",
       );
     }).pipe(Effect.scoped),
   );
 
-  it.live("restarts a running Omen through the service, so it picks up the new settings", () =>
+  it.live("restarts a running Caw through the service, so it picks up the new settings", () =>
     Effect.gen(function* () {
       const { home, tokenFile } = yield* freshHome;
 
-      yield* omen(home, ["install", "--yes", "--discord-token-file", tokenFile], true);
+      yield* caw(home, ["install", "--yes", "--discord-token-file", tokenFile], true);
 
       expect(ran).toEqual([
-        "launchctl bootout gui/501/omen",
+        "launchctl bootout gui/501/caw",
         "Shutdown RPC",
-        `launchctl bootstrap gui/501 ${NodePath.join(home, "Library", "LaunchAgents", "omen.plist")}`,
+        `launchctl bootstrap gui/501 ${NodePath.join(home, "Library", "LaunchAgents", "caw.plist")}`,
       ]);
-      expect(printed).toContain("Stopped the running Omen");
-      expect(printed).toContain("Omen is running (pid 4242)");
+      expect(printed).toContain("Stopped the running Caw");
+      expect(printed).toContain("Caw is running (pid 4242)");
     }).pipe(Effect.scoped),
   );
 
@@ -325,30 +325,30 @@ describe("omen install", () => {
     Effect.gen(function* () {
       const { home, tokenFile } = yield* freshHome;
 
-      yield* omen(home, ["install", "--yes", "--discord-token-file", tokenFile], true, true);
+      yield* caw(home, ["install", "--yes", "--discord-token-file", tokenFile], true, true);
 
       expect(ran).toEqual([
-        "launchctl bootout gui/501/omen",
-        `launchctl bootstrap gui/501 ${NodePath.join(home, "Library", "LaunchAgents", "omen.plist")}`,
+        "launchctl bootout gui/501/caw",
+        `launchctl bootstrap gui/501 ${NodePath.join(home, "Library", "LaunchAgents", "caw.plist")}`,
       ]);
-      expect(printed).toContain("Omen is running (pid 4242)");
+      expect(printed).toContain("Caw is running (pid 4242)");
     }).pipe(Effect.scoped),
   );
 
-  it.live("with --no-service, starts Omen in the background and writes no service", () =>
+  it.live("with --no-service, starts Caw in the background and writes no service", () =>
     Effect.gen(function* () {
       const { home, tokenFile } = yield* freshHome;
 
-      yield* omen(home, ["install", "--yes", "--discord-token-file", tokenFile, "--no-service"]);
+      yield* caw(home, ["install", "--yes", "--discord-token-file", tokenFile, "--no-service"]);
 
       expect(ran).toEqual([
-        `detached /usr/local/bin/bun /opt/omen/main.ts start OMEN_HOME=${home} >> ${NodePath.join(home, "logs", "daemon.out")}`,
+        `detached /usr/local/bin/bun /opt/caw/main.ts start CAW_HOME=${home} >> ${NodePath.join(home, "logs", "daemon.out")}`,
       ]);
-      expect(printed).toContain("Start Omen at login?: No");
-      expect(printed).toContain("Omen is running (pid 4242)");
+      expect(printed).toContain("Start Caw at login?: No");
+      expect(printed).toContain("Caw is running (pid 4242)");
       expect(
         yield* Effect.promise(() =>
-          Fs.access(NodePath.join(home, "Library", "LaunchAgents", "omen.plist")).then(
+          Fs.access(NodePath.join(home, "Library", "LaunchAgents", "caw.plist")).then(
             () => true,
             () => false,
           ),
@@ -365,15 +365,15 @@ describe("omen install", () => {
       yield* Effect.promise(() => Fs.writeFile(badToken, "bad-token"));
 
       expect(
-        yield* Effect.exit(omen(home, ["install", "--yes", "--discord-token-file", badToken])),
+        yield* Effect.exit(caw(home, ["install", "--yes", "--discord-token-file", badToken])),
       ).toEqual(Exit.fail(expect.objectContaining({ message: "Discord rejected the bot token." })));
       expect(printed).toContain("Discord settings rejected");
-      expect(yield* Effect.exit(omen(home, ["install", "--yes"]))).toEqual(
+      expect(yield* Effect.exit(caw(home, ["install", "--yes"]))).toEqual(
         Exit.fail(expect.objectContaining({ message: "Pass --discord-token-file." })),
       );
       expect(
         yield* Effect.exit(
-          omen(home, [
+          caw(home, [
             "install",
             "--yes",
             "--discord-token-file",

@@ -2,16 +2,16 @@ import { BunSocket } from "@effect/platform-bun";
 import { Context, Layer } from "effect";
 import type { RpcClientError, RpcGroup } from "effect/rpc";
 import { RpcClient, RpcSerialization } from "effect/rpc";
-import { OmenRpcs } from "./omen-rpcs.ts";
+import { CawRpcs } from "./caw-rpcs.ts";
 
 /** The CLI's typed connection to a running daemon. */
-export class OmenClient extends Context.Service<
-  OmenClient,
-  RpcClient.RpcClient<RpcGroup.Rpcs<typeof OmenRpcs>, RpcClientError.RpcClientError>
->()("@omen/core/OmenClient") {
-  /** Connects to the daemon's socket (`OmenHome.socket`). */
+export class CawClient extends Context.Service<
+  CawClient,
+  RpcClient.RpcClient<RpcGroup.Rpcs<typeof CawRpcs>, RpcClientError.RpcClientError>
+>()("@caw/core/CawClient") {
+  /** Connects to the daemon's socket (`CawHome.socket`). */
   static readonly layer = (socket: string) =>
-    Layer.effect(OmenClient, RpcClient.make(OmenRpcs)).pipe(
+    Layer.effect(CawClient, RpcClient.make(CawRpcs)).pipe(
       Layer.provide(
         RpcClient.layerProtocolSocket().pipe(
           Layer.provide([

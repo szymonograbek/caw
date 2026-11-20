@@ -1,10 +1,10 @@
 import { Effect, Option, Schema } from "effect";
-import type { ChannelError } from "@omen/sdk/channel";
-import type { Omen } from "@omen/sdk/plugin";
-import type { ExternalConversationId } from "@omen/sdk/ids";
-import { ChannelMessageId } from "@omen/sdk/ids";
-import type { Tool } from "@omen/sdk/tool";
-import { makeTool, ToolError } from "@omen/sdk/tool";
+import type { ChannelError } from "@caw/sdk/channel";
+import type { Caw } from "@caw/sdk/plugin";
+import type { ExternalConversationId } from "@caw/sdk/ids";
+import { ChannelMessageId } from "@caw/sdk/ids";
+import type { Tool } from "@caw/sdk/tool";
+import { makeTool, ToolError } from "@caw/sdk/tool";
 import type { MessageNotFound } from "./discord-client.ts";
 
 const ReactParameters = Schema.Struct({
@@ -15,7 +15,7 @@ const ReactParameters = Schema.Struct({
 /** What the react tool needs: the allowed emoji, Conversation lookup, and a reaction that reports a missing message. */
 export interface ReactToolDependencies {
   readonly allowedReactions: ReadonlyArray<string>;
-  readonly conversation: Omen["Service"]["conversation"];
+  readonly conversation: Caw["Service"]["conversation"];
   readonly react: (
     conversation: ExternalConversationId,
     message: ChannelMessageId,

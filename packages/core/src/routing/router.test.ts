@@ -1,7 +1,7 @@
 import { describe, expect, it } from "@effect/vitest";
-import { ConversationPlace } from "@omen/sdk/channel";
-import { HarnessError, HarnessEvent, SessionStart } from "@omen/sdk/harness";
-import { ChannelName, ExternalConversationId, ProfileName } from "@omen/sdk/ids";
+import { ConversationPlace } from "@caw/sdk/channel";
+import { HarnessError, HarnessEvent, SessionStart } from "@caw/sdk/harness";
+import { ChannelName, ExternalConversationId, ProfileName } from "@caw/sdk/ids";
 import { Effect, Layer, Option, Queue, Ref } from "effect";
 import { Conversations } from "../store/conversations.ts";
 import { Sessions } from "../store/sessions.ts";
@@ -80,7 +80,7 @@ describe("Router", () => {
       const session = yield* sessionAt(0);
 
       expect(session.request.start._tag).toBe("New");
-      expect(session.request.env["OMEN_SESSION_ID"]).toBe(session.request.sessionId);
+      expect(session.request.env["CAW_SESSION_ID"]).toBe(session.request.sessionId);
       expect(session.request.env["FROM_ENV"]).toBe("1");
       expect(session.request.rootConversationId).not.toBe(session.request.conversationId);
       expect(yield* inputsOf(session)).toEqual([

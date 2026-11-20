@@ -1,6 +1,6 @@
 import { claudeHarnessName } from "./claude-error.ts";
 import { findClaudeExecutable, notInstalled } from "./claude-executable.ts";
-import { answer, answerList, PluginSetup, SetupError, SetupQuestion } from "@omen/sdk/setup";
+import { answer, answerList, PluginSetup, SetupError, SetupQuestion } from "@caw/sdk/setup";
 import { Config, Effect, Option } from "effect";
 
 const knownSources = ["user", "project", "local"];
@@ -18,7 +18,7 @@ const checkSources = (sources: ReadonlyArray<string>) => {
     : Effect.succeed(knownSources.filter((source) => sources.includes(source)));
 };
 
-/** The Claude options `omen install` writes into the `default` profile. */
+/** The Claude options `caw install` writes into the `default` profile. */
 export const claudeSetup: PluginSetup = PluginSetup.Harness({
   title: "Claude",
   hint: "Claude Code through the Claude Agent SDK",

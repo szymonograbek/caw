@@ -1,4 +1,4 @@
-import type { GuidePage } from "@omen/sdk/plugin";
+import type { GuidePage } from "@caw/sdk/plugin";
 import { maxBodyLength, memoriesPerScope } from "./memory.ts";
 import { pinnedBudget } from "./pinned-memories.ts";
 
@@ -29,6 +29,6 @@ fails; merge related Memories with memory_update or forget stale ones, then retr
 Nothing is evicted automatically.
 
 CLI:
-  omen memory export [--out <absolute file>]
+  caw memory export [--out <absolute file>]
       Writes every Memory as markdown, to stdout or to the file.`,
 };

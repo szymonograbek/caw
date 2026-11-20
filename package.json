@@ -1,5 +1,5 @@
 {
-  "name": "omen-workspace",
+  "name": "caw-workspace",
   "private": true,
   "workspaces": [
     "packages/*",
@@ -9,7 +9,7 @@
   "scripts": {
     "prepare": "effect-tsgo patch --typescript --oxlint",
     "dev:setup": "sh scripts/dev-setup.sh",
-    "build": "bun build --compile --minify --sourcemap packages/cli/src/main.ts --outfile dist/omen",
+    "build": "bun build --compile --minify --sourcemap packages/cli/src/main.ts --outfile dist/caw",
     "install:global": "bun run build && sh scripts/install-global.sh",
     "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p packages/sdk && tsc --noEmit -p packages/core && tsc --noEmit -p packages/cli && tsc --noEmit -p plugins/discord && tsc --noEmit -p plugins/claude && tsc --noEmit -p plugins/memory && tsc --noEmit -p plugins/scheduler && tsc --noEmit -p plugins/profiles && tsc --noEmit -p tools/oxlint",
     "lint": "oxlint --type-aware --deny-warnings",
@@ -17,7 +17,7 @@
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "knip": "knip",
-    "test": "bun --bun vitest run --project=omen && vitest run --project=oxlint",
+    "test": "bun --bun vitest run --project=caw && vitest run --project=oxlint",
     "verify": "bun run format:check && bun run lint && bun run typecheck && bun run knip && bun run test"
   },
   "devDependencies": {

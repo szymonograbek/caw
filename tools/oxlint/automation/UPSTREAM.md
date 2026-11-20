@@ -8,5 +8,5 @@
 ## Deviations
 
 - `index.ts` registers only the copied rules, without upstream's `profiles.ts` and catalog re-exports.
-- Not vendored: the React rules (`no-react-state-hooks`, `no-react-component-inner-functions`, `no-react-non-component-function-exports`, `require-tsx-in-ui-folders`), because Omen has no UI; `no-sql-type-parameter`, until the SQL layer exists; and the style, xstate, tailwind and HTTP-layout rules the kickoff guide skips.
+- Not vendored: the React rules (`no-react-state-hooks`, `no-react-component-inner-functions`, `no-react-non-component-function-exports`, `require-tsx-in-ui-folders`), because Caw has no UI; `no-sql-type-parameter`, until the SQL layer exists; and the style, xstate, tailwind and HTTP-layout rules the kickoff guide skips.
 - Project-owned: `rules/no-nested-yield.ts` has no upstream. It bans `yield*` inside the operand of another `yield*`.
