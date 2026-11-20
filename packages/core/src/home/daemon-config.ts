@@ -11,7 +11,7 @@ export class DaemonConfig extends Context.Service<
     /** How many Channel messages a lost Session's replacement gets as `<channel-history>`. */
     readonly historyLimit: number;
   }
->()("@caw/core/DaemonConfig") {
+>()("@gloaming/core/DaemonConfig") {
   static readonly layer = Layer.effect(
     DaemonConfig,
     Effect.gen(function* () {

@@ -8,7 +8,7 @@ import { CawRpcs } from "./caw-rpcs.ts";
 export class CawClient extends Context.Service<
   CawClient,
   RpcClient.RpcClient<RpcGroup.Rpcs<typeof CawRpcs>, RpcClientError.RpcClientError>
->()("@caw/core/CawClient") {
+>()("@gloaming/core/CawClient") {
   /** Connects to the daemon's socket (`CawHome.socket`). */
   static readonly layer = (socket: string) =>
     Layer.effect(CawClient, RpcClient.make(CawRpcs)).pipe(

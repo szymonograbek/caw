@@ -1,4 +1,4 @@
-import { OfflineHost } from "@caw/core/offline-host";
+import { OfflineHost } from "@gloaming/core/offline-host";
 import { Console, Effect } from "effect";
 import { Argument, Command } from "effect/cli";
 import { CliFailure } from "../cli-failure.ts";

@@ -1,6 +1,6 @@
-import type { PluginName } from "@caw/sdk/ids";
-import type { GuidePage, Migration, PluginDefinition, PluginServices } from "@caw/sdk/plugin";
-import type { PluginSetup } from "@caw/sdk/setup";
+import type { PluginName } from "@gloaming/sdk/ids";
+import type { GuidePage, Migration, PluginDefinition, PluginServices } from "@gloaming/sdk/plugin";
+import type { PluginSetup } from "@gloaming/sdk/setup";
 import type { Layer } from "effect";
 import { Effect, Option, Schema } from "effect";
 

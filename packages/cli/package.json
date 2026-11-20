@@ -1,5 +1,5 @@
 {
-  "name": "caw",
+  "name": "@gloaming/caw",
   "version": "0.0.0",
   "private": true,
   "bin": {
@@ -7,15 +7,15 @@
   },
   "type": "module",
   "dependencies": {
-    "@caw/core": "workspace:*",
-    "@caw/plugin-claude": "workspace:*",
-    "@caw/plugin-discord": "workspace:*",
-    "@caw/plugin-memory": "workspace:*",
-    "@caw/plugin-profiles": "workspace:*",
-    "@caw/plugin-scheduler": "workspace:*",
-    "@caw/sdk": "workspace:*",
     "@clack/prompts": "1.9.0",
     "@effect/platform-bun": "4.1.4",
+    "@gloaming/core": "workspace:*",
+    "@gloaming/plugin-claude": "workspace:*",
+    "@gloaming/plugin-discord": "workspace:*",
+    "@gloaming/plugin-memory": "workspace:*",
+    "@gloaming/plugin-profiles": "workspace:*",
+    "@gloaming/plugin-scheduler": "workspace:*",
+    "@gloaming/sdk": "workspace:*",
     "effect": "4.1.4"
   },
   "devDependencies": {

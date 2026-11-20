@@ -1,4 +1,4 @@
-import { PluginName } from "@caw/sdk/ids";
+import { PluginName } from "@gloaming/sdk/ids";
 import { asc, eq, max } from "drizzle-orm";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { Context, Effect, Layer, Option, Schema } from "effect";
@@ -42,7 +42,7 @@ export class PluginRows extends Context.Service<
     readonly setOrder: (order: ReadonlyArray<PluginName>) => Effect.Effect<void>;
     readonly remove: (name: PluginName) => Effect.Effect<void>;
   }
->()("@caw/core/PluginRows") {
+>()("@gloaming/core/PluginRows") {
   static readonly layer = Layer.effect(
     PluginRows,
     Effect.gen(function* () {

@@ -1,4 +1,4 @@
-import type { GuidePage } from "@caw/sdk/plugin";
+import type { GuidePage } from "@gloaming/sdk/plugin";
 import { maxBodyLength, memoriesPerScope } from "./memory.ts";
 import { pinnedBudget } from "./pinned-memories.ts";
 

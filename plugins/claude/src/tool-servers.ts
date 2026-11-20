@@ -4,9 +4,9 @@ import type {
 } from "@anthropic-ai/claude-agent-sdk";
 import { createSdkMcpServer } from "@anthropic-ai/claude-agent-sdk";
 import { Effect, Schema } from "effect";
-import type { HarnessError } from "@caw/sdk/harness";
-import type { Tool, ToolContext, ToolGroup } from "@caw/sdk/tool";
-import { ToolError } from "@caw/sdk/tool";
+import type { HarnessError } from "@gloaming/sdk/harness";
+import type { Tool, ToolContext, ToolGroup } from "@gloaming/sdk/tool";
+import { ToolError } from "@gloaming/sdk/tool";
 import { z } from "zod";
 import { claudeError } from "./claude-error.ts";
 

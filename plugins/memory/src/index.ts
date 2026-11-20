@@ -1,7 +1,7 @@
 import { Effect, Layer, Option, Schema } from "effect";
-import { PluginName } from "@caw/sdk/ids";
-import { Interceptor } from "@caw/sdk/interceptors";
-import { definePlugin, Caw } from "@caw/sdk/plugin";
+import { PluginName } from "@gloaming/sdk/ids";
+import { Interceptor } from "@gloaming/sdk/interceptors";
+import { definePlugin, Caw } from "@gloaming/sdk/plugin";
 import { memoryGuide } from "./guide.ts";
 import { memoryMigrations } from "./memories-table.ts";
 import { memoryCommand } from "./memory-command.ts";

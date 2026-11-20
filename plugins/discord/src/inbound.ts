@@ -6,9 +6,9 @@ import type {
   ChannelError,
   ChannelMessage,
   QuotedMessage,
-} from "@caw/sdk/channel";
-import { ChannelInput, ConversationPlace } from "@caw/sdk/channel";
-import { ChannelMessageId, ChannelName, ExternalConversationId } from "@caw/sdk/ids";
+} from "@gloaming/sdk/channel";
+import { ChannelInput, ConversationPlace } from "@gloaming/sdk/channel";
+import { ChannelMessageId, ChannelName, ExternalConversationId } from "@gloaming/sdk/ids";
 
 /** The registered name of this Channel. */
 export const DISCORD_CHANNEL = ChannelName.make("discord");

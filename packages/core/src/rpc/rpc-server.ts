@@ -1,5 +1,5 @@
 import { BunSocketServer } from "@effect/platform-bun";
-import { CliCommandError } from "@caw/sdk/plugin";
+import { CliCommandError } from "@gloaming/sdk/plugin";
 import { Effect, Layer, Option } from "effect";
 import { RpcSerialization, RpcServer } from "effect/rpc";
 import { conversationCommand } from "../commands/conversation-command.ts";

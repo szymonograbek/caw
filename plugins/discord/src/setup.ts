@@ -1,4 +1,4 @@
-import { answer, PluginSetup, SetupError, SetupQuestion } from "@caw/sdk/setup";
+import { answer, PluginSetup, SetupError, SetupQuestion } from "@gloaming/sdk/setup";
 import { Effect, Match, Schema } from "effect";
 import type { HttpClientError } from "effect/http";
 import { HttpClient, HttpClientRequest, HttpClientResponse } from "effect/http";

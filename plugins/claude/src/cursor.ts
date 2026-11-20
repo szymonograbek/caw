@@ -1,6 +1,6 @@
 import { Effect, Schema } from "effect";
-import type { ResumeCursor } from "@caw/sdk/harness";
-import type { HarnessError } from "@caw/sdk/harness";
+import type { ResumeCursor } from "@gloaming/sdk/harness";
+import type { HarnessError } from "@gloaming/sdk/harness";
 import { claudeError } from "./claude-error.ts";
 
 /** The Claude Code session id behind a Session's resume cursor. */

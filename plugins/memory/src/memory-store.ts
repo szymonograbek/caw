@@ -1,7 +1,7 @@
 import { and, asc, count, eq, isNotNull, isNull, or } from "drizzle-orm";
 import * as SqliteDrizzle from "drizzle-orm/effect-sqlite-bun";
 import { Array, Context, DateTime, Effect, Layer, Option } from "effect";
-import { ConversationId } from "@caw/sdk/ids";
+import { ConversationId } from "@gloaming/sdk/ids";
 import { memoriesTable } from "./memories-table.ts";
 import type { MemoryId } from "./memory.ts";
 import {
@@ -99,7 +99,7 @@ export class MemoryStore extends Context.Service<
     readonly pinned: (root: ConversationId) => Effect.Effect<ReadonlyArray<Memory>>;
     readonly all: Effect.Effect<ReadonlyArray<Memory>>;
   }
->()("@caw/plugin-memory/MemoryStore") {
+>()("@gloaming/plugin-memory/MemoryStore") {
   static readonly layer = Layer.effect(
     MemoryStore,
     Effect.gen(function* () {

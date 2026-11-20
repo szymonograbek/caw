@@ -1,7 +1,7 @@
 import { Effect } from "effect";
 import { SqlClient } from "effect/sql";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
-import type { Migration } from "@caw/sdk/plugin";
+import type { Migration } from "@gloaming/sdk/plugin";
 
 export const memoriesTable = sqliteTable("plugin_memory_memories", {
   id: integer("id").primaryKey({ autoIncrement: true }),

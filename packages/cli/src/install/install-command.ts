@@ -1,9 +1,9 @@
-import type { LoadedPlugin } from "@caw/core/loaded-plugin";
-import { OfflineHost } from "@caw/core/offline-host";
-import { CawHome } from "@caw/core/caw-home";
-import type { PluginName } from "@caw/sdk/ids";
-import type { PluginSetup } from "@caw/sdk/setup";
-import { SetupQuestion as Question } from "@caw/sdk/setup";
+import type { LoadedPlugin } from "@gloaming/core/loaded-plugin";
+import { OfflineHost } from "@gloaming/core/offline-host";
+import { CawHome } from "@gloaming/core/caw-home";
+import type { PluginName } from "@gloaming/sdk/ids";
+import type { PluginSetup } from "@gloaming/sdk/setup";
+import { SetupQuestion as Question } from "@gloaming/sdk/setup";
 import { Config, Effect, Option } from "effect";
 import { Command, Flag } from "effect/cli";
 import { CliFailure } from "../cli-failure.ts";

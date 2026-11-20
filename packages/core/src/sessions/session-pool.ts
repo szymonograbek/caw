@@ -1,7 +1,7 @@
-import type { SessionStatus } from "@caw/sdk/conversation";
-import type { SessionCloseReason } from "@caw/sdk/events";
-import { CawEvent } from "@caw/sdk/events";
-import type { SessionId } from "@caw/sdk/ids";
+import type { SessionStatus } from "@gloaming/sdk/conversation";
+import type { SessionCloseReason } from "@gloaming/sdk/events";
+import { CawEvent } from "@gloaming/sdk/events";
+import type { SessionId } from "@gloaming/sdk/ids";
 import { Machine } from "@typeonce/effect-machine";
 import {
   Array,
@@ -63,7 +63,7 @@ export class SessionPool extends Context.Service<
     readonly closeAll: (reason: SessionCloseReason) => Effect.Effect<void>;
     readonly live: Effect.Effect<ReadonlyArray<SessionId>>;
   }
->()("@caw/core/SessionPool") {
+>()("@gloaming/core/SessionPool") {
   static readonly layer = Layer.effect(
     SessionPool,
     Effect.gen(function* () {

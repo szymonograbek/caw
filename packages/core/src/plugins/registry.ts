@@ -1,9 +1,9 @@
-import type { Channel } from "@caw/sdk/channel";
-import type { Harness } from "@caw/sdk/harness";
-import type { ChannelName, HarnessName, PluginName } from "@caw/sdk/ids";
-import type { Interceptor } from "@caw/sdk/interceptors";
-import type { CliCommand, ProfileLookup } from "@caw/sdk/plugin";
-import type { Tool } from "@caw/sdk/tool";
+import type { Channel } from "@gloaming/sdk/channel";
+import type { Harness } from "@gloaming/sdk/harness";
+import type { ChannelName, HarnessName, PluginName } from "@gloaming/sdk/ids";
+import type { Interceptor } from "@gloaming/sdk/interceptors";
+import type { CliCommand, ProfileLookup } from "@gloaming/sdk/plugin";
+import type { Tool } from "@gloaming/sdk/tool";
 import type { Scope } from "effect";
 import { Array, Context, Data, Effect, Layer, Option, Order, Ref } from "effect";
 
@@ -37,7 +37,7 @@ export class Registry extends Context.Service<
     readonly harness: (name: Option.Option<HarnessName>) => Effect.Effect<Option.Option<Harness>>;
     readonly cliCommand: (name: string) => Effect.Effect<Option.Option<CliCommand>>;
   }
->()("@caw/core/Registry") {
+>()("@gloaming/core/Registry") {
   static readonly layer = Layer.effect(
     Registry,
     Effect.gen(function* () {

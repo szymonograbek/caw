@@ -140,7 +140,7 @@ HarnessEvent: Text | ToolCall | ToolResult | TurnEnded | Error | CursorUpdated
   - an inter-plugin event bus.
 - **No guard rails** beyond typing; plugins may break things.
 - **Order**: install order by default, changed with `caw plugin order`.
-- **Package**: a default export plus an `caw` key in `package.json` (name, version, settings schema).
+- **Package**: a default export plus a `caw` key in `package.json` (name, version, settings schema).
 - **Install**: `caw plugin add <git-url | npm-name | path>` installs into `~/.caw/plugins/<name>/` and runs `bun install`. Built-ins ship inside Caw and are enabled by default.
 - **Storage**: plugins can own tables `plugin_<name>_*` in the core DB, with migrations core runs, or use a key-value `store.get/set`.
 

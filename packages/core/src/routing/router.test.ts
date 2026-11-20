@@ -1,7 +1,7 @@
 import { describe, expect, it } from "@effect/vitest";
-import { ConversationPlace } from "@caw/sdk/channel";
-import { HarnessError, HarnessEvent, SessionStart } from "@caw/sdk/harness";
-import { ChannelName, ExternalConversationId, ProfileName } from "@caw/sdk/ids";
+import { ConversationPlace } from "@gloaming/sdk/channel";
+import { HarnessError, HarnessEvent, SessionStart } from "@gloaming/sdk/harness";
+import { ChannelName, ExternalConversationId, ProfileName } from "@gloaming/sdk/ids";
 import { Effect, Layer, Option, Queue, Ref } from "effect";
 import { Conversations } from "../store/conversations.ts";
 import { Sessions } from "../store/sessions.ts";

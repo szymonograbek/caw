@@ -1,5 +1,5 @@
 import { Schema } from "effect";
-import { ConversationId } from "@caw/sdk/ids";
+import { ConversationId } from "@gloaming/sdk/ids";
 
 export const MemoryId = Schema.Int.pipe(Schema.brand("MemoryId"));
 

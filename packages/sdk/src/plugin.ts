@@ -100,7 +100,7 @@ export class Caw extends Context.Service<
       prompt: string,
     ) => Effect.Effect<void, ConversationNotFound>;
   }
->()("@caw/sdk/Caw") {}
+>()("@gloaming/sdk/Caw") {}
 
 /** A Plugin's identity and key-value store, provided to its own layer only. */
 export class PluginContext extends Context.Service<
@@ -113,7 +113,7 @@ export class PluginContext extends Context.Service<
     ) => Effect.Effect<Option.Option<A>>;
     readonly set: <A, I>(key: string, schema: Schema.Codec<A, I>, value: A) => Effect.Effect<void>;
   }
->()("@caw/sdk/PluginContext") {}
+>()("@gloaming/sdk/PluginContext") {}
 
 /** `SqliteClient` is what Drizzle's `effect-sqlite-bun` driver needs for a Plugin's own tables. */
 export type PluginServices = Caw | PluginContext | SqlClient.SqlClient | SqliteClient.SqliteClient;

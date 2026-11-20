@@ -1,4 +1,4 @@
-import type { GuidePage } from "@caw/sdk/plugin";
+import type { GuidePage } from "@gloaming/sdk/plugin";
 
 export const scheduleGuide: GuidePage = {
   topic: "schedule",

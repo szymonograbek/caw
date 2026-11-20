@@ -1,7 +1,7 @@
 import { describe, expect, it } from "@effect/vitest";
 import { Effect, Schema } from "effect";
-import { ConversationId, PluginName, SessionId } from "@caw/sdk/ids";
-import { makeTool } from "@caw/sdk/tool";
+import { ConversationId, PluginName, SessionId } from "@gloaming/sdk/ids";
+import { makeTool } from "@gloaming/sdk/tool";
 import { toolServers } from "./tool-servers.ts";
 
 const context = {

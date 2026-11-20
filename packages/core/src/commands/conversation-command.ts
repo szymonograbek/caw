@@ -1,9 +1,9 @@
-import { CurrentCliContext, fromCommand } from "@caw/sdk/cli-command";
-import type { Conversation } from "@caw/sdk/conversation";
-import { ReplyMode } from "@caw/sdk/conversation";
-import { ConversationId, ProfileName } from "@caw/sdk/ids";
-import { CliCommandError } from "@caw/sdk/plugin";
-import { defaultProfileName } from "@caw/sdk/profile";
+import { CurrentCliContext, fromCommand } from "@gloaming/sdk/cli-command";
+import type { Conversation } from "@gloaming/sdk/conversation";
+import { ReplyMode } from "@gloaming/sdk/conversation";
+import { ConversationId, ProfileName } from "@gloaming/sdk/ids";
+import { CliCommandError } from "@gloaming/sdk/plugin";
+import { defaultProfileName } from "@gloaming/sdk/profile";
 import { Console, Effect, Option } from "effect";
 import { Command, Flag } from "effect/cli";
 import { Registration, Registry } from "../plugins/registry.ts";

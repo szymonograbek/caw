@@ -1,5 +1,5 @@
-import { CawEvent } from "@caw/sdk/events";
-import type { PluginName } from "@caw/sdk/ids";
+import { CawEvent } from "@gloaming/sdk/events";
+import type { PluginName } from "@gloaming/sdk/ids";
 import { Cause, Context, Effect, Exit, Layer, Option, Predicate, Ref, Schema, Scope } from "effect";
 import { EventBus } from "../events/event-bus.ts";
 import { SessionPool } from "../sessions/session-pool.ts";
@@ -63,7 +63,7 @@ export class PluginHost extends Context.Service<
       settings: Schema.Json,
     ) => Effect.Effect<void, PluginNotFound | InvalidPluginSettings>;
   }
->()("@caw/core/PluginHost") {
+>()("@gloaming/core/PluginHost") {
   static readonly layer = Layer.effect(
     PluginHost,
     Effect.gen(function* () {

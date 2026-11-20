@@ -1,5 +1,5 @@
 import * as NodePath from "node:path";
-import type { ChannelMessageId, ConversationId } from "@caw/sdk/ids";
+import type { ChannelMessageId, ConversationId } from "@gloaming/sdk/ids";
 import { Config, Context, Effect, Layer } from "effect";
 
 /**
@@ -24,7 +24,7 @@ export class CawHome extends Context.Service<
     /** Where one message's attachments are saved inside a Workspace. */
     readonly inbox: (workspace: string, message: ChannelMessageId) => string;
   }
->()("@caw/core/CawHome") {
+>()("@gloaming/core/CawHome") {
   static readonly at = (root: string): CawHome["Service"] => {
     const absolute = NodePath.resolve(root);
 

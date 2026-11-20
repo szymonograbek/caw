@@ -1,5 +1,10 @@
-import { Conversation, ReplyMode } from "@caw/sdk/conversation";
-import { ChannelName, ConversationId, ExternalConversationId, ProfileName } from "@caw/sdk/ids";
+import { Conversation, ReplyMode } from "@gloaming/sdk/conversation";
+import {
+  ChannelName,
+  ConversationId,
+  ExternalConversationId,
+  ProfileName,
+} from "@gloaming/sdk/ids";
 import { and, eq } from "drizzle-orm";
 import { sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { Context, Effect, Layer, Option, Schema } from "effect";
@@ -54,7 +59,7 @@ export class Conversations extends Context.Service<
     ) => Effect.Effect<void>;
     readonly setReplyMode: (id: ConversationId, replyMode: ReplyMode) => Effect.Effect<void>;
   }
->()("@caw/core/Conversations") {
+>()("@gloaming/core/Conversations") {
   static readonly layer = Layer.effect(
     Conversations,
     Effect.gen(function* () {

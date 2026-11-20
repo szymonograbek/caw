@@ -1,8 +1,8 @@
 import { SqliteClient } from "@effect/sql-sqlite-bun";
-import type { Channel } from "@caw/sdk/channel";
-import type { ConversationId, PluginName } from "@caw/sdk/ids";
-import type { PluginServices } from "@caw/sdk/plugin";
-import { ConversationNotFound, Caw, PluginContext } from "@caw/sdk/plugin";
+import type { Channel } from "@gloaming/sdk/channel";
+import type { ConversationId, PluginName } from "@gloaming/sdk/ids";
+import type { PluginServices } from "@gloaming/sdk/plugin";
+import { ConversationNotFound, Caw, PluginContext } from "@gloaming/sdk/plugin";
 import type { Scope } from "effect";
 import { Context, Effect, Layer, Option, Schema } from "effect";
 import { SqlClient } from "effect/sql";
@@ -26,7 +26,7 @@ export class PluginScopes extends Context.Service<
       scope: Scope.Scope,
     ) => Effect.Effect<void>;
   }
->()("@caw/core/PluginScopes") {
+>()("@gloaming/core/PluginScopes") {
   static readonly layer = Layer.effect(
     PluginScopes,
     Effect.gen(function* () {

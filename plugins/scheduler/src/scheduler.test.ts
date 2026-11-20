@@ -2,10 +2,10 @@ import { SqliteClient } from "@effect/sql-sqlite-bun";
 import { describe, expect, it } from "@effect/vitest";
 import { Array, Effect, Exit, Layer, Option, PubSub, Scope, Stream } from "effect";
 import { TestClock } from "effect/testing";
-import { Conversation } from "@caw/sdk/conversation";
-import { ChannelName, ConversationId, ExternalConversationId } from "@caw/sdk/ids";
-import type { CliCommand, CliContext, PluginMessage } from "@caw/sdk/plugin";
-import { ConversationNotFound, Caw, PluginContext } from "@caw/sdk/plugin";
+import { Conversation } from "@gloaming/sdk/conversation";
+import { ChannelName, ConversationId, ExternalConversationId } from "@gloaming/sdk/ids";
+import type { CliCommand, CliContext, PluginMessage } from "@gloaming/sdk/plugin";
+import { ConversationNotFound, Caw, PluginContext } from "@gloaming/sdk/plugin";
 import scheduler from "./index.ts";
 
 interface Delivery {

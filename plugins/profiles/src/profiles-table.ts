@@ -1,7 +1,7 @@
 import { Effect } from "effect";
 import { SqlClient } from "effect/sql";
 import { sqliteTable, text } from "drizzle-orm/sqlite-core";
-import type { Migration } from "@caw/sdk/plugin";
+import type { Migration } from "@gloaming/sdk/plugin";
 
 export const profilesTable = sqliteTable("plugin_profiles_profiles", {
   name: text("name").primaryKey(),

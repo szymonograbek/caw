@@ -1,4 +1,4 @@
-import type { GuidePage } from "@caw/sdk/plugin";
+import type { GuidePage } from "@gloaming/sdk/plugin";
 
 const overview: GuidePage = {
   topic: "overview",
@@ -52,7 +52,7 @@ const plugins: GuidePage = {
   topic: "plugins",
   summary: "Installing, enabling, ordering and configuring plugins",
   body: `Discord, Claude, memory, scheduler and profiles are built-in plugins. Others are
-packages with an "caw" key in their package.json.
+packages with a "caw" key in their package.json.
 
 Commands:
   caw plugin list

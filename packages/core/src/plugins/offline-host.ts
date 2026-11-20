@@ -1,5 +1,5 @@
-import type { PluginName } from "@caw/sdk/ids";
-import { CliCommandError } from "@caw/sdk/plugin";
+import type { PluginName } from "@gloaming/sdk/ids";
+import { CliCommandError } from "@gloaming/sdk/plugin";
 import { Context, Effect, Layer, Option } from "effect";
 import { resolvePluginSource } from "../commands/plugin-command.ts";
 import { updateDotEnv } from "../home/env-file.ts";
@@ -47,7 +47,7 @@ export class OfflineHost extends Context.Service<
       argv: ReadonlyArray<string>,
     ) => Effect.Effect<string, CliCommandError>;
   }
->()("@caw/core/OfflineHost") {
+>()("@gloaming/core/OfflineHost") {
   static readonly layer = Layer.effect(
     OfflineHost,
     Effect.gen(function* () {

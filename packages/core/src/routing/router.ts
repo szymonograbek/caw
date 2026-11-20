@@ -1,9 +1,9 @@
-import type { Channel, ChannelInput, ChannelMessage } from "@caw/sdk/channel";
-import { ConversationPlace } from "@caw/sdk/channel";
-import type { Conversation } from "@caw/sdk/conversation";
-import { CawEvent } from "@caw/sdk/events";
-import type { ConversationId } from "@caw/sdk/ids";
-import { ConversationNotFound } from "@caw/sdk/plugin";
+import type { Channel, ChannelInput, ChannelMessage } from "@gloaming/sdk/channel";
+import { ConversationPlace } from "@gloaming/sdk/channel";
+import type { Conversation } from "@gloaming/sdk/conversation";
+import { CawEvent } from "@gloaming/sdk/events";
+import type { ConversationId } from "@gloaming/sdk/ids";
+import { ConversationNotFound } from "@gloaming/sdk/plugin";
 import { Cause, Context, DateTime, Effect, Layer, Match, Option, Stream } from "effect";
 import { DaemonConfig } from "../home/daemon-config.ts";
 import { CawHome } from "../home/caw-home.ts";
@@ -52,7 +52,7 @@ export class Router extends Context.Service<
       prompt: string,
     ) => Effect.Effect<void, ConversationNotFound>;
   }
->()("@caw/core/Router") {
+>()("@gloaming/core/Router") {
   static readonly layer = Layer.effect(
     Router,
     Effect.gen(function* () {

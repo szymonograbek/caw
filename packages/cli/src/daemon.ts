@@ -1,8 +1,8 @@
-import type { DaemonStatus } from "@caw/core/caw-rpcs";
-import { CawHome } from "@caw/core/caw-home";
-import { CawClient } from "@caw/core/rpc-client";
-import type { ConversationId } from "@caw/sdk/ids";
-import type { CliCommandError } from "@caw/sdk/plugin";
+import type { DaemonStatus } from "@gloaming/core/caw-rpcs";
+import { CawHome } from "@gloaming/core/caw-home";
+import { CawClient } from "@gloaming/core/rpc-client";
+import type { ConversationId } from "@gloaming/sdk/ids";
+import type { CliCommandError } from "@gloaming/sdk/plugin";
 import { Cause, Context, Effect, Layer, Option, Schedule, Schema } from "effect";
 import type { RpcClientError } from "effect/rpc";
 
@@ -42,7 +42,7 @@ export class Daemon extends Context.Service<
       readonly cwd: string;
     }) => Effect.Effect<string, CliCommandError | DaemonNotRunning>;
   }
->()("@caw/cli/Daemon") {
+>()("@gloaming/cli/Daemon") {
   static readonly layer = Layer.effect(
     Daemon,
     Effect.gen(function* () {

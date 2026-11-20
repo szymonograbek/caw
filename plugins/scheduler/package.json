@@ -1,5 +1,5 @@
 {
-  "name": "@caw/plugin-scheduler",
+  "name": "@gloaming/plugin-scheduler",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -7,8 +7,8 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "@caw/sdk": "workspace:*",
     "@effect/sql-sqlite-bun": "4.1.4",
+    "@gloaming/sdk": "workspace:*",
     "drizzle-orm": "1.0.0-rc.5",
     "effect": "4.1.4"
   },

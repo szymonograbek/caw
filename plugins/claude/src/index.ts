@@ -1,6 +1,6 @@
 import { Effect, Layer, Option, Schema } from "effect";
-import { PluginName } from "@caw/sdk/ids";
-import { definePlugin, Caw } from "@caw/sdk/plugin";
+import { PluginName } from "@gloaming/sdk/ids";
+import { definePlugin, Caw } from "@gloaming/sdk/plugin";
 import { claudeHarness } from "./claude-harness.ts";
 import { claudeSetup } from "./setup.ts";
 

@@ -1,5 +1,5 @@
 {
-  "name": "@caw/core",
+  "name": "@gloaming/core",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -14,9 +14,9 @@
     "./plugin-state": "./src/plugins/plugin-state.ts"
   },
   "dependencies": {
-    "@caw/sdk": "workspace:*",
     "@effect/platform-bun": "4.1.4",
     "@effect/sql-sqlite-bun": "4.1.4",
+    "@gloaming/sdk": "workspace:*",
     "@typeonce/effect-machine": "0.46.0",
     "drizzle-orm": "1.0.0-rc.5",
     "effect": "4.1.4"

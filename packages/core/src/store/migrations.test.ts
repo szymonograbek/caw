@@ -1,7 +1,7 @@
 import * as NodePath from "node:path";
 import { describe, expect, it } from "@effect/vitest";
-import { Conversation } from "@caw/sdk/conversation";
-import { ChannelName, ConversationId, ExternalConversationId } from "@caw/sdk/ids";
+import { Conversation } from "@gloaming/sdk/conversation";
+import { ChannelName, ConversationId, ExternalConversationId } from "@gloaming/sdk/ids";
 import { Effect, Layer, Option } from "effect";
 import { SqlClient } from "effect/sql";
 import { temporaryHome } from "../testing/test-daemon.ts";

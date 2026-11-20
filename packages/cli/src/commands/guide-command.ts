@@ -1,5 +1,5 @@
-import { renderGuide } from "@caw/core/guide";
-import type { LoadedPlugin } from "@caw/core/loaded-plugin";
+import { renderGuide } from "@gloaming/core/guide";
+import type { LoadedPlugin } from "@gloaming/core/loaded-plugin";
 import { Console, Effect, Result } from "effect";
 import { Argument, Command } from "effect/cli";
 import { CliFailure } from "../cli-failure.ts";

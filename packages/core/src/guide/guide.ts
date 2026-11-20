@@ -1,4 +1,4 @@
-import type { GuidePage } from "@caw/sdk/plugin";
+import type { GuidePage } from "@gloaming/sdk/plugin";
 import { Option, Result } from "effect";
 import type { LoadedPlugin } from "../plugins/loaded-plugin.ts";
 import { coreGuide } from "./core-guide.ts";

@@ -37,7 +37,7 @@ export class HostFiles extends Context.Service<
     /** Removes a file or directory tree; succeeds when it is already gone. */
     readonly remove: (path: string) => Effect.Effect<void, HostFileError>;
   }
->()("@caw/core/HostFiles") {
+>()("@gloaming/core/HostFiles") {
   static readonly layer = Layer.succeed(HostFiles, {
     readText: (path) =>
       attempt("read", path, () => Fs.readFile(path, "utf8")).pipe(

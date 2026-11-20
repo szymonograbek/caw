@@ -1,7 +1,7 @@
-import type { ChannelError } from "@caw/sdk/channel";
-import { Session } from "@caw/sdk/conversation";
-import { CawEvent } from "@caw/sdk/events";
-import { SessionStart } from "@caw/sdk/harness";
+import type { ChannelError } from "@gloaming/sdk/channel";
+import { Session } from "@gloaming/sdk/conversation";
+import { CawEvent } from "@gloaming/sdk/events";
+import { SessionStart } from "@gloaming/sdk/harness";
 import { Context, Effect, Layer, Option } from "effect";
 import { EventBus } from "../events/event-bus.ts";
 import { DaemonConfig } from "../home/daemon-config.ts";
@@ -37,7 +37,7 @@ export class SessionRecovery extends Context.Service<
       message: string,
     ) => Effect.Effect<void>;
   }
->()("@caw/core/SessionRecovery") {
+>()("@gloaming/core/SessionRecovery") {
   static readonly layer = Layer.effect(
     SessionRecovery,
     Effect.gen(function* () {

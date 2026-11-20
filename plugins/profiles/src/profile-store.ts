@@ -1,8 +1,8 @@
 import { asc, eq } from "drizzle-orm";
 import * as SqliteDrizzle from "drizzle-orm/effect-sqlite-bun";
 import { Context, Effect, Layer, Option, Schema } from "effect";
-import { HarnessName, ProfileName } from "@caw/sdk/ids";
-import { Profile } from "@caw/sdk/profile";
+import { HarnessName, ProfileName } from "@gloaming/sdk/ids";
+import { Profile } from "@gloaming/sdk/profile";
 import { profilesTable } from "./profiles-table.ts";
 
 /** A `plugin_profiles_profiles` row, decoded into a Profile's fields. */
@@ -31,7 +31,7 @@ export class ProfileStore extends Context.Service<
     /** Whether a profile with that name existed. */
     readonly remove: (name: ProfileName) => Effect.Effect<boolean>;
   }
->()("@caw/plugin-profiles/ProfileStore") {
+>()("@gloaming/plugin-profiles/ProfileStore") {
   static readonly layer = Layer.effect(
     ProfileStore,
     Effect.gen(function* () {

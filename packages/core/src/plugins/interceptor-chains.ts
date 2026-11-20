@@ -1,15 +1,15 @@
-import type { ChannelMessage } from "@caw/sdk/channel";
-import type { Conversation } from "@caw/sdk/conversation";
-import type { ToolCallRequest } from "@caw/sdk/harness";
-import { ToolCallDecision } from "@caw/sdk/harness";
-import type { PluginName } from "@caw/sdk/ids";
+import type { ChannelMessage } from "@gloaming/sdk/channel";
+import type { Conversation } from "@gloaming/sdk/conversation";
+import type { ToolCallRequest } from "@gloaming/sdk/harness";
+import { ToolCallDecision } from "@gloaming/sdk/harness";
+import type { PluginName } from "@gloaming/sdk/ids";
 import type {
   OutboundReplyContext,
   SessionOpeningContext,
   TurnInputContext,
-} from "@caw/sdk/interceptors";
-import { Interceptor } from "@caw/sdk/interceptors";
-import type { Tool, ToolGroup } from "@caw/sdk/tool";
+} from "@gloaming/sdk/interceptors";
+import { Interceptor } from "@gloaming/sdk/interceptors";
+import type { Tool, ToolGroup } from "@gloaming/sdk/tool";
 import { Context, Effect, Layer, Match, Option } from "effect";
 import { Registration, Registry } from "./registry.ts";
 
@@ -41,7 +41,7 @@ export class InterceptorChains extends Context.Service<
       context: OutboundReplyContext,
     ) => Effect.Effect<Option.Option<string>>;
   }
->()("@caw/core/InterceptorChains") {
+>()("@gloaming/core/InterceptorChains") {
   static readonly layer = Layer.effect(
     InterceptorChains,
     Effect.gen(function* () {

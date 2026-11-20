@@ -1,10 +1,10 @@
 import { Effect, Option, Schema } from "effect";
-import type { ChannelError } from "@caw/sdk/channel";
-import type { Caw } from "@caw/sdk/plugin";
-import type { ExternalConversationId } from "@caw/sdk/ids";
-import { ChannelMessageId } from "@caw/sdk/ids";
-import type { Tool } from "@caw/sdk/tool";
-import { makeTool, ToolError } from "@caw/sdk/tool";
+import type { ChannelError } from "@gloaming/sdk/channel";
+import type { Caw } from "@gloaming/sdk/plugin";
+import type { ExternalConversationId } from "@gloaming/sdk/ids";
+import { ChannelMessageId } from "@gloaming/sdk/ids";
+import type { Tool } from "@gloaming/sdk/tool";
+import { makeTool, ToolError } from "@gloaming/sdk/tool";
 import type { MessageNotFound } from "./discord-client.ts";
 
 const ReactParameters = Schema.Struct({
