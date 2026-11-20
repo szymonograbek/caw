@@ -1,16 +1,16 @@
 import * as Fs from "node:fs/promises";
 import * as NodeOs from "node:os";
 import * as NodePath from "node:path";
-import type { ChannelMessage, ConversationPlace } from "@gloaming/sdk/channel";
-import { ConversationPlace as Place } from "@gloaming/sdk/channel";
+import type { ChannelMessage, ConversationPlace } from "@gloaming/caw-plugin-sdk/channel";
+import { ConversationPlace as Place } from "@gloaming/caw-plugin-sdk/channel";
 import {
   ChannelMessageId,
   ChannelName,
   ExternalConversationId,
   PluginName,
-} from "@gloaming/sdk/ids";
-import { definePlugin, Caw } from "@gloaming/sdk/plugin";
-import { Profile } from "@gloaming/sdk/profile";
+} from "@gloaming/caw-plugin-sdk/ids";
+import { definePlugin, Caw } from "@gloaming/caw-plugin-sdk/plugin";
+import { Profile } from "@gloaming/caw-plugin-sdk/profile";
 import { DateTime, Duration, Effect, Layer, Option, Schema } from "effect";
 import { HttpClient, HttpClientResponse } from "effect/http";
 import { TestClock } from "effect/testing";

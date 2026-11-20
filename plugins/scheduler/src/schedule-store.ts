@@ -1,7 +1,7 @@
 import { asc, eq, lte } from "drizzle-orm";
 import * as SqliteDrizzle from "drizzle-orm/effect-sqlite-bun";
 import { Array, Context, DateTime, Effect, Layer, Option } from "effect";
-import { ConversationId } from "@gloaming/sdk/ids";
+import { ConversationId } from "@gloaming/caw-plugin-sdk/ids";
 import type { ScheduleId } from "./schedule.ts";
 import { Schedule, ScheduleId as ScheduleIdSchema, ScheduleTiming } from "./schedule.ts";
 import { schedulesTable } from "./schedules-table.ts";
@@ -67,7 +67,7 @@ export class ScheduleStore extends Context.Service<
       lastRunAt: Option.Option<DateTime.Utc>,
     ) => Effect.Effect<void>;
   }
->()("@gloaming/plugin-scheduler/ScheduleStore") {
+>()("@caw/plugin-scheduler/ScheduleStore") {
   static readonly layer = Layer.effect(
     ScheduleStore,
     Effect.gen(function* () {

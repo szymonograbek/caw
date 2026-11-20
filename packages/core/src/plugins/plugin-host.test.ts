@@ -1,6 +1,6 @@
 import { describe, expect, it } from "@effect/vitest";
-import { ConversationPlace } from "@gloaming/sdk/channel";
-import { PluginName } from "@gloaming/sdk/ids";
+import { ConversationPlace } from "@gloaming/caw-plugin-sdk/channel";
+import { PluginName } from "@gloaming/caw-plugin-sdk/ids";
 import { Effect, Layer, Ref } from "effect";
 import { makeFakeChannel } from "../testing/fake-channel.ts";
 import { makeFakeHarness } from "../testing/fake-harness.ts";

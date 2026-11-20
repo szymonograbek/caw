@@ -1,6 +1,6 @@
 import { Context, DateTime, Duration, Effect, Layer, Option, Queue } from "effect";
-import type { ConversationId } from "@gloaming/sdk/ids";
-import { Caw } from "@gloaming/sdk/plugin";
+import type { ConversationId } from "@gloaming/caw-plugin-sdk/ids";
+import { Caw } from "@gloaming/caw-plugin-sdk/plugin";
 import type { Schedule, ScheduleId } from "./schedule.ts";
 import { dueRun } from "./schedule.ts";
 import type { NewSchedule } from "./schedule-store.ts";
@@ -19,7 +19,7 @@ export class Scheduler extends Context.Service<
     ) => Effect.Effect<ReadonlyArray<Schedule>>;
     readonly remove: (id: ScheduleId) => Effect.Effect<boolean>;
   }
->()("@gloaming/plugin-scheduler/Scheduler") {
+>()("@caw/plugin-scheduler/Scheduler") {
   static readonly layer = Layer.effect(
     Scheduler,
     Effect.gen(function* () {

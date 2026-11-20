@@ -1,4 +1,4 @@
-import { OfflineHost } from "@gloaming/core/offline-host";
+import { OfflineHost } from "@caw/core/offline-host";
 import { Effect } from "effect";
 import { Command } from "effect/cli";
 import { builtins } from "./builtins.ts";

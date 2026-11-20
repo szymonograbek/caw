@@ -1,4 +1,4 @@
-import type { ChannelMessage } from "@gloaming/sdk/channel";
+import type { ChannelMessage } from "@gloaming/caw-plugin-sdk/channel";
 import { DateTime, Option } from "effect";
 
 /** An attachment as the agent sees it: saved into the Workspace inbox when the download worked. */

@@ -1,9 +1,9 @@
 import { Console, Effect, Option, Schema } from "effect";
 import { Argument, Command, Flag } from "effect/cli";
-import { fromCommand } from "@gloaming/sdk/cli-command";
-import { HarnessName, ProfileName } from "@gloaming/sdk/ids";
-import { CliCommandError } from "@gloaming/sdk/plugin";
-import { Profile } from "@gloaming/sdk/profile";
+import { fromCommand } from "@gloaming/caw-plugin-sdk/cli-command";
+import { HarnessName, ProfileName } from "@gloaming/caw-plugin-sdk/ids";
+import { CliCommandError } from "@gloaming/caw-plugin-sdk/plugin";
+import { Profile } from "@gloaming/caw-plugin-sdk/profile";
 import { ProfileStore } from "./profile-store.ts";
 
 /** The daemon resolves paths, so a relative path would point inside the daemon's own cwd. */

@@ -1,5 +1,5 @@
 import * as NodePath from "node:path";
-import { CawHome } from "@gloaming/core/caw-home";
+import { CawHome } from "@caw/core/caw-home";
 import { Data, Effect, FileSystem, Match, Option, Schedule } from "effect";
 import { CliFailure } from "../cli-failure.ts";
 import { Daemon, pollStatus } from "../daemon.ts";

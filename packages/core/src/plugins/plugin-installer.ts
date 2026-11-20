@@ -1,8 +1,8 @@
 import * as Fs from "node:fs/promises";
 import * as NodePath from "node:path";
-import { PluginName } from "@gloaming/sdk/ids";
-import type { Migration, PluginServices } from "@gloaming/sdk/plugin";
-import { PluginSetup } from "@gloaming/sdk/setup";
+import { PluginName } from "@gloaming/caw-plugin-sdk/ids";
+import type { Migration, PluginServices } from "@gloaming/caw-plugin-sdk/plugin";
+import { PluginSetup } from "@gloaming/caw-plugin-sdk/setup";
 import { Context, Effect, Layer, Option, Predicate, Schema } from "effect";
 import { HostFiles } from "../home/host-files.ts";
 import { CawHome } from "../home/caw-home.ts";
@@ -108,7 +108,7 @@ export class PluginInstaller extends Context.Service<
     /** Deletes the Plugin's folder. */
     readonly uninstall: (name: PluginName) => Effect.Effect<void, PluginInstallError>;
   }
->()("@gloaming/core/PluginInstaller") {
+>()("@caw/core/PluginInstaller") {
   static readonly layer = Layer.effect(
     PluginInstaller,
     Effect.gen(function* () {

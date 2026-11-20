@@ -1,6 +1,6 @@
 import { describe, expect, it } from "@effect/vitest";
 import { Effect } from "effect";
-import { HarnessError } from "@gloaming/sdk/harness";
+import { HarnessError } from "@gloaming/caw-plugin-sdk/harness";
 import { ClaudeSessionId, decodeCursor, encodeCursor } from "./cursor.ts";
 
 describe("resume cursor", () => {

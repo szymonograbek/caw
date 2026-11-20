@@ -1,4 +1,4 @@
-import { CawHome } from "@gloaming/core/caw-home";
+import { CawHome } from "@caw/core/caw-home";
 import { Effect, FileSystem, Ref, Schedule, Stdio, Stream } from "effect";
 import { Command, Flag } from "effect/cli";
 import { CliFailure } from "../cli-failure.ts";

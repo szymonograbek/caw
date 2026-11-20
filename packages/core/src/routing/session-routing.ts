@@ -1,8 +1,8 @@
-import type { Channel } from "@gloaming/sdk/channel";
-import type { Conversation } from "@gloaming/sdk/conversation";
-import { Session } from "@gloaming/sdk/conversation";
-import { SessionStart } from "@gloaming/sdk/harness";
-import { defaultProfileName, Profile } from "@gloaming/sdk/profile";
+import type { Channel } from "@gloaming/caw-plugin-sdk/channel";
+import type { Conversation } from "@gloaming/caw-plugin-sdk/conversation";
+import { Session } from "@gloaming/caw-plugin-sdk/conversation";
+import { SessionStart } from "@gloaming/caw-plugin-sdk/harness";
+import { defaultProfileName, Profile } from "@gloaming/caw-plugin-sdk/profile";
 import { Context, Effect, Layer, Option, Schema } from "effect";
 import { Registration, Registry } from "../plugins/registry.ts";
 import { SessionPool } from "../sessions/session-pool.ts";
@@ -35,7 +35,7 @@ export class SessionRouting extends Context.Service<
       forkFrom: Option.Option<Conversation>,
     ) => Effect.Effect<SessionTarget, NoHarnessRegistered>;
   }
->()("@gloaming/core/SessionRouting") {
+>()("@caw/core/SessionRouting") {
   static readonly layer = Layer.effect(
     SessionRouting,
     Effect.gen(function* () {

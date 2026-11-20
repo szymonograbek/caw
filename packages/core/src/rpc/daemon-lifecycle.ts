@@ -14,7 +14,7 @@ export class DaemonLifecycle extends Context.Service<
     /** Completes once `shutdown` ran. */
     readonly stopped: Effect.Effect<void>;
   }
->()("@gloaming/core/DaemonLifecycle") {
+>()("@caw/core/DaemonLifecycle") {
   static readonly layer = Layer.effect(
     DaemonLifecycle,
     Effect.gen(function* () {

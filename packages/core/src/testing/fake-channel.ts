@@ -3,9 +3,13 @@ import type {
   ChannelCommandName,
   ChannelMessage,
   ConversationPlace,
-} from "@gloaming/sdk/channel";
-import { ChannelInput } from "@gloaming/sdk/channel";
-import { ChannelMessageId, ChannelName, ExternalConversationId } from "@gloaming/sdk/ids";
+} from "@gloaming/caw-plugin-sdk/channel";
+import { ChannelInput } from "@gloaming/caw-plugin-sdk/channel";
+import {
+  ChannelMessageId,
+  ChannelName,
+  ExternalConversationId,
+} from "@gloaming/caw-plugin-sdk/ids";
 import { Effect, Queue, Ref, Stream } from "effect";
 
 export interface SentMessage {

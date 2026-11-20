@@ -10,7 +10,7 @@ import { CawHome } from "./caw-home.ts";
 export class DaemonEnvironment extends Context.Service<
   DaemonEnvironment,
   { readonly vars: Readonly<Record<string, string>> }
->()("@gloaming/core/DaemonEnvironment") {
+>()("@caw/core/DaemonEnvironment") {
   /** `process` holds the variables Bun started with; this is the one place core reads them. */
   static readonly layer = Layer.effect(
     DaemonEnvironment,

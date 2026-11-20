@@ -6,7 +6,7 @@ import { runCoreMigrations } from "./migrations.ts";
 
 /** Drizzle over Caw's sqlite database, migrated before first use. */
 export class Database extends Context.Service<Database, SqliteDrizzle.EffectSQLiteBunDatabase>()(
-  "@gloaming/core/Database",
+  "@caw/core/Database",
 ) {
   static readonly layer = Layer.effect(Database, SqliteDrizzle.makeWithDefaults());
 }

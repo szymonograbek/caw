@@ -5,7 +5,7 @@ import { SqliteClient } from "@effect/sql-sqlite-bun";
 import { describe, expect, it } from "@effect/vitest";
 import { Array, Effect, Layer, Option, PubSub, Stream } from "effect";
 import { TestClock } from "effect/testing";
-import { Conversation, Session } from "@gloaming/sdk/conversation";
+import { Conversation, Session } from "@gloaming/caw-plugin-sdk/conversation";
 import {
   ChannelName,
   ConversationId,
@@ -13,12 +13,12 @@ import {
   HarnessName,
   ProfileName,
   SessionId,
-} from "@gloaming/sdk/ids";
-import { Interceptor } from "@gloaming/sdk/interceptors";
-import type { CliCommand, PluginMessage } from "@gloaming/sdk/plugin";
-import { Caw, PluginContext } from "@gloaming/sdk/plugin";
-import { Profile } from "@gloaming/sdk/profile";
-import type { Tool, ToolContext } from "@gloaming/sdk/tool";
+} from "@gloaming/caw-plugin-sdk/ids";
+import { Interceptor } from "@gloaming/caw-plugin-sdk/interceptors";
+import type { CliCommand, PluginMessage } from "@gloaming/caw-plugin-sdk/plugin";
+import { Caw, PluginContext } from "@gloaming/caw-plugin-sdk/plugin";
+import { Profile } from "@gloaming/caw-plugin-sdk/profile";
+import type { Tool, ToolContext } from "@gloaming/caw-plugin-sdk/tool";
 import memory from "./index.ts";
 
 interface Registered {

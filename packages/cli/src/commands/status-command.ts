@@ -1,6 +1,6 @@
-import { CawHome } from "@gloaming/core/caw-home";
-import type { DaemonStatus } from "@gloaming/core/caw-rpcs";
-import { describePluginState } from "@gloaming/core/plugin-state";
+import { CawHome } from "@caw/core/caw-home";
+import type { DaemonStatus } from "@caw/core/caw-rpcs";
+import { describePluginState } from "@caw/core/plugin-state";
 import { Console, DateTime, Effect, Option } from "effect";
 import { Command } from "effect/cli";
 import { CliFailure } from "../cli-failure.ts";

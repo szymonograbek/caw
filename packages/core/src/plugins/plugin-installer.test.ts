@@ -13,7 +13,7 @@ const daemon = Layer.unwrap(Effect.map(temporaryHome, (home) => testCoreLayer(ho
 const writeFixture = (folder: string) =>
   Effect.promise(async () => {
     const effect = import.meta.resolve("effect");
-    const sdk = import.meta.resolve("@gloaming/sdk/plugin");
+    const sdk = import.meta.resolve("@gloaming/caw-plugin-sdk/plugin");
 
     await Fs.mkdir(folder, { recursive: true });
     await Fs.writeFile(

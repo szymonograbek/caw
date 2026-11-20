@@ -1,6 +1,6 @@
 import { Effect, Schema } from "effect";
-import type { Tool, ToolContext } from "@gloaming/sdk/tool";
-import { makeTool, ToolError } from "@gloaming/sdk/tool";
+import type { Tool, ToolContext } from "@gloaming/caw-plugin-sdk/tool";
+import { makeTool, ToolError } from "@gloaming/caw-plugin-sdk/tool";
 import type { Memory, MemoryNotFound, MemoryScopeFull, MemoryTooLong } from "./memory.ts";
 import {
   maxBodyLength,

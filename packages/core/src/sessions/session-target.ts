@@ -1,7 +1,7 @@
-import type { Channel } from "@gloaming/sdk/channel";
-import type { Conversation, Session } from "@gloaming/sdk/conversation";
-import type { SessionStart } from "@gloaming/sdk/harness";
-import type { Profile } from "@gloaming/sdk/profile";
+import type { Channel } from "@gloaming/caw-plugin-sdk/channel";
+import type { Conversation, Session } from "@gloaming/caw-plugin-sdk/conversation";
+import type { SessionStart } from "@gloaming/caw-plugin-sdk/harness";
+import type { Profile } from "@gloaming/caw-plugin-sdk/profile";
 
 /** Everything a Session needs to run, decided by routing. */
 export interface SessionTarget {

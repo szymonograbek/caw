@@ -25,7 +25,7 @@ export class Processes extends Context.Service<
       output: string,
     ) => Effect.Effect<void, CliFailure>;
   }
->()("@gloaming/cli/Processes") {
+>()("@gloaming/caw/Processes") {
   static readonly layer = Layer.effect(
     Processes,
     Effect.gen(function* () {

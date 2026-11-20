@@ -1,6 +1,6 @@
 import { Effect, Layer, Option, Schema } from "effect";
-import { PluginName } from "@gloaming/sdk/ids";
-import { definePlugin, Caw } from "@gloaming/sdk/plugin";
+import { PluginName } from "@gloaming/caw-plugin-sdk/ids";
+import { definePlugin, Caw } from "@gloaming/caw-plugin-sdk/plugin";
 import { profilesGuide } from "./guide.ts";
 import { profileCommand } from "./profile-command.ts";
 import { ProfileStore } from "./profile-store.ts";

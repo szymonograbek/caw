@@ -1,7 +1,7 @@
 import type { Readable, Writable } from "node:stream";
 import { styleText } from "node:util";
 import * as Clack from "@clack/prompts";
-import type { SetupChoice } from "@gloaming/sdk/setup";
+import type { SetupChoice } from "@gloaming/caw-plugin-sdk/setup";
 import { Cause, Context, Effect, Exit, Layer } from "effect";
 import { CliFailure } from "../cli-failure.ts";
 
@@ -64,7 +64,7 @@ export class WizardUi extends Context.Service<
     readonly confirm: (message: string, initial: boolean) => Effect.Effect<boolean, CliFailure>;
     readonly outro: (message: string, steps: ReadonlyArray<NextStep>) => Effect.Effect<void>;
   }
->()("@gloaming/cli/WizardUi") {
+>()("@gloaming/caw/WizardUi") {
   /** clack reading keys from `input` and drawing on `output`. */
   static readonly on = (input: Readable, output: Writable) =>
     Layer.sync(WizardUi, () => {

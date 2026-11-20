@@ -2,7 +2,7 @@ import type { ClientEvents } from "discord.js";
 import { Client, DiscordAPIError, Events, GatewayIntentBits, Partials } from "discord.js";
 import { Config, Effect, Queue, Redacted, Schema, Stream } from "effect";
 import type { Scope } from "effect";
-import { ChannelError } from "@gloaming/sdk/channel";
+import { ChannelError } from "@gloaming/caw-plugin-sdk/channel";
 import { DISCORD_CHANNEL } from "./inbound.ts";
 
 /** Discord answered that the message does not exist in that channel. */

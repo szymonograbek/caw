@@ -1,15 +1,15 @@
-import type { ChannelMessage } from "@gloaming/sdk/channel";
-import type { Conversation } from "@gloaming/sdk/conversation";
-import type { ToolCallRequest } from "@gloaming/sdk/harness";
-import { ToolCallDecision } from "@gloaming/sdk/harness";
-import type { PluginName } from "@gloaming/sdk/ids";
+import type { ChannelMessage } from "@gloaming/caw-plugin-sdk/channel";
+import type { Conversation } from "@gloaming/caw-plugin-sdk/conversation";
+import type { ToolCallRequest } from "@gloaming/caw-plugin-sdk/harness";
+import { ToolCallDecision } from "@gloaming/caw-plugin-sdk/harness";
+import type { PluginName } from "@gloaming/caw-plugin-sdk/ids";
 import type {
   OutboundReplyContext,
   SessionOpeningContext,
   TurnInputContext,
-} from "@gloaming/sdk/interceptors";
-import { Interceptor } from "@gloaming/sdk/interceptors";
-import type { Tool, ToolGroup } from "@gloaming/sdk/tool";
+} from "@gloaming/caw-plugin-sdk/interceptors";
+import { Interceptor } from "@gloaming/caw-plugin-sdk/interceptors";
+import type { Tool, ToolGroup } from "@gloaming/caw-plugin-sdk/tool";
 import { Context, Effect, Layer, Match, Option } from "effect";
 import { Registration, Registry } from "./registry.ts";
 
@@ -41,7 +41,7 @@ export class InterceptorChains extends Context.Service<
       context: OutboundReplyContext,
     ) => Effect.Effect<Option.Option<string>>;
   }
->()("@gloaming/core/InterceptorChains") {
+>()("@caw/core/InterceptorChains") {
   static readonly layer = Layer.effect(
     InterceptorChains,
     Effect.gen(function* () {

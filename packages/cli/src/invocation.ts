@@ -1,5 +1,5 @@
 import * as NodePath from "node:path";
-import { ConversationId } from "@gloaming/sdk/ids";
+import { ConversationId } from "@gloaming/caw-plugin-sdk/ids";
 import { Config, Context, Effect, Layer, Option } from "effect";
 
 /** `bun build --compile` serves the bundled modules from Bun's virtual `/$bunfs` root. */
@@ -23,7 +23,7 @@ export class Invocation extends Context.Service<
     /** The user id `launchctl bootstrap gui/<uid>` needs. */
     readonly userId: Option.Option<number>;
   }
->()("@gloaming/cli/Invocation") {
+>()("@gloaming/caw/Invocation") {
   /** This process: the one place the CLI reads `process`. */
   static readonly layer = Layer.effect(
     Invocation,

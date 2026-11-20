@@ -1,5 +1,5 @@
 {
-  "name": "@gloaming/plugin-profiles",
+  "name": "@caw/plugin-profiles",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@effect/sql-sqlite-bun": "4.1.4",
-    "@gloaming/sdk": "workspace:*",
+    "@gloaming/caw-plugin-sdk": "workspace:*",
     "drizzle-orm": "1.0.0-rc.5",
     "effect": "4.1.4"
   },

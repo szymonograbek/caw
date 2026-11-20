@@ -1,7 +1,7 @@
 import { describe, expect, it } from "@effect/vitest";
 import { DateTime, Effect, Option } from "effect";
-import { ChannelInput, ConversationPlace } from "@gloaming/sdk/channel";
-import { ExternalConversationId } from "@gloaming/sdk/ids";
+import { ChannelInput, ConversationPlace } from "@gloaming/caw-plugin-sdk/channel";
+import { ExternalConversationId } from "@gloaming/caw-plugin-sdk/ids";
 import type { DiscordMessage } from "./inbound.ts";
 import { isFromPerson, parseCommand, parseMessage } from "./inbound.ts";
 

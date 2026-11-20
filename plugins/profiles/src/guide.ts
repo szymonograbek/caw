@@ -1,4 +1,4 @@
-import type { GuidePage } from "@gloaming/sdk/plugin";
+import type { GuidePage } from "@gloaming/caw-plugin-sdk/plugin";
 
 export const profilesGuide: GuidePage = {
   topic: "profiles",

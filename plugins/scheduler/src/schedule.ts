@@ -1,5 +1,5 @@
 import { Cron, DateTime, Duration, Option, Result, Schema } from "effect";
-import { ConversationId } from "@gloaming/sdk/ids";
+import { ConversationId } from "@gloaming/caw-plugin-sdk/ids";
 
 export const ScheduleId = Schema.Int.pipe(Schema.brand("ScheduleId"));
 

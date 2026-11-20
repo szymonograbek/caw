@@ -1,5 +1,5 @@
-import { ChannelMessageId, ExternalConversationId } from "@gloaming/sdk/ids";
-import type { HarnessError, SessionNotFound } from "@gloaming/sdk/harness";
+import { ChannelMessageId, ExternalConversationId } from "@gloaming/caw-plugin-sdk/ids";
+import type { HarnessError, SessionNotFound } from "@gloaming/caw-plugin-sdk/harness";
 import type { Effect, Stream } from "effect";
 import { Context, Schema } from "effect";
 
@@ -61,4 +61,4 @@ export class SessionLink extends Context.Service<
     readonly stopTurn: (inFlight: ReadonlyArray<SessionInput>) => Effect.Effect<void>;
     readonly reportFailure: (failure: TurnFailure) => Effect.Effect<void>;
   }
->()("@gloaming/core/SessionLink") {}
+>()("@caw/core/SessionLink") {}

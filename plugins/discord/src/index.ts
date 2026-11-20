@@ -1,6 +1,6 @@
 import { Effect, Layer, Option } from "effect";
-import { definePlugin, Caw } from "@gloaming/sdk/plugin";
-import { PluginName } from "@gloaming/sdk/ids";
+import { definePlugin, Caw } from "@gloaming/caw-plugin-sdk/plugin";
+import { PluginName } from "@gloaming/caw-plugin-sdk/ids";
 import { DiscordChannel } from "./discord-channel.ts";
 import { discordGuide } from "./guide.ts";
 import { reactTool } from "./react-tool.ts";

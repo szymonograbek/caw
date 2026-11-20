@@ -1,5 +1,5 @@
-import { ConversationId, PluginName } from "@gloaming/sdk/ids";
-import { CliCommandError } from "@gloaming/sdk/plugin";
+import { ConversationId, PluginName } from "@gloaming/caw-plugin-sdk/ids";
+import { CliCommandError } from "@gloaming/caw-plugin-sdk/plugin";
 import { Schema } from "effect";
 import { Rpc, RpcGroup } from "effect/rpc";
 import { PluginState } from "../plugins/plugin-state.ts";

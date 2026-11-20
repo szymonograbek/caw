@@ -1,5 +1,5 @@
-import { runDaemon } from "@gloaming/core/daemon";
-import { CawHome } from "@gloaming/core/caw-home";
+import { runDaemon } from "@caw/core/daemon";
+import { CawHome } from "@caw/core/caw-home";
 import { Console, Effect, Option } from "effect";
 import { Command } from "effect/cli";
 import { builtins } from "../builtins.ts";

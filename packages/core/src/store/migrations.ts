@@ -1,6 +1,6 @@
 import * as Migrator from "@effect/sql-sqlite-bun/SqliteMigrator";
-import type { Migration } from "@gloaming/sdk/plugin";
-import type { PluginName } from "@gloaming/sdk/ids";
+import type { Migration } from "@gloaming/caw-plugin-sdk/plugin";
+import type { PluginName } from "@gloaming/caw-plugin-sdk/ids";
 import { Effect } from "effect";
 import { SqlClient } from "effect/sql";
 

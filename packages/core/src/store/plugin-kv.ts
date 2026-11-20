@@ -1,4 +1,4 @@
-import type { PluginName } from "@gloaming/sdk/ids";
+import type { PluginName } from "@gloaming/caw-plugin-sdk/ids";
 import { and, eq } from "drizzle-orm";
 import { primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { Context, Effect, Layer, Option } from "effect";
@@ -21,7 +21,7 @@ export class PluginKv extends Context.Service<
     readonly get: (plugin: PluginName, key: string) => Effect.Effect<Option.Option<string>>;
     readonly set: (plugin: PluginName, key: string, valueJson: string) => Effect.Effect<void>;
   }
->()("@gloaming/core/PluginKv") {
+>()("@caw/core/PluginKv") {
   static readonly layer = Layer.effect(
     PluginKv,
     Effect.gen(function* () {

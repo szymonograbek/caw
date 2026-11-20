@@ -1,7 +1,7 @@
 import * as NodePath from "node:path";
 import { describe, expect, it } from "@effect/vitest";
-import { ConversationPlace } from "@gloaming/sdk/channel";
-import { ChannelName, ConversationId, ExternalConversationId } from "@gloaming/sdk/ids";
+import { ConversationPlace } from "@gloaming/caw-plugin-sdk/channel";
+import { ChannelName, ConversationId, ExternalConversationId } from "@gloaming/caw-plugin-sdk/ids";
 import { Effect, Exit, Layer, Option, Ref } from "effect";
 import { writeAgentFiles } from "../home/agent-files.ts";
 import { CawHome } from "../home/caw-home.ts";

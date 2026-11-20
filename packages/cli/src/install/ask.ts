@@ -1,5 +1,10 @@
-import type { SetupAnswers, SetupChoice, SetupError, SetupQuestion } from "@gloaming/sdk/setup";
-import { SetupAnswer, SetupQuestion as Question } from "@gloaming/sdk/setup";
+import type {
+  SetupAnswers,
+  SetupChoice,
+  SetupError,
+  SetupQuestion,
+} from "@gloaming/caw-plugin-sdk/setup";
+import { SetupAnswer, SetupQuestion as Question } from "@gloaming/caw-plugin-sdk/setup";
 import { Effect, FileSystem, Match, Option } from "effect";
 import { CliFailure } from "../cli-failure.ts";
 import { WizardUi } from "./wizard-ui.ts";

@@ -1,5 +1,5 @@
 import { Schema } from "effect";
-import { ConversationId } from "@gloaming/sdk/ids";
+import { ConversationId } from "@gloaming/caw-plugin-sdk/ids";
 
 export const MemoryId = Schema.Int.pipe(Schema.brand("MemoryId"));
 

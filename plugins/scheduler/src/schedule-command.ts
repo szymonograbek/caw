@@ -1,9 +1,9 @@
 import { Console, DateTime, Effect, Option, Result } from "effect";
 import { Argument, Command, Flag } from "effect/cli";
-import { CurrentCliContext, fromCommand } from "@gloaming/sdk/cli-command";
-import type { Conversation } from "@gloaming/sdk/conversation";
-import { ConversationId } from "@gloaming/sdk/ids";
-import { CliCommandError, Caw } from "@gloaming/sdk/plugin";
+import { CurrentCliContext, fromCommand } from "@gloaming/caw-plugin-sdk/cli-command";
+import type { Conversation } from "@gloaming/caw-plugin-sdk/conversation";
+import { ConversationId } from "@gloaming/caw-plugin-sdk/ids";
+import { CliCommandError, Caw } from "@gloaming/caw-plugin-sdk/plugin";
 import type { Schedule } from "./schedule.ts";
 import { nextRun, parseCron, ScheduleId, ScheduleTiming } from "./schedule.ts";
 import { Scheduler } from "./scheduler.ts";

@@ -1,14 +1,14 @@
 import { describe, expect, it } from "@effect/vitest";
 import { Effect, Exit, Option } from "effect";
-import { Conversation } from "@gloaming/sdk/conversation";
-import type { ConversationId, ExternalConversationId } from "@gloaming/sdk/ids";
+import { Conversation } from "@gloaming/caw-plugin-sdk/conversation";
+import type { ConversationId, ExternalConversationId } from "@gloaming/caw-plugin-sdk/ids";
 import {
   ChannelName,
   ConversationId as Id,
   ExternalConversationId as ExternalId,
   SessionId,
-} from "@gloaming/sdk/ids";
-import { ConversationNotFound } from "@gloaming/sdk/plugin";
+} from "@gloaming/caw-plugin-sdk/ids";
+import { ConversationNotFound } from "@gloaming/caw-plugin-sdk/plugin";
 import { MessageNotFound } from "./discord-client.ts";
 import { reactTool } from "./react-tool.ts";
 

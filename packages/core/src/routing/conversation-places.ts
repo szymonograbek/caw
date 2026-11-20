@@ -1,8 +1,12 @@
-import type { ConversationPlace } from "@gloaming/sdk/channel";
-import type { ReplyMode } from "@gloaming/sdk/conversation";
-import { Conversation } from "@gloaming/sdk/conversation";
-import { CawEvent } from "@gloaming/sdk/events";
-import type { ChannelName, ConversationId, ExternalConversationId } from "@gloaming/sdk/ids";
+import type { ConversationPlace } from "@gloaming/caw-plugin-sdk/channel";
+import type { ReplyMode } from "@gloaming/caw-plugin-sdk/conversation";
+import { Conversation } from "@gloaming/caw-plugin-sdk/conversation";
+import { CawEvent } from "@gloaming/caw-plugin-sdk/events";
+import type {
+  ChannelName,
+  ConversationId,
+  ExternalConversationId,
+} from "@gloaming/caw-plugin-sdk/ids";
 import { Context, Effect, Layer, Match, Option } from "effect";
 import { EventBus } from "../events/event-bus.ts";
 import { Conversations } from "../store/conversations.ts";
@@ -21,7 +25,7 @@ export class ConversationPlaces extends Context.Service<
     /** The top-level Conversation that owns the Workspace and profile. */
     readonly root: (conversation: Conversation) => Effect.Effect<Conversation>;
   }
->()("@gloaming/core/ConversationPlaces") {
+>()("@caw/core/ConversationPlaces") {
   static readonly layer = Layer.effect(
     ConversationPlaces,
     Effect.gen(function* () {

@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 import { BunRuntime, BunServices } from "@effect/platform-bun";
-import { OfflineHost } from "@gloaming/core/offline-host";
-import { CawHome } from "@gloaming/core/caw-home";
+import { OfflineHost } from "@caw/core/offline-host";
+import { CawHome } from "@caw/core/caw-home";
 import { Console, Effect, Layer, Logger } from "effect";
 import { FetchHttpClient } from "effect/http";
 import { CliFailure } from "./cli-failure.ts";

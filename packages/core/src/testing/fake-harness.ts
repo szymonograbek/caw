@@ -1,6 +1,10 @@
-import type { Harness, HarnessEvent, OpenSession } from "@gloaming/sdk/harness";
-import { HarnessEvent as Events, SessionNotFound, SessionStart } from "@gloaming/sdk/harness";
-import { HarnessName } from "@gloaming/sdk/ids";
+import type { Harness, HarnessEvent, OpenSession } from "@gloaming/caw-plugin-sdk/harness";
+import {
+  HarnessEvent as Events,
+  SessionNotFound,
+  SessionStart,
+} from "@gloaming/caw-plugin-sdk/harness";
+import { HarnessName } from "@gloaming/caw-plugin-sdk/ids";
 import type { Cause } from "effect";
 import { Effect, Queue, Ref, Stream } from "effect";
 

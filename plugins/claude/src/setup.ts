@@ -1,6 +1,12 @@
 import { claudeHarnessName } from "./claude-error.ts";
 import { findClaudeExecutable, notInstalled } from "./claude-executable.ts";
-import { answer, answerList, PluginSetup, SetupError, SetupQuestion } from "@gloaming/sdk/setup";
+import {
+  answer,
+  answerList,
+  PluginSetup,
+  SetupError,
+  SetupQuestion,
+} from "@gloaming/caw-plugin-sdk/setup";
 import { Config, Effect, Option } from "effect";
 
 const knownSources = ["user", "project", "local"];

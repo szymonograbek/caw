@@ -18,7 +18,7 @@ import { CliCommandError } from "./plugin.ts";
 
 /** The `CliContext` of the invocation a command handler runs in. */
 export class CurrentCliContext extends Context.Service<CurrentCliContext, CliContext>()(
-  "@gloaming/sdk/CurrentCliContext",
+  "@gloaming/caw-plugin-sdk/CurrentCliContext",
 ) {}
 
 /**

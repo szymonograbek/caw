@@ -1,7 +1,7 @@
 import * as NodePath from "node:path";
-import { CurrentCliContext, fromCommand } from "@gloaming/sdk/cli-command";
-import { PluginName } from "@gloaming/sdk/ids";
-import { CliCommandError } from "@gloaming/sdk/plugin";
+import { CurrentCliContext, fromCommand } from "@gloaming/caw-plugin-sdk/cli-command";
+import { PluginName } from "@gloaming/caw-plugin-sdk/ids";
+import { CliCommandError } from "@gloaming/caw-plugin-sdk/plugin";
 import { Console, Effect, Option, Schema } from "effect";
 import { Argument, Command } from "effect/cli";
 import type { PluginEntry } from "../plugins/plugin-host.ts";

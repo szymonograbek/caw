@@ -27,13 +27,13 @@
       "dependencies": {
         "@clack/prompts": "1.9.0",
         "@effect/platform-bun": "4.1.4",
-        "@gloaming/core": "workspace:*",
-        "@gloaming/plugin-claude": "workspace:*",
-        "@gloaming/plugin-discord": "workspace:*",
-        "@gloaming/plugin-memory": "workspace:*",
-        "@gloaming/plugin-profiles": "workspace:*",
-        "@gloaming/plugin-scheduler": "workspace:*",
-        "@gloaming/sdk": "workspace:*",
+        "@caw/core": "workspace:*",
+        "@caw/plugin-claude": "workspace:*",
+        "@caw/plugin-discord": "workspace:*",
+        "@caw/plugin-memory": "workspace:*",
+        "@caw/plugin-profiles": "workspace:*",
+        "@caw/plugin-scheduler": "workspace:*",
+        "@gloaming/caw-plugin-sdk": "workspace:*",
         "effect": "4.1.4",
       },
       "devDependencies": {
@@ -41,12 +41,12 @@
       },
     },
     "packages/core": {
-      "name": "@gloaming/core",
+      "name": "@caw/core",
       "version": "0.0.0",
       "dependencies": {
         "@effect/platform-bun": "4.1.4",
         "@effect/sql-sqlite-bun": "4.1.4",
-        "@gloaming/sdk": "workspace:*",
+        "@gloaming/caw-plugin-sdk": "workspace:*",
         "@typeonce/effect-machine": "0.46.0",
         "drizzle-orm": "1.0.0-rc.5",
         "effect": "4.1.4",
@@ -56,7 +56,7 @@
       },
     },
     "packages/sdk": {
-      "name": "@gloaming/sdk",
+      "name": "@gloaming/caw-plugin-sdk",
       "version": "0.0.0",
       "dependencies": {
         "@effect/sql-sqlite-bun": "4.1.4",
@@ -64,11 +64,11 @@
       },
     },
     "plugins/claude": {
-      "name": "@gloaming/plugin-claude",
+      "name": "@caw/plugin-claude",
       "version": "0.0.0",
       "dependencies": {
         "@anthropic-ai/claude-agent-sdk": "0.3.329",
-        "@gloaming/sdk": "workspace:*",
+        "@gloaming/caw-plugin-sdk": "workspace:*",
         "effect": "4.1.4",
         "zod": "4.6.7",
       },
@@ -77,10 +77,10 @@
       },
     },
     "plugins/discord": {
-      "name": "@gloaming/plugin-discord",
+      "name": "@caw/plugin-discord",
       "version": "0.0.0",
       "dependencies": {
-        "@gloaming/sdk": "workspace:*",
+        "@gloaming/caw-plugin-sdk": "workspace:*",
         "discord.js": "14.28.1",
         "effect": "4.1.4",
       },
@@ -89,11 +89,11 @@
       },
     },
     "plugins/memory": {
-      "name": "@gloaming/plugin-memory",
+      "name": "@caw/plugin-memory",
       "version": "0.0.0",
       "dependencies": {
         "@effect/sql-sqlite-bun": "4.1.4",
-        "@gloaming/sdk": "workspace:*",
+        "@gloaming/caw-plugin-sdk": "workspace:*",
         "drizzle-orm": "1.0.0-rc.5",
         "effect": "4.1.4",
       },
@@ -102,11 +102,11 @@
       },
     },
     "plugins/profiles": {
-      "name": "@gloaming/plugin-profiles",
+      "name": "@caw/plugin-profiles",
       "version": "0.0.0",
       "dependencies": {
         "@effect/sql-sqlite-bun": "4.1.4",
-        "@gloaming/sdk": "workspace:*",
+        "@gloaming/caw-plugin-sdk": "workspace:*",
         "drizzle-orm": "1.0.0-rc.5",
         "effect": "4.1.4",
       },
@@ -115,11 +115,11 @@
       },
     },
     "plugins/scheduler": {
-      "name": "@gloaming/plugin-scheduler",
+      "name": "@caw/plugin-scheduler",
       "version": "0.0.0",
       "dependencies": {
         "@effect/sql-sqlite-bun": "4.1.4",
-        "@gloaming/sdk": "workspace:*",
+        "@gloaming/caw-plugin-sdk": "workspace:*",
         "drizzle-orm": "1.0.0-rc.5",
         "effect": "4.1.4",
       },
@@ -209,19 +209,19 @@
 
     "@napi-rs/wasm-runtime": ["@napi-rs/wasm-runtime@1.2.6", "", { "dependencies": { "@tybys/wasm-util": "^0.10.3" }, "peerDependencies": { "@emnapi/core": "^1.7.1 || 2.0.0-beta.2", "@emnapi/runtime": "^1.7.1 || 2.0.0-beta.2" } }, "sha512-mRyDmEw9/fCDXCGfL1sbgIw/GUK0PVxRW4YwgPN61F3LQ+fSyoBFarJVzgGyhF6kRzEQZ0FejDqm4WLXSeqQmw=="],
 
-    "@gloaming/core": ["@gloaming/core@workspace:packages/core"],
+    "@caw/core": ["@caw/core@workspace:packages/core"],
 
-    "@gloaming/plugin-claude": ["@gloaming/plugin-claude@workspace:plugins/claude"],
+    "@caw/plugin-claude": ["@caw/plugin-claude@workspace:plugins/claude"],
 
-    "@gloaming/plugin-discord": ["@gloaming/plugin-discord@workspace:plugins/discord"],
+    "@caw/plugin-discord": ["@caw/plugin-discord@workspace:plugins/discord"],
 
-    "@gloaming/plugin-memory": ["@gloaming/plugin-memory@workspace:plugins/memory"],
+    "@caw/plugin-memory": ["@caw/plugin-memory@workspace:plugins/memory"],
 
-    "@gloaming/plugin-profiles": ["@gloaming/plugin-profiles@workspace:plugins/profiles"],
+    "@caw/plugin-profiles": ["@caw/plugin-profiles@workspace:plugins/profiles"],
 
-    "@gloaming/plugin-scheduler": ["@gloaming/plugin-scheduler@workspace:plugins/scheduler"],
+    "@caw/plugin-scheduler": ["@caw/plugin-scheduler@workspace:plugins/scheduler"],
 
-    "@gloaming/sdk": ["@gloaming/sdk@workspace:packages/sdk"],
+    "@gloaming/caw-plugin-sdk": ["@gloaming/caw-plugin-sdk@workspace:packages/sdk"],
 
     "@opentelemetry/api": ["@opentelemetry/api@1.10.0", "", {}, "sha512-lMkyes8iHrG+mk6WH7X70MdCLI2RS0FwNBY1PyQ8UemaijE2m5mv5A0Niy3HtbYTFrgkUEQjFMXmSAk2hQDuPQ=="],
 

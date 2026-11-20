@@ -1,9 +1,9 @@
 import { describe, expect, it } from "@effect/vitest";
-import type { ChannelMessage } from "@gloaming/sdk/channel";
-import { Conversation } from "@gloaming/sdk/conversation";
-import { ToolCallDecision } from "@gloaming/sdk/harness";
-import { ConversationId, PluginName, SessionId } from "@gloaming/sdk/ids";
-import { InboundDecision, Interceptor } from "@gloaming/sdk/interceptors";
+import type { ChannelMessage } from "@gloaming/caw-plugin-sdk/channel";
+import { Conversation } from "@gloaming/caw-plugin-sdk/conversation";
+import { ToolCallDecision } from "@gloaming/caw-plugin-sdk/harness";
+import { ConversationId, PluginName, SessionId } from "@gloaming/caw-plugin-sdk/ids";
+import { InboundDecision, Interceptor } from "@gloaming/caw-plugin-sdk/interceptors";
 import { Effect, Layer, Option, Ref } from "effect";
 import { message } from "../testing/test-daemon.ts";
 import { InterceptorChains } from "./interceptor-chains.ts";

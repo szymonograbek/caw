@@ -1,4 +1,4 @@
-import { CawEvent } from "@gloaming/sdk/events";
+import { CawEvent } from "@gloaming/caw-plugin-sdk/events";
 import { Effect, Layer } from "effect";
 import { EventBus } from "./events/event-bus.ts";
 import { writeAgentFiles } from "./home/agent-files.ts";

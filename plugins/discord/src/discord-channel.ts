@@ -1,13 +1,13 @@
 import type { ChatInputCommandInteraction, Client, Message, TextBasedChannel } from "discord.js";
 import { Events } from "discord.js";
 import { Context, Effect, Filter, Layer, Option, Schedule, Stream } from "effect";
-import type { Channel, ChannelError, ChannelMessage } from "@gloaming/sdk/channel";
-import { ChannelInput } from "@gloaming/sdk/channel";
-import type { ChannelMessageId, ExternalConversationId } from "@gloaming/sdk/ids";
+import type { Channel, ChannelError, ChannelMessage } from "@gloaming/caw-plugin-sdk/channel";
+import { ChannelInput } from "@gloaming/caw-plugin-sdk/channel";
+import type { ChannelMessageId, ExternalConversationId } from "@gloaming/caw-plugin-sdk/ids";
 import {
   ChannelMessageId as MessageId,
   ExternalConversationId as ConversationId,
-} from "@gloaming/sdk/ids";
+} from "@gloaming/caw-plugin-sdk/ids";
 import { chunkMessage, DISCORD_MESSAGE_LIMIT } from "./chunk-message.ts";
 import { adoptDefaultAvatar } from "./default-avatar.ts";
 import type { MessageNotFound } from "./discord-client.ts";
@@ -233,7 +233,7 @@ const buildChannel = (client: Client<true>): DiscordChannelApi => {
  * gateway connection lasts as long as the layer.
  */
 export class DiscordChannel extends Context.Service<DiscordChannel, DiscordChannelApi>()(
-  "@gloaming/plugin-discord/DiscordChannel",
+  "@caw/plugin-discord/DiscordChannel",
 ) {
   static readonly layer = Layer.effect(
     DiscordChannel,

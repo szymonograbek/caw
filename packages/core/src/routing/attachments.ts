@@ -1,5 +1,5 @@
 import * as NodePath from "node:path";
-import type { ChannelMessage } from "@gloaming/sdk/channel";
+import type { ChannelMessage } from "@gloaming/caw-plugin-sdk/channel";
 import { Context, Effect, Layer, Option } from "effect";
 import { HttpClient } from "effect/http";
 import { HostFiles } from "../home/host-files.ts";
@@ -17,7 +17,7 @@ export class Attachments extends Context.Service<
       message: ChannelMessage,
     ) => Effect.Effect<ReadonlyArray<AttachmentRef>>;
   }
->()("@gloaming/core/Attachments") {
+>()("@caw/core/Attachments") {
   static readonly layer = Layer.effect(
     Attachments,
     Effect.gen(function* () {

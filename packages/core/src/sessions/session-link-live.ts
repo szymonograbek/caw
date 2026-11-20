@@ -1,7 +1,7 @@
-import { CawEvent } from "@gloaming/sdk/events";
-import type { ChannelError } from "@gloaming/sdk/channel";
-import type { HarnessEvent, LiveSession } from "@gloaming/sdk/harness";
-import { HarnessError } from "@gloaming/sdk/harness";
+import { CawEvent } from "@gloaming/caw-plugin-sdk/events";
+import type { ChannelError } from "@gloaming/caw-plugin-sdk/channel";
+import type { HarnessEvent, LiveSession } from "@gloaming/caw-plugin-sdk/harness";
+import { HarnessError } from "@gloaming/caw-plugin-sdk/harness";
 import { Context, Deferred, Effect, Layer, Match, Option, Queue, Stream } from "effect";
 import { DaemonEnvironment } from "../home/daemon-environment.ts";
 import { HostFiles } from "../home/host-files.ts";
@@ -39,7 +39,7 @@ export class SessionLinks extends Context.Service<
       inputs: Queue.Queue<SessionInput>,
     ) => Effect.Effect<SessionLink["Service"]>;
   }
->()("@gloaming/core/SessionLinks") {
+>()("@caw/core/SessionLinks") {
   static readonly layer = Layer.effect(
     SessionLinks,
     Effect.gen(function* () {

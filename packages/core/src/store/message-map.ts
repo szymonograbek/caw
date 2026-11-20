@@ -1,4 +1,4 @@
-import type { ChannelMessageId, ConversationId, SessionId } from "@gloaming/sdk/ids";
+import type { ChannelMessageId, ConversationId, SessionId } from "@gloaming/caw-plugin-sdk/ids";
 import { primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { Context, Effect, Layer, Option } from "effect";
 import { Database } from "./database.ts";
@@ -24,7 +24,7 @@ export class MessageMap extends Context.Service<
       session: Option.Option<SessionId>,
     ) => Effect.Effect<void>;
   }
->()("@gloaming/core/MessageMap") {
+>()("@caw/core/MessageMap") {
   static readonly layer = Layer.effect(
     MessageMap,
     Effect.gen(function* () {

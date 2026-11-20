@@ -6,7 +6,7 @@ A minimal daemon that lets trusted people talk to agent Harnesses (Claude Agent 
 
 ## Stack
 
-Bun workspaces: `packages/sdk` (`@gloaming/sdk`, the only package plugins import), `packages/core` (`@gloaming/core`), `packages/cli` (`caw`, bin `src/main.ts`), and `plugins/{discord,claude,memory,scheduler,profiles}` (`@gloaming/plugin-<name>`). Packages reference each other with `workspace:*`, and each runtime dependency lives only in the package that uses it.
+Bun workspaces: `packages/sdk` (`@gloaming/caw-plugin-sdk`, the only package plugins import), `packages/core` (`@caw/core`), `packages/cli` (`@gloaming/caw`, bin `caw` from `src/main.ts`), and `plugins/{discord,claude,memory,scheduler,profiles}` (`@caw/plugin-<name>`). Only `@gloaming/caw` and `@gloaming/caw-plugin-sdk` are meant for npm; `@caw/*` packages stay private. Packages reference each other with `workspace:*`, and each runtime dependency lives only in the package that uses it.
 
 | Package                                         | Version    | Where                                                                              |
 | ----------------------------------------------- | ---------- | ---------------------------------------------------------------------------------- |

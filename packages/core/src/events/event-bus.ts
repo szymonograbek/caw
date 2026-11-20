@@ -1,5 +1,5 @@
-import type { CawEvent } from "@gloaming/sdk/events";
-import type { PluginMessage } from "@gloaming/sdk/plugin";
+import type { CawEvent } from "@gloaming/caw-plugin-sdk/events";
+import type { PluginMessage } from "@gloaming/caw-plugin-sdk/plugin";
 import { Context, Effect, Layer, PubSub, Stream } from "effect";
 
 /** Where core announces every Event, plus the inter-plugin message bus. */
@@ -11,7 +11,7 @@ export class EventBus extends Context.Service<
     readonly events: Stream.Stream<CawEvent>;
     readonly pluginMessages: PubSub.PubSub<PluginMessage>;
   }
->()("@gloaming/core/EventBus") {
+>()("@caw/core/EventBus") {
   static readonly layer = Layer.effect(
     EventBus,
     Effect.gen(function* () {

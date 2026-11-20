@@ -1,5 +1,5 @@
 import { describe, expect, it } from "@effect/vitest";
-import { ChannelMessageId } from "@gloaming/sdk/ids";
+import { ChannelMessageId } from "@gloaming/caw-plugin-sdk/ids";
 import { DateTime, Option } from "effect";
 import { message } from "../testing/test-daemon.ts";
 import { formatHistory, formatInput, formatMessage, formatTask } from "./inbound-format.ts";

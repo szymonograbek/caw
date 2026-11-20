@@ -1,10 +1,15 @@
 import { SqliteClient } from "@effect/sql-sqlite-bun";
 import { describe, expect, it } from "@effect/vitest";
 import { Array, Effect, Layer, Option, PubSub, Stream } from "effect";
-import { HarnessName, ProfileName } from "@gloaming/sdk/ids";
-import type { CliCommand, CliContext, PluginMessage, ProfileLookup } from "@gloaming/sdk/plugin";
-import { Caw, PluginContext } from "@gloaming/sdk/plugin";
-import { Profile } from "@gloaming/sdk/profile";
+import { HarnessName, ProfileName } from "@gloaming/caw-plugin-sdk/ids";
+import type {
+  CliCommand,
+  CliContext,
+  PluginMessage,
+  ProfileLookup,
+} from "@gloaming/caw-plugin-sdk/plugin";
+import { Caw, PluginContext } from "@gloaming/caw-plugin-sdk/plugin";
+import { Profile } from "@gloaming/caw-plugin-sdk/profile";
 import profiles from "./index.ts";
 
 interface Registered {

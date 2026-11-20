@@ -1,4 +1,4 @@
-import { ConversationId, SessionId } from "@gloaming/sdk/ids";
+import { ConversationId, SessionId } from "@gloaming/caw-plugin-sdk/ids";
 import { Effect, Random } from "effect";
 
 const hex = (byte: number) => byte.toString(16).padStart(2, "0");

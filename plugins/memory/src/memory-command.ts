@@ -1,7 +1,7 @@
 import { Console, Effect, Option, Schema } from "effect";
 import { Command, Flag } from "effect/cli";
-import { fromCommand } from "@gloaming/sdk/cli-command";
-import { CliCommandError } from "@gloaming/sdk/plugin";
+import { fromCommand } from "@gloaming/caw-plugin-sdk/cli-command";
+import { CliCommandError } from "@gloaming/caw-plugin-sdk/plugin";
 import { exportMarkdown } from "./memory-export.ts";
 import { MemoryStore } from "./memory-store.ts";
 

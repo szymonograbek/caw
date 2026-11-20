@@ -1,5 +1,5 @@
 import { describe, expect, it } from "@effect/vitest";
-import { ChannelMessageId, ExternalConversationId } from "@gloaming/sdk/ids";
+import { ChannelMessageId, ExternalConversationId } from "@gloaming/caw-plugin-sdk/ids";
 import { Machine } from "@typeonce/effect-machine";
 import { Effect, Layer, Option, Queue, Ref, Stream } from "effect";
 import { TestClock } from "effect/testing";
