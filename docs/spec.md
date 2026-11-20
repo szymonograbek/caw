@@ -166,7 +166,14 @@ There is no event log, projection, or message table: the Channel is the history.
 - The agent uses the same CLI through its shell. A tiny core skill tells it to run `omen guide`. `omen guide` lists topics; `omen guide <topic>` explains one. Plugins add pages.
 - The current Conversation is resolved from `OMEN_CONVERSATION_ID`.
 - Commands:
-  - `start | stop | status | install` — `install` writes a launchd plist (macOS first) or a systemd unit.
+  - `start | stop | status | install`
+  - `install` is the first-run setup wizard. Each step lists what installed plugins offer, never a hardcoded menu:
+    1. Pick a Channel (Discord today) and enter its config. The Discord bot token is checked live and saved to `~/.omen/.env`. If the bot is in no server, the wizard prints an invite URL.
+    2. Pick a Harness (Claude today) and its options. These become the `default` Harness profile.
+    3. Pick which feature plugins to enable.
+    4. Optionally write a launchd plist (macOS first) or a systemd unit. It is loaded only on an explicit yes.
+
+    Every prompt has a flag, so `install` also runs non-interactively. Plugins take part through an optional `setup` in their definition.
   - `logs [-f]`
   - `guide [topic]`
   - `plugin add | remove | enable | disable | order | list | set`
