@@ -18,26 +18,33 @@ interface Core {
   readonly deliveries: Array<Delivery>;
   readonly commands: Array<CliCommand>;
   readonly conversations: Set<string>;
+  /** Each thread's parent Conversation. */
+  readonly threads: Map<string, ConversationId>;
 }
 
 const room = ConversationId.make("room-1");
 
-const conversationRecord = (id: ConversationId) =>
+const conversationRecord = (core: Core, id: ConversationId) =>
   new Conversation({
     id,
     channel: ChannelName.make("discord"),
     externalId: ExternalConversationId.make(`external-${id}`),
-    parentId: Option.none(),
+    parentId: Option.fromNullishOr(core.threads.get(id)),
     replyMode: "threaded",
     profile: Option.none(),
   });
 
 const lookupIn = (core: Core) => (id: ConversationId) =>
   core.conversations.has(id)
-    ? Effect.succeed(conversationRecord(id))
+    ? Effect.succeed(conversationRecord(core, id))
     : Effect.fail(new ConversationNotFound({ conversationId: id }));
 
-const makeCore = (): Core => ({ deliveries: [], commands: [], conversations: new Set([room]) });
+const makeCore = (): Core => ({
+  deliveries: [],
+  commands: [],
+  conversations: new Set([room]),
+  threads: new Map(),
+});
 
 /** Starts the plugin in its own scope, as core does when it enables it; close the scope to stop it. */
 const startPlugin = (core: Core) =>
@@ -80,6 +87,16 @@ const startPlugin = (core: Core) =>
   });
 
 const inRoom: CliContext = { conversationId: Option.some(room), cwd: "/" };
+
+const thread = ConversationId.make("room-1-thread");
+
+const inThread: CliContext = { conversationId: Option.some(thread), cwd: "/" };
+
+/** Adds a thread of `room` to the fake core. */
+const openThread = (core: Core) => {
+  core.conversations.add(thread);
+  core.threads.set(thread, room);
+};
 
 const outside: CliContext = { conversationId: Option.none(), cwd: "/" };
 
@@ -286,6 +303,78 @@ describe("omen schedule", () => {
       expect(mine).not.toContain("theirs");
       expect(all).toContain("mine");
       expect(all).toContain("conversation room-2");
+    }).pipe(Effect.provide(sqlite)),
+  );
+
+  it.effect(
+    "targets the top-level Conversation from a thread unless --conversation says otherwise",
+    () =>
+      Effect.gen(function* () {
+        const core = makeCore();
+
+        openThread(core);
+        yield* TestClock.setTime(nov20At8);
+        yield* startPlugin(core);
+
+        const added = yield* schedule(
+          core,
+          ["add", "--at", "2026-11-20T09:00Z", "--prompt", "main"],
+          inThread,
+        );
+
+        yield* schedule(
+          core,
+          ["add", "--at", "2026-11-20T09:30Z", "--prompt", "here", "--conversation", thread],
+          inThread,
+        );
+        yield* advance("2 hours");
+
+        expect(added).toContain("for Conversation room-1;");
+        expect(core.deliveries).toEqual([
+          { conversationId: room, prompt: "main" },
+          { conversationId: thread, prompt: "here" },
+        ]);
+      }).pipe(Effect.provide(sqlite)),
+  );
+
+  it.effect("lists the top-level Conversation's and its threads' Schedules from either", () =>
+    Effect.gen(function* () {
+      const core = makeCore();
+      const other = ConversationId.make("room-2");
+
+      openThread(core);
+      core.conversations.add(other);
+      yield* TestClock.setTime(nov20At8);
+      yield* startPlugin(core);
+      yield* schedule(core, ["add", "--at", "2026-11-21T08:00Z", "--prompt", "main"]);
+      yield* schedule(core, [
+        "add",
+        "--at",
+        "2026-11-21T09:00Z",
+        "--prompt",
+        "thread",
+        "--conversation",
+        thread,
+      ]);
+      yield* schedule(core, [
+        "add",
+        "--at",
+        "2026-11-21T10:00Z",
+        "--prompt",
+        "theirs",
+        "--conversation",
+        other,
+      ]);
+      const fromMain = yield* schedule(core, ["list"]);
+      const fromThread = yield* schedule(core, ["list"], inThread);
+      const onlyThread = yield* schedule(core, ["list", "--conversation", thread]);
+
+      expect(fromMain).toContain("main");
+      expect(fromMain).toContain("conversation room-1-thread");
+      expect(fromMain).not.toContain("theirs");
+      expect(fromThread).toBe(fromMain);
+      expect(onlyThread).not.toContain("main");
+      expect(onlyThread).toContain("thread");
     }).pipe(Effect.provide(sqlite)),
   );
 

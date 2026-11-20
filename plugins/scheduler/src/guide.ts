@@ -16,10 +16,13 @@ Commands:
       offset such as 2026-11-21T09:00+01:00. --timezone defaults to the host's zone;
       pass the zone from your <context timezone="..."/> so times mean what the
       person meant.
-      The Conversation defaults to OMEN_CONVERSATION_ID, which your shell already
-      has, so to schedule for the Conversation you are in, leave --conversation out.
+      The Conversation defaults to the top-level Conversation you are in: the
+      main channel, even when you run this from a thread. Pass --conversation
+      <id> to target a thread or another Conversation, only when the person
+      wants runs there; OMEN_CONVERSATION_ID holds this thread's id.
   omen schedule list [--all | --conversation <id>]
-      This Conversation's Schedules (or every one), soonest first, with ids.
+      Schedules of this top-level Conversation and its threads (or every one, or
+      exactly one Conversation's), soonest first, with ids.
   omen schedule remove <id>
 
 Examples:

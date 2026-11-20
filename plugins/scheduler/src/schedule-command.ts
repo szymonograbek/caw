@@ -1,6 +1,7 @@
 import { Console, DateTime, Effect, Option, Result } from "effect";
 import { Argument, Command, Flag } from "effect/cli";
 import { CurrentCliContext, fromCommand } from "@omen/sdk/cli-command";
+import type { Conversation } from "@omen/sdk/conversation";
 import { ConversationId } from "@omen/sdk/ids";
 import { CliCommandError, Omen } from "@omen/sdk/plugin";
 import type { Schedule } from "./schedule.ts";
@@ -67,16 +68,53 @@ const parseTiming = (
     return yield* usageError("Pass exactly one of --cron or --at.");
   });
 
-const conversationFlag = Flag.String("conversation").pipe(
-  Flag.withSchema(ConversationId),
-  Flag.optional,
-  Flag.withDescription("The target Conversation (default: OMEN_CONVERSATION_ID)"),
-);
+const conversationFlag = (description: string) =>
+  Flag.String("conversation").pipe(
+    Flag.withSchema(ConversationId),
+    Flag.optional,
+    Flag.withDescription(description),
+  );
+
+/** The top-level Conversation: the Conversation itself, or a thread's parent. */
+const rootOf = (conversation: Conversation): ConversationId =>
+  Option.getOrElse(conversation.parentId, () => conversation.id);
 
 /** `omen schedule add | list | remove`. */
 export const scheduleCommand = Effect.gen(function* () {
   const omen = yield* Omen;
   const scheduler = yield* Scheduler;
+
+  const findConversation = (id: ConversationId) =>
+    omen.conversation(id).pipe(Effect.mapError(() => usageError(`No Conversation ${id}.`)));
+
+  /** The top-level Conversation of the Session running the CLI. */
+  const currentRoot = (missing: string) =>
+    Effect.gen(function* () {
+      const context = yield* CurrentCliContext;
+
+      const current = yield* Effect.fromOption(context.conversationId).pipe(
+        Effect.mapError(() => usageError(missing)),
+      );
+
+      return rootOf(yield* findConversation(current));
+    });
+
+  /** Whether a Schedule targets `root` or one of its threads; false once its Conversation is gone. */
+  const isUnder = (root: ConversationId) => (schedule: Schedule) =>
+    omen.conversation(schedule.conversationId).pipe(
+      Effect.map((target) => rootOf(target) === root),
+      Effect.catchTag("ConversationNotFound", () => Effect.succeed(false)),
+    );
+
+  const listUnderCurrentRoot = Effect.gen(function* () {
+    const root = yield* currentRoot(
+      "Pass --all or --conversation <id>; there is no OMEN_CONVERSATION_ID here.",
+    );
+
+    const schedules = yield* scheduler.list(Option.none());
+
+    return yield* Effect.filter(schedules, isUnder(root));
+  });
 
   const add = Command.make(
     "add",
@@ -90,7 +128,9 @@ export const scheduleCommand = Effect.gen(function* () {
         Flag.withDescription("A one-off ISO datetime, e.g. 2026-11-21T09:00"),
       ),
       prompt: Flag.String("prompt").pipe(Flag.withDescription("What the agent is asked to do")),
-      conversation: conversationFlag,
+      conversation: conversationFlag(
+        "The target Conversation (default: the top-level Conversation of OMEN_CONVERSATION_ID)",
+      ),
       timezone: Flag.String("timezone").pipe(
         Flag.optional,
         Flag.withDescription("IANA zone for --cron and --at without an offset (default: local)"),
@@ -98,19 +138,11 @@ export const scheduleCommand = Effect.gen(function* () {
     },
     (input) =>
       Effect.gen(function* () {
-        const context = yield* CurrentCliContext;
-
-        const conversationId = yield* Effect.fromOption(
-          Option.orElse(input.conversation, () => context.conversationId),
-        ).pipe(
-          Effect.mapError(() =>
-            usageError("Pass --conversation <id>; there is no OMEN_CONVERSATION_ID here."),
-          ),
-        );
-
-        yield* omen
-          .conversation(conversationId)
-          .pipe(Effect.mapError(() => usageError(`No Conversation ${conversationId}.`)));
+        const conversationId = yield* Option.match(input.conversation, {
+          onSome: (id) => findConversation(id).pipe(Effect.as(id)),
+          onNone: () =>
+            currentRoot("Pass --conversation <id>; there is no OMEN_CONVERSATION_ID here."),
+        });
 
         const timeZone = yield* Option.match(input.timezone, {
           onNone: () => Effect.succeed(DateTime.zoneMakeLocal()),
@@ -144,25 +176,18 @@ export const scheduleCommand = Effect.gen(function* () {
         Flag.withDefault(false),
         Flag.withDescription("List every Conversation's Schedules"),
       ),
-      conversation: conversationFlag,
+      conversation: conversationFlag(
+        "Only this Conversation's (default: the top-level Conversation of OMEN_CONVERSATION_ID and its threads)",
+      ),
     },
     ({ all, conversation }) =>
       Effect.gen(function* () {
-        const context = yield* CurrentCliContext;
-        const target = Option.orElse(conversation, () => context.conversationId);
-
-        const scope = all
-          ? Effect.succeedNone
-          : Effect.fromOption(target).pipe(
-              Effect.asSome,
-              Effect.mapError(() =>
-                usageError(
-                  "Pass --all or --conversation <id>; there is no OMEN_CONVERSATION_ID here.",
-                ),
-              ),
-            );
-
-        const schedules = yield* Effect.flatMap(scope, scheduler.list);
+        const schedules = yield* all
+          ? scheduler.list(Option.none())
+          : Option.match(conversation, {
+              onSome: (id) => scheduler.list(Option.some(id)),
+              onNone: () => listUnderCurrentRoot,
+            });
 
         yield* Console.log(
           schedules.length === 0 ? "No Schedules." : schedules.map(describeSchedule).join("\n"),
