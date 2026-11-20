@@ -8,7 +8,6 @@ import { Config, Console, Effect, FileSystem, Option } from "effect";
 import { Command, Flag, Prompt } from "effect/cli";
 import { ChildProcess, ChildProcessSpawner } from "effect/process";
 import { CliFailure } from "../cli-failure.ts";
-import { cliEntry } from "../commands/start-command.ts";
 import { Invocation } from "../invocation.ts";
 import type { Asking, QuestionFlags } from "./ask.ts";
 import { ask, configureWith, flagNameOf } from "./ask.ts";
@@ -298,8 +297,7 @@ export const installCommand = (
         const target = {
           userHome: yield* Config.String("HOME"),
           omenHome: home.root,
-          bun: invocation.bun,
-          entry: cliEntry,
+          cli: invocation.cli,
           path: yield* Config.String("PATH").pipe(Config.withDefault("/usr/bin:/bin")),
           userId: invocation.userId,
         };

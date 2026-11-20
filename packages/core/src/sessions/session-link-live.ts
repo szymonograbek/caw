@@ -1,4 +1,3 @@
-import * as NodePath from "node:path";
 import { OmenEvent } from "@omen/sdk/events";
 import type { ChannelError } from "@omen/sdk/channel";
 import type { HarnessEvent, LiveSession } from "@omen/sdk/harness";
@@ -17,7 +16,6 @@ import { DeliverySignal, HarnessSignal, SessionLink } from "./session-link.ts";
 import type { SessionTarget } from "./session-target.ts";
 
 /** Omen's core skill, a local Claude plugin telling the agent to run `omen guide`. */
-const coreSkillDir = NodePath.join(import.meta.dirname, "..", "..", "skill");
 
 const none: ReadonlyArray<HarnessSignal> = [];
 
@@ -147,7 +145,7 @@ export class SessionLinks extends Context.Service<
               systemPrompt: [omenPrompt(target), ...setup.systemPrompt],
               tools: setup.tools,
               skillDirs: [
-                coreSkillDir,
+                home.skillDir,
                 ...registrations.flatMap((entry) =>
                   Registration.$is("SkillDir")(entry) ? [entry.path] : [],
                 ),

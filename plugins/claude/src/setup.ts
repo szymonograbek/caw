@@ -1,4 +1,5 @@
 import { claudeHarnessName } from "./claude-error.ts";
+import { findClaudeExecutable, notInstalled } from "./claude-executable.ts";
 import { answer, PluginSetup, SetupError, SetupQuestion } from "@omen/sdk/setup";
 import { Effect, Option } from "effect";
 
@@ -47,12 +48,20 @@ export const claudeSetup: PluginSetup = PluginSetup.Harness({
   ],
   configure: (answers) =>
     Effect.gen(function* () {
+      const executable = yield* Effect.fromOption(
+        findClaudeExecutable(process.env["PATH"] ?? ""),
+      ).pipe(Effect.mapError(() => new SetupError({ message: notInstalled })));
+
       const model = yield* answer(answers, "model");
       const sources = yield* Effect.flatMap(answer(answers, "settingSources"), parseSources);
       const isDefault = sources.join(",") === defaultSources.join(",");
 
       return {
-        report: [`Model: ${model}`, `Settings sources: ${sources.join(", ")}`],
+        report: [
+          `Claude Code: ${executable}`,
+          `Model: ${model}`,
+          `Settings sources: ${sources.join(", ")}`,
+        ],
         harness: claudeHarnessName,
         model: model === "default" ? Option.none() : Option.some(model),
         settingSources: isDefault ? Option.none() : Option.some(sources),

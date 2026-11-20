@@ -15,7 +15,7 @@ A minimal daemon that lets trusted people talk to agent Harnesses (Claude Agent 
   - `packages/core` — daemon, store, routing, RPC.
   - `packages/cli` — the `omen` binary.
   - `plugins/*` — built-in plugins.
-- **Stack**: Bun, Effect v4. Distributed as an npm package (`bun add -g omen`).
+- **Stack**: Bun, Effect v4. Distributed as an npm package (`bun add -g omen`), or compiled into a single `omen` binary (`bun run install:global`). Omen runs the Claude Code installed on the host (`claude` on `PATH`), not a bundled copy.
 - **State**: everything under `~/.omen/` (DB, plugins, Workspaces, logs, `.env`), so migrating machines is a folder copy.
 
 ## Conversations and Sessions

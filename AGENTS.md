@@ -45,7 +45,7 @@ Deviations from the kickoff guides:
 
 ## Commands
 
-`bun run verify` (format check, lint, typecheck, Knip, tests) must pass before any handoff. The other scripts are in `package.json`. Run `bun run dev:setup` once per checkout: it writes `.env.local` with this checkout's `OMEN_HOME` (`.omen-dev/`), and Bun loads `.env.local` automatically.
+`bun run verify` (format check, lint, typecheck, Knip, tests) must pass before any handoff. The other scripts are in `package.json`. Run `bun run dev:setup` once per checkout: it writes `.env.local` with this checkout's `OMEN_HOME` (`.omen-dev/`), and Bun loads `.env.local` automatically. `bun run build` compiles the CLI into `dist/omen`, and `bun run install:global` builds it and copies it to `$OMEN_INSTALL_DIR` (default: Bun's global bin). The compiled binary keeps its modules in Bun's virtual `/$bunfs`, which other processes cannot read: anything a Session's processes need (the `omen` shim, the core skill, Claude Code itself) must come from disk.
 
 ## Omen
 

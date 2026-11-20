@@ -1,12 +1,12 @@
 import * as NodePath from "node:path";
 import { Match, Option } from "effect";
 
-/** What the service runs: `<bun> <entry> start` with Omen's environment. */
+/** What the service runs: `<cli> start` with Omen's environment. */
 export interface ServiceTarget {
   readonly userHome: string;
   readonly omenHome: string;
-  readonly bun: string;
-  readonly entry: string;
+  /** The command that starts the CLI (see `Invocation.cli`). */
+  readonly cli: ReadonlyArray<string>;
   /** Baked in, so the agent's shell finds the same tools as the installing shell. */
   readonly path: string;
   readonly userId: Option.Option<number>;
@@ -40,9 +40,7 @@ const launchdPlist = (target: ServiceTarget): ServiceFile => {
   ${string(label)}
   <key>ProgramArguments</key>
   <array>
-    ${string(target.bun)}
-    ${string(target.entry)}
-    ${string("start")}
+    ${[...target.cli, "start"].map(string).join("\n    ")}
   </array>
   <key>EnvironmentVariables</key>
   <dict>
@@ -79,7 +77,7 @@ Description=Omen
 After=network-online.target
 
 [Service]
-ExecStart=${[target.bun, target.entry, "start"].map(quoted).join(" ")}
+ExecStart=${[...target.cli, "start"].map(quoted).join(" ")}
 Environment=${quoted(`OMEN_HOME=${target.omenHome}`)} ${quoted(`PATH=${target.path}`)}
 Restart=on-failure
 

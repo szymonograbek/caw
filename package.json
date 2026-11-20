@@ -9,6 +9,8 @@
   "scripts": {
     "prepare": "effect-tsgo patch --typescript --oxlint",
     "dev:setup": "sh scripts/dev-setup.sh",
+    "build": "bun build --compile --minify --sourcemap packages/cli/src/main.ts --outfile dist/omen",
+    "install:global": "bun run build && sh scripts/install-global.sh",
     "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p packages/sdk && tsc --noEmit -p packages/core && tsc --noEmit -p packages/cli && tsc --noEmit -p plugins/discord && tsc --noEmit -p plugins/claude && tsc --noEmit -p plugins/memory && tsc --noEmit -p plugins/scheduler && tsc --noEmit -p plugins/profiles && tsc --noEmit -p tools/oxlint",
     "lint": "oxlint --type-aware --deny-warnings",
     "lint:fix": "oxlint --type-aware --fix",

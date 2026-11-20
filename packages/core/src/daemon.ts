@@ -1,7 +1,7 @@
 import { OmenEvent } from "@omen/sdk/events";
 import { Effect, Layer } from "effect";
 import { EventBus } from "./events/event-bus.ts";
-import { writeCliShim } from "./home/cli-shim.ts";
+import { writeAgentFiles } from "./home/agent-files.ts";
 import { hostCoreLayer } from "./host-core-layer.ts";
 import { daemonLoggerLayer } from "./logging/daemon-logger.ts";
 import type { LoadedPlugin } from "./plugins/loaded-plugin.ts";
@@ -13,8 +13,8 @@ import { Sessions } from "./store/sessions.ts";
 export interface DaemonOptions {
   /** The Plugins that ship with Omen, enabled on first start. */
   readonly builtins: ReadonlyArray<LoadedPlugin>;
-  /** The CLI's main module; Sessions run it through `<home>/bin/omen`. */
-  readonly cliEntry: string;
+  /** The command that starts this CLI (`[bun, main.ts]`, or the compiled binary); Sessions run it through `<home>/bin/omen`. */
+  readonly cli: ReadonlyArray<string>;
 }
 
 /** Starts every enabled Plugin, then serves until `Shutdown` (or interruption). */
@@ -24,7 +24,7 @@ const serve = Effect.fn("Daemon.serve")(function* (options: DaemonOptions) {
   const bus = yield* EventBus;
   const lifecycle = yield* DaemonLifecycle;
 
-  yield* writeCliShim(options.cliEntry).pipe(Effect.orDie);
+  yield* writeAgentFiles(options.cli).pipe(Effect.orDie);
   yield* sessions.idleAllLive;
   yield* plugins.start(options.builtins);
   yield* bus.publish(OmenEvent.DaemonStarted());

@@ -5,6 +5,7 @@ import { Effect, FiberSet, Option, Predicate, Queue, Schema, Stream } from "effe
 import type { Harness, HarnessError, OpenSession } from "@omen/sdk/harness";
 import { HarnessEvent, SessionStart } from "@omen/sdk/harness";
 import { claudeError, claudeHarnessName } from "./claude-error.ts";
+import { claudeExecutable } from "./claude-executable.ts";
 import { decodeCursor } from "./cursor.ts";
 import { toHarnessEvents } from "./events.ts";
 import { preToolUse } from "./pre-tool-use.ts";
@@ -58,9 +59,11 @@ const open = Effect.fn("ClaudeHarness.open")(function* (request: OpenSession) {
     runPromise,
   );
 
+  const executable = yield* claudeExecutable(request.env["PATH"] ?? "");
   const input = yield* Queue.unbounded<SDKUserMessage, Cause.Done>();
 
   const options: Options = {
+    pathToClaudeCodeExecutable: executable,
     ...start,
     ...Option.match(request.profile.model, { onNone: () => ({}), onSome: (model) => ({ model }) }),
     cwd: request.cwd,

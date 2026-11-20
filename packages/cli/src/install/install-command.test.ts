@@ -66,7 +66,7 @@ const omen = (home: string, argv: ReadonlyArray<string>) =>
           cwd: home,
           conversationId: Option.none(),
           platform: "darwin",
-          bun: "/usr/local/bin/bun",
+          cli: ["/usr/local/bin/bun", "/opt/omen/main.ts"],
           userId: Option.some(501),
         }),
         Layer.succeed(HttpClient.HttpClient, fakeDiscord),
@@ -143,7 +143,9 @@ describe("omen install", () => {
       );
 
       expect(plist).toContain(`<key>OMEN_HOME</key>\n    <string>${home}</string>`);
-      expect(plist).toContain("<string>/usr/local/bin/bun</string>");
+      expect(plist).toContain(
+        "<string>/usr/local/bin/bun</string>\n    <string>/opt/omen/main.ts</string>\n    <string>start</string>",
+      );
     }).pipe(Effect.scoped),
   );
 

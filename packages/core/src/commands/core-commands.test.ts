@@ -3,6 +3,7 @@ import { describe, expect, it } from "@effect/vitest";
 import { ConversationPlace } from "@omen/sdk/channel";
 import { ChannelName, ConversationId, ExternalConversationId } from "@omen/sdk/ids";
 import { Effect, Exit, Layer, Option, Ref } from "effect";
+import { writeAgentFiles } from "../home/agent-files.ts";
 import { OmenHome } from "../home/omen-home.ts";
 import { DaemonLifecycle } from "../rpc/daemon-lifecycle.ts";
 import { OmenClient } from "../rpc/rpc-client.ts";
@@ -132,6 +133,7 @@ describe("core CLI commands", () => {
       const harness = yield* makeFakeHarness;
       const home = yield* OmenHome;
 
+      yield* writeAgentFiles(["/opt/omen/bin/omen"]);
       yield* startPlugins(channel, harness);
       yield* channel.say(message("dm", "m1", "hi", ConversationPlace.Direct()));
       yield* eventually(Effect.map(Ref.get(harness.sessions), (all) => all.length === 1));
@@ -139,9 +141,16 @@ describe("core CLI commands", () => {
       const [session] = yield* Ref.get(harness.sessions);
 
       expect(session?.request.env["PATH"]?.split(":")[0]).toBe(home.binDir);
-      expect(session?.request.skillDirs[0]).toBe(
-        NodePath.resolve(import.meta.dirname, "..", "..", "skill"),
+      expect(session?.request.skillDirs[0]).toBe(home.skillDir);
+
+      const shim = yield* Effect.promise(() => Bun.file(NodePath.join(home.binDir, "omen")).text());
+
+      const skill = yield* Effect.promise(() =>
+        Bun.file(NodePath.join(home.skillDir, "skills", "omen", "SKILL.md")).text(),
       );
+
+      expect(shim).toContain(`exec '/opt/omen/bin/omen' "$@"`);
+      expect(skill).toContain("Run `omen guide`");
     }).pipe(Effect.provide(server), Effect.scoped),
   );
 });

@@ -1,5 +1,9 @@
+import * as NodePath from "node:path";
 import { ConversationId } from "@omen/sdk/ids";
 import { Config, Context, Effect, Layer, Option } from "effect";
+
+/** `bun build --compile` serves the bundled modules from Bun's virtual `/$bunfs` root. */
+const compiled = import.meta.dirname.startsWith("/$bunfs");
 
 /** Facts about this `omen` process that commands act on; tests substitute their own. */
 export class Invocation extends Context.Service<
@@ -11,8 +15,11 @@ export class Invocation extends Context.Service<
     readonly conversationId: Option.Option<ConversationId>;
     /** `process.platform`; decides which service file `omen install` writes. */
     readonly platform: string;
-    /** The Bun binary running the CLI, which the service file runs too. */
-    readonly bun: string;
+    /**
+     * The command that starts this CLI, for the `omen` shim and service files:
+     * `[bun, main.ts]` from source, or just the binary when compiled.
+     */
+    readonly cli: ReadonlyArray<string>;
     /** The user id `launchctl bootstrap gui/<uid>` needs. */
     readonly userId: Option.Option<number>;
   }
@@ -29,7 +36,9 @@ export class Invocation extends Context.Service<
         cwd: process.cwd(),
         conversationId,
         platform: process.platform,
-        bun: process.execPath,
+        cli: compiled
+          ? [process.execPath]
+          : [process.execPath, NodePath.join(import.meta.dirname, "main.ts")],
         userId: Option.fromNullishOr(process.getuid?.()),
       };
     }),

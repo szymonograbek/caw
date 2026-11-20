@@ -67,12 +67,16 @@ const PackageJson = Schema.fromJsonString(
 const failWith = (source: string) => (cause: unknown) =>
   new PluginInstallError({ source, message: String(cause) });
 
-/** Runs `bun add <source>` in `folder` with the Bun running Omen. */
+/**
+ * Runs `bun add <source>` in `folder` with the Bun running Omen. `BUN_BE_BUN`
+ * makes a compiled `omen` binary act as the Bun it embeds.
+ */
 const bunAdd = (folder: string, source: string) =>
   Effect.gen(function* () {
     const child = yield* Effect.sync(() =>
       Bun.spawn([process.execPath, "add", source], {
         cwd: folder,
+        env: { ...process.env, BUN_BE_BUN: "1" },
         stdout: "ignore",
         stderr: "pipe",
       }),
