@@ -117,6 +117,7 @@ const openSession = (registered: Registered, root: ConversationId) =>
         model: Option.none(),
         cwd: Option.none(),
         settingSources: Option.none(),
+        effort: Option.none(),
       }),
     }),
   ).pipe(Effect.map((contributions) => contributions.flatMap((c) => c.systemPrompt)));

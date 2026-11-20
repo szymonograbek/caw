@@ -11,6 +11,7 @@ const ProfileRow = Schema.Struct({
   harness: HarnessName,
   env: Schema.fromJsonString(Schema.Record(Schema.String, Schema.String)),
   model: Schema.OptionFromNullOr(Schema.String),
+  effort: Schema.OptionFromNullOr(Schema.String),
   cwd: Schema.OptionFromNullOr(Schema.String),
   settingSources: Schema.OptionFromNullOr(Schema.fromJsonString(Schema.Array(Schema.String))),
 });

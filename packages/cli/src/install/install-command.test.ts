@@ -190,21 +190,24 @@ const freshHome = Effect.gen(function* () {
   return { home, tokenFile };
 });
 
-/** The `default` profile's env, as the profiles Plugin stored it. */
-const defaultProfileEnv = (home: string) => {
+/** The `default` profile's env and effort, as the profiles Plugin stored them. */
+const defaultProfile = (home: string) => {
   const db = new Database(NodePath.join(home, "omen.db"), { readonly: true });
 
   const row = db
-    .query<{ env_json: string }, []>(
-      "select env_json from plugin_profiles_profiles where name = 'default'",
+    .query<{ env_json: string; effort: string | null }, []>(
+      "select env_json, effort from plugin_profiles_profiles where name = 'default'",
     )
     .get();
 
   db.close();
 
-  return Schema.decodeUnknownSync(
-    Schema.fromJsonString(Schema.Record(Schema.String, Schema.String)),
-  )(row?.env_json);
+  return {
+    env: Schema.decodeUnknownSync(
+      Schema.fromJsonString(Schema.Record(Schema.String, Schema.String)),
+    )(row?.env_json),
+    effort: row?.effort,
+  };
 };
 
 const pluginsTable = (home: string) => {
@@ -230,6 +233,8 @@ describe("omen install", () => {
         tokenFile,
         "--model",
         "sonnet",
+        "--effort",
+        "high",
         "--settings-sources",
         "user,local",
         "--plugins",
@@ -252,6 +257,7 @@ describe("omen install", () => {
         `Saved DISCORD_TOKEN to ${NodePath.join(home, ".env")}`,
         "Harness: Claude",
         "Claude model: Sonnet",
+        "Claude effort: High",
         "Claude Code settings to load: user, local",
         "Claude settings checked",
         expect.stringMatching(/^Claude Code: /),
@@ -278,8 +284,9 @@ describe("omen install", () => {
       );
       expect(((yield* Effect.promise(() => Fs.stat(env))).mode & 0o777).toString(8)).toBe("600");
 
-      expect(defaultProfileEnv(home)).toEqual({
-        CLAUDE_CONFIG_DIR: NodePath.join(home, ".claude"),
+      expect(defaultProfile(home)).toEqual({
+        env: { CLAUDE_CONFIG_DIR: NodePath.join(home, ".claude") },
+        effort: "high",
       });
       expect(pluginsTable(home)).toEqual([
         { name: "discord", enabled: 1 },

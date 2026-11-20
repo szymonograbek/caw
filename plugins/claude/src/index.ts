@@ -8,6 +8,7 @@ const guide = `The \`claude\` Harness runs each Session as one long-lived Claude
 
 Profile fields it honors:
 - \`model\`: the Claude model (for example \`sonnet\` or \`opus\`); unset uses Claude Code's default.
+- \`effort\`: the reasoning effort, any of \`low\`, \`medium\`, \`high\`, \`xhigh\`, \`max\`; unset uses \`medium\`.
 - \`settingSources\`: which Claude Code settings to load, any of \`user\`, \`project\`, \`local\`; unset loads all three.
 - \`env\`: added to the Session's environment, so \`CLAUDE_CONFIG_DIR\` selects another Claude config directory.
 - \`cwd\`: the Session's working directory instead of the Workspace.

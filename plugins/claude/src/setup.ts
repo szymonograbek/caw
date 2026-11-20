@@ -35,6 +35,19 @@ export const claudeSetup: PluginSetup = PluginSetup.Harness({
       ],
       initial: "default",
     }),
+    SetupQuestion.Choice({
+      key: "effort",
+      flag: "effort",
+      message: "Claude effort",
+      choices: [
+        { value: "low", title: "Low", hint: "fastest, least thinking" },
+        { value: "medium", title: "Medium", hint: "balanced" },
+        { value: "high", title: "High", hint: "more thinking" },
+        { value: "xhigh", title: "Extra high", hint: "deeper thinking" },
+        { value: "max", title: "Max", hint: "most thinking, slowest" },
+      ],
+      initial: "medium",
+    }),
     SetupQuestion.MultiChoice({
       key: "settingSources",
       flag: "settings-sources",
@@ -54,6 +67,7 @@ export const claudeSetup: PluginSetup = PluginSetup.Harness({
       ).pipe(Effect.mapError(() => new SetupError({ message: notInstalled })));
 
       const model = yield* answer(answers, "model");
+      const effort = yield* answer(answers, "effort");
       const sources = yield* Effect.flatMap(answerList(answers, "settingSources"), checkSources);
 
       // Claude Code keys its login by config dir: without this one the daemon's Sessions are logged out.
@@ -72,6 +86,7 @@ export const claudeSetup: PluginSetup = PluginSetup.Harness({
         }),
         harness: claudeHarnessName,
         model: model === "default" ? Option.none() : Option.some(model),
+        effort: Option.some(effort),
         settingSources:
           sources.length === knownSources.length ? Option.none() : Option.some(sources),
       };

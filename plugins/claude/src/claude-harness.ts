@@ -1,4 +1,9 @@
-import type { Options, SDKUserMessage, SettingSource } from "@anthropic-ai/claude-agent-sdk";
+import type {
+  EffortLevel,
+  Options,
+  SDKUserMessage,
+  SettingSource,
+} from "@anthropic-ai/claude-agent-sdk";
 import { query } from "@anthropic-ai/claude-agent-sdk";
 import type { Cause } from "effect";
 import { Effect, FiberSet, Option, Predicate, Queue, Schema, Stream } from "effect";
@@ -16,6 +21,13 @@ const defaultSettingSources: ReadonlyArray<SettingSource> = ["user", "project", 
 
 const decodeSettingSources = Schema.decodeUnknownEffect(
   Schema.Array(Schema.Literals(["user", "project", "local"])),
+);
+
+/** The effort of Sessions whose profile sets none. */
+const defaultEffort: EffortLevel = "medium";
+
+const decodeEffort = Schema.decodeUnknownEffect(
+  Schema.Literals(["low", "medium", "high", "xhigh", "max"]),
 );
 
 const userMessage = (text: string): SDKUserMessage => ({
@@ -50,6 +62,14 @@ const open = Effect.fn("ClaudeHarness.open")(function* (request: OpenSession) {
       ),
   });
 
+  const effort = yield* Option.match(request.profile.effort, {
+    onNone: () => Effect.succeed(defaultEffort),
+    onSome: (level) =>
+      decodeEffort(level).pipe(
+        Effect.mapError((issue) => claudeError(`Invalid effort: ${issue.message}`, issue)),
+      ),
+  });
+
   const mcpServers = yield* toolServers(
     request.tools,
     {
@@ -67,6 +87,7 @@ const open = Effect.fn("ClaudeHarness.open")(function* (request: OpenSession) {
     pathToClaudeCodeExecutable: executable,
     ...start,
     ...Option.match(request.profile.model, { onNone: () => ({}), onSome: (model) => ({ model }) }),
+    effort,
     cwd: request.cwd,
     env: sessionEnv(request.env),
     settingSources: [...settingSources],

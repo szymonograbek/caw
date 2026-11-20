@@ -76,6 +76,7 @@ export interface HarnessConfigured {
   readonly report: ReadonlyArray<string>;
   readonly harness: HarnessName;
   readonly model: Option.Option<string>;
+  readonly effort: Option.Option<string>;
   readonly settingSources: Option.Option<ReadonlyArray<string>>;
   /**
    * The installing shell's variables the Harness needs. The daemon does not run

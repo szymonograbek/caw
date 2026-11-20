@@ -2,14 +2,14 @@ import type { GuidePage } from "@omen/sdk/plugin";
 
 export const profilesGuide: GuidePage = {
   topic: "profiles",
-  summary: "Harness profiles: which Harness, model, env and cwd a Conversation runs with",
+  summary: "Harness profiles: which Harness, model, effort, env and cwd a Conversation runs with",
   body: `A Harness profile is a named set of Harness settings. Each Conversation uses one;
 the \`default\` profile applies when a Conversation sets none, and you can redefine
 \`default\` itself. A Session stays bound to the profile it started with.
 
 Commands:
   omen profile add <name> --harness claude [--env K=V ...] [--model <model>]
-                          [--cwd <absolute dir>] [--settings-sources user,project,local]
+                          [--effort <effort>] [--cwd <absolute dir>] [--settings-sources user,project,local]
       Creates the profile, or replaces every setting of the one with that name.
       --env is repeatable. --cwd replaces the Workspace as the Sessions' cwd.
       --settings-sources picks which Claude settings files load (default: all three).

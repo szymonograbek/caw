@@ -97,6 +97,7 @@ HarnessEvent: Text | ToolCall | ToolResult | TurnEnded | Error | CursorUpdated
 
 - `permissionMode: bypassPermissions` everywhere (ADR 0001).
 - `settingSources` come from the profile; the default is `['user','project','local']`.
+- `effort` comes from the profile; the default is `medium`.
 - The system prompt is the `claude_code` preset plus a short fixed Omen append. It tells the agent:
   - it is Omen, talking through `<Channel>`;
   - to write Discord markdown;
@@ -199,7 +200,7 @@ The Claude Agent SDK Harness (see above).
 
 ### profiles
 
-- `omen profile add <name> --harness claude --env K=V … [--model] [--cwd] [--settings-sources]`.
+- `omen profile add <name> --harness claude --env K=V … [--model] [--effort] [--cwd] [--settings-sources]`.
 - `omen conversation set --profile <name>`.
 - A `default` profile applies when none is set.
 - The profile's cwd overrides the Workspace default.

@@ -75,6 +75,7 @@ const fakePlugin = (channel: FakeChannel, harness: FakeHarness) =>
                   model: Option.none(),
                   cwd: Option.none(),
                   settingSources: Option.none(),
+                  effort: Option.none(),
                 }),
               ),
             );

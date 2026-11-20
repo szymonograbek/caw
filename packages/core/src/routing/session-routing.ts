@@ -78,6 +78,7 @@ export class SessionRouting extends Context.Service<
           model: Option.none(),
           cwd: Option.none(),
           settingSources: Option.none(),
+          effort: Option.none(),
         });
       });
 

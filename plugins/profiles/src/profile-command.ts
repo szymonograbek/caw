@@ -22,6 +22,7 @@ const describeProfile = (profile: Profile): string =>
     profile.name,
     `harness=${profile.harness}`,
     ...Option.toArray(Option.map(profile.model, (model) => `model=${model}`)),
+    ...Option.toArray(Option.map(profile.effort, (effort) => `effort=${effort}`)),
     ...Option.toArray(Option.map(profile.cwd, (cwd) => `cwd=${cwd}`)),
     ...Option.toArray(
       Option.map(profile.settingSources, (sources) => `settings-sources=${sources.join(",")}`),
@@ -49,6 +50,10 @@ export const profileCommand = Effect.gen(function* () {
         Flag.withDescription("An environment variable for the Harness, as K=V (repeatable)"),
       ),
       model: Flag.String("model").pipe(Flag.optional, Flag.withDescription("The model to use")),
+      effort: Flag.String("effort").pipe(
+        Flag.optional,
+        Flag.withDescription("The reasoning effort, e.g. low, medium, high"),
+      ),
       cwd: Flag.String("cwd").pipe(
         Flag.withSchema(AbsolutePath),
         Flag.optional,

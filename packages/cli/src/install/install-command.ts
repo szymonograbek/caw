@@ -219,6 +219,10 @@ export const installCommand = (
               onNone: () => [],
               onSome: (model) => ["--model", model],
             }),
+            ...Option.match(harnessConfig.effort, {
+              onNone: () => [],
+              onSome: (effort) => ["--effort", effort],
+            }),
             ...Option.match(harnessConfig.settingSources, {
               onNone: () => [],
               onSome: (sources) => ["--settings-sources", sources.join(",")],

@@ -11,6 +11,8 @@ export class Profile extends Schema.Class<Profile, { readonly brand: unique symb
   harness: HarnessName,
   env: Schema.Record(Schema.String, Schema.String),
   model: Schema.Option(Schema.String),
+  /** The reasoning effort, e.g. `low` or `high`; `None` means the Harness default. */
+  effort: Schema.Option(Schema.String),
   /** Overrides the Workspace directory as the Sessions' cwd. */
   cwd: Schema.Option(Schema.String),
   /** Claude `settingSources`; `None` means the Harness default (`user`, `project`, `local`). */

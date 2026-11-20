@@ -70,6 +70,8 @@ describe("profiles plugin", () => {
         "API_KEY=secret",
         "--model",
         "opus",
+        "--effort",
+        "high",
         "--cwd",
         "/home/me/work",
         "--settings-sources",
@@ -87,6 +89,7 @@ describe("profiles plugin", () => {
             harness: HarnessName.make("claude"),
             env: { CLAUDE_CONFIG_DIR: "/home/me/.claude-work", API_KEY: "secret" },
             model: Option.some("opus"),
+            effort: Option.some("high"),
             cwd: Option.some("/home/me/work"),
             settingSources: Option.some(["user", "project"]),
           }),
@@ -99,7 +102,16 @@ describe("profiles plugin", () => {
     Effect.gen(function* () {
       const registered = yield* startPlugin;
 
-      yield* run(registered, ["add", "work", "--harness", "claude", "--model", "opus"]);
+      yield* run(registered, [
+        "add",
+        "work",
+        "--harness",
+        "claude",
+        "--model",
+        "opus",
+        "--effort",
+        "low",
+      ]);
       yield* run(registered, ["add", "work", "--harness", "claude"]);
 
       const found = yield* Effect.forEach(registered.lookups, (lookup) =>
@@ -113,6 +125,7 @@ describe("profiles plugin", () => {
             harness: HarnessName.make("claude"),
             env: {},
             model: Option.none(),
+            effort: Option.none(),
             cwd: Option.none(),
             settingSources: Option.none(),
           }),
